@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Trip Planner</string>
+    <string name="web_client_id">788453335355-a9i3cltekbb5jdtl3c3bece4pqhblm9a.apps.googleusercontent.com</string>
+    <string name="login_to_trip_planner_app">Login to Trip Planner App</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="not_registered_hyperlink">Belum punya akun? Register</string>
+    <string name="have_account_hyperlink">Sudah punya akun? Login</string>
+    <string name="buat_akun">Buat Akun</string>
+    <string name="register">Register</string>
+    <string name="masukkan_email">Masukkan email</string>
+    <string name="masukkan_password">Masukkan password</string>
+    <string name="password_character_minimum">Password harus minimal 5 karakter</string>
+    <string name="password_mismatch">Password yang dimasukkan tidak sama</string>
+    <string name="masukkan_konfirmasi_password">Masukkan konfirmasi password</string>
+    <string name="konfirmasi_password">Konfirmasi password</string>
+    <string name="keluar">Keluar</string>
+    <string name="registrasi_berhasil">Registrasi berhasil</string>
+</resources>

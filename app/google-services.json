@@ -12,7 +12,20 @@
           "package_name": "com.thesis.project.tripplanner"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "788453335355-n2ql9qq5ebp1oddhk7g43rarioiqk6v4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thesis.project.tripplanner",
+            "certificate_hash": "2ddb89276a71ca17b6a9e56c75d08381dbba9888"
+          }
+        },
+        {
+          "client_id": "788453335355-211brq9agnc053ussqv4qiidh7982h7m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDEF8LOC7jzbQGmo9T3kNi6hCr6uhYoEbs"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "788453335355-211brq9agnc053ussqv4qiidh7982h7m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

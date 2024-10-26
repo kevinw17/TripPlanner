@@ -86,6 +86,10 @@ class AuthViewModel: ViewModel() {
   fun resetErrorState() {
     _authState.value = null
   }
+
+  fun setAuthenticated() {
+    _authState.value = AuthState.Authenticated
+  }
 }
 
 sealed class AuthState {

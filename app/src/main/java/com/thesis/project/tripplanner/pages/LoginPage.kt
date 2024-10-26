@@ -1,6 +1,9 @@
 package com.thesis.project.tripplanner.pages
 
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,47 +13,74 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
+import com.google.android.gms.auth.api.identity.Identity
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.Utils
+import com.thesis.project.tripplanner.presentation.sign_in.GoogleAuthUiClient
 import com.thesis.project.tripplanner.viewmodel.AuthState
 import com.thesis.project.tripplanner.viewmodel.AuthViewModel
+import com.thesis.project.tripplanner.viewmodel.SignInViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginPage(
   modifier: Modifier = Modifier,
   navController: NavController,
-  authViewModel: AuthViewModel
+  authViewModel: AuthViewModel,
+  signInViewModel: SignInViewModel = viewModel()
 ) {
 
   var email by remember { mutableStateOf(Utils.EMPTY) }
   var password by remember { mutableStateOf(Utils.EMPTY) }
   val authState = authViewModel.authState.observeAsState()
+  val signInState by signInViewModel.state.collectAsState()
   val context = LocalContext.current
-  val auth = FirebaseAuth.getInstance()
+  val coroutineScope = rememberCoroutineScope()
+
+  val oneTapClient = Identity.getSignInClient(context)
+  val googleAuthUiClient = GoogleAuthUiClient(context, oneTapClient)
+
+  val launcher = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.StartIntentSenderForResult()
+  ) { result ->
+    if (result.resultCode == -1) {
+      val intent = result.data
+      intent?.let {
+        coroutineScope.launch {
+          val signInResult = googleAuthUiClient.signInWithIntent(intent)
+          signInViewModel.onSignInResult(signInResult)
+        }
+      }
+    }
+  }
 
   LaunchedEffect(authState.value) {
     when(authState.value) {
@@ -61,6 +91,16 @@ fun LoginPage(
         Toast.LENGTH_SHORT
       ).show()
       else -> Unit
+    }
+  }
+
+  LaunchedEffect(signInState) {
+    if (signInState.isSignInSuccessful) {
+      authViewModel.setAuthenticated()
+      Toast.makeText(context, "Google Sign-In Successful", Toast.LENGTH_SHORT).show()
+      navController.navigate("home")
+    } else if (signInState.signInError != null) {
+      Toast.makeText(context, "Google Sign-In failed: ${signInState.signInError}", Toast.LENGTH_SHORT).show()
     }
   }
 
@@ -102,7 +142,7 @@ fun LoginPage(
           onValueChange = {
             email = it
           },
-          label = {
+          placeholder = {
             Text(text = stringResource(R.string.masukkan_email))
           }
         )
@@ -137,6 +177,35 @@ fun LoginPage(
         )
       ) {
         Text(text = stringResource(R.string.login))
+      }
+
+      Spacer(modifier = Modifier.height(16.dp))
+
+      Button(
+        onClick = {
+          coroutineScope.launch {
+            val intentSender = googleAuthUiClient.signIn()
+            intentSender?.let {
+              launcher.launch(IntentSenderRequest.Builder(it).build())
+            } ?: run {
+              Toast.makeText(context, "Google Sign-In failed to initiate", Toast.LENGTH_SHORT).show()
+            }
+          }
+        },
+        colors = ButtonDefaults.buttonColors(
+          containerColor = Color.White,
+          contentColor = Color.Black
+        ),
+        modifier = Modifier.fillMaxWidth()
+          .padding(horizontal = 54.dp)
+      ) {
+        Icon(
+          painter = painterResource(R.drawable.ic_google),
+          contentDescription = "Google Sign-In",
+          modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = "Login dengan akun Google")
       }
 
       Spacer(modifier = Modifier.height(8.dp))

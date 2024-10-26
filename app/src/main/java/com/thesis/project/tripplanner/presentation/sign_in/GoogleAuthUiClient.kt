@@ -3,6 +3,8 @@ package com.thesis.project.tripplanner.presentation.sign_in
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import android.util.Log
+import android.widget.Toast
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -20,17 +22,18 @@ class GoogleAuthUiClient(
   private val auth = Firebase.auth
 
   suspend fun signIn(): IntentSender? {
-    val result = try {
-      oneTapClient.beginSignIn(
-        buildSignInRequest()
-      ).await()
-    } catch(e: Exception) {
-        e.printStackTrace()
-        if(e is CancellationException) throw e
-        null
+    return try {
+      val result = oneTapClient.beginSignIn(buildSignInRequest()).await()
+      Log.d("GoogleAuthUiClient", "Sign-In success: ${result.pendingIntent}")
+      result.pendingIntent?.intentSender
+    } catch (e: Exception) {
+      Log.e("GoogleAuthUiClient", "Sign-In failed: ${e.message}", e)
+      Toast.makeText(context, "Google Sign-In failed to initiate: ${e.message}", Toast.LENGTH_SHORT).show()
+      if (e is CancellationException) throw e
+      null
     }
-    return result?.pendingIntent?.intentSender
   }
+
 
   suspend fun signInWithIntent(intent: Intent): SignInResult {
     val credential = oneTapClient.getSignInCredentialFromIntent(intent)

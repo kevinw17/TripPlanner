@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Trip Planner</string>
-    <string name="web_client_id">788453335355-a9i3cltekbb5jdtl3c3bece4pqhblm9a.apps.googleusercontent.com</string>
+    <string name="web_client_id">788453335355-211brq9agnc053ussqv4qiidh7982h7m.apps.googleusercontent.com</string>
     <string name="login_to_trip_planner_app">Login to Trip Planner App</string>
     <string name="email">Email</string>
     <string name="password">Password</string>

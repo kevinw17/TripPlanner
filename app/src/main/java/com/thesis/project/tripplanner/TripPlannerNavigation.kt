@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.thesis.project.tripplanner.pages.HomePage
+import com.thesis.project.tripplanner.pages.ItineraryPage
 import com.thesis.project.tripplanner.pages.LoginPage
 import com.thesis.project.tripplanner.pages.RegisterPage
 import com.thesis.project.tripplanner.viewmodel.AuthViewModel
@@ -40,6 +41,11 @@ fun TripPlannerNavigation(
           modifier = modifier,
           navController = navController,
           authViewModel = authViewModel
+        )
+      }
+      composable("itinerary") {
+        ItineraryPage(
+          navController = navController
         )
       }
     }

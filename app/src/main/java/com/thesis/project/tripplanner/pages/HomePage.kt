@@ -79,7 +79,7 @@ fun HomePage(
       )
     },
     bottomBar = {
-      BottomNavigationBar()
+      BottomNavigationBar(navController)
     }
   ) { paddingValues ->
     LazyColumn(
@@ -195,42 +195,5 @@ fun HomePage(
         }
       }
     }
-  }
-}
-
-@Composable
-fun BottomNavigationBar() {
-  Row(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(8.dp),
-    horizontalArrangement = Arrangement.SpaceAround,
-    verticalAlignment = Alignment.CenterVertically
-  ) {
-    BottomNavigationItem(
-      icon = R.drawable.ic_home,
-      label = "Home",
-      onClick = { /* Navigate to Home */ }
-    )
-    BottomNavigationItem(
-      icon = R.drawable.ic_itinerary,
-      label = "Itinerary",
-      onClick = { /* Navigate to Itinerary */ }
-    )
-    BottomNavigationItem(
-      icon = R.drawable.ic_explore,
-      label = "Explore",
-      onClick = { /* Navigate to Explore */ }
-    )
-    BottomNavigationItem(
-      icon = R.drawable.ic_suggestion,
-      label = "Suggestions",
-      onClick = { /* Navigate to Suggestion */ }
-    )
-    BottomNavigationItem(
-      icon = R.drawable.ic_account,
-      label = "Account",
-      onClick = { /* Navigate to Account */ }
-    )
   }
 }

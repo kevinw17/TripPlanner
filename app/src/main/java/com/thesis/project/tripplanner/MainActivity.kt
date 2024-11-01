@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.thesis.project.tripplanner.navigation.TripPlannerNavigation
 import com.thesis.project.tripplanner.ui.theme.TripPlannerTheme
 import com.thesis.project.tripplanner.viewmodel.AuthViewModel
 import com.thesis.project.tripplanner.viewmodel.SplashScreenViewModel

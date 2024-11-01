@@ -1,4 +1,4 @@
-package com.thesis.project.tripplanner.presentation.sign_in
+package com.thesis.project.tripplanner.view.google_sign_in
 
 import android.content.Context
 import android.content.Intent

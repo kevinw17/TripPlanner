@@ -1,4 +1,4 @@
-package com.thesis.project.tripplanner.pages
+package com.thesis.project.tripplanner.view.login_register
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,7 +15,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thesis.project.tripplanner.R
-import com.thesis.project.tripplanner.Utils
+import com.thesis.project.tripplanner.utils.Utils
 
 @Composable
 fun PasswordField(

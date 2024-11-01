@@ -1,4 +1,4 @@
-package com.thesis.project.tripplanner.pages
+package com.thesis.project.tripplanner.view.bottomnav
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

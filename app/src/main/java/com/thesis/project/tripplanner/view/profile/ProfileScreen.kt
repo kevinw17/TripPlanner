@@ -1,4 +1,4 @@
-package com.thesis.project.tripplanner.presentation.profile
+package com.thesis.project.tripplanner.view.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.thesis.project.tripplanner.presentation.sign_in.UserData
+import com.thesis.project.tripplanner.view.google_sign_in.UserData
 
 @Composable
 fun ProfileScreen(

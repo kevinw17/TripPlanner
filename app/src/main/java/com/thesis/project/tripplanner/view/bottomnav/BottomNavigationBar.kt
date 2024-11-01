@@ -1,4 +1,4 @@
-package com.thesis.project.tripplanner.pages
+package com.thesis.project.tripplanner.view.bottomnav
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -33,7 +33,7 @@ fun BottomNavigationBar(navController: NavController) {
     BottomNavigationItem(
       icon = R.drawable.ic_explore,
       label = "Explore",
-      onClick = { /* Navigate to Explore */ }
+      onClick = { navController.navigate("explore") }
     )
     BottomNavigationItem(
       icon = R.drawable.ic_suggestion,

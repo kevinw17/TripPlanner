@@ -1,5 +1,7 @@
-package com.thesis.project.tripplanner.pages
+package com.thesis.project.tripplanner.view.itinerary
 
+import android.app.DatePickerDialog
+import android.widget.DatePicker
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -41,9 +43,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.thesis.project.tripplanner.R
-import com.thesis.project.tripplanner.Utils
-import com.thesis.project.tripplanner.components.DestinationBottomSheet
+import com.thesis.project.tripplanner.utils.Utils
+import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,22 +58,70 @@ fun ItineraryPage(
 
   val coroutineScope = rememberCoroutineScope()
   val scaffoldState = rememberBottomSheetScaffoldState()
+  val context = LocalContext.current
   var selectedDestination by remember { mutableStateOf(Utils.EMPTY) }
+  var startDate by remember { mutableStateOf(Utils.EMPTY) }
+  var endDate by remember { mutableStateOf(Utils.EMPTY) }
+  val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+  var startCalendar by remember { mutableStateOf<Calendar?>(null) }
 
   val destinations = listOf("Jakarta", "Bandung", "Bali", "Surabaya", "Yogyakarta", "Medan", "Makassar")
 
-  BottomSheetScaffold(
-    scaffoldState = scaffoldState,
-    sheetContent = {
-      DestinationBottomSheet(
-        destinations = destinations,
-        onSelect = { destination ->
-          selectedDestination = destination
-          coroutineScope.launch { scaffoldState.bottomSheetState.hide() }
+  val openStartDatePicker = {
+    val calendar = Calendar.getInstance()
+    DatePickerDialog(
+      context,
+      { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+        val selectedDate = Calendar.getInstance().apply {
+          set(year, month, dayOfMonth)
         }
-      )
-    }
-  ) {
+        startCalendar = selectedDate
+        startDate = dateFormatter.format(selectedDate.time)
+
+        if (endDate.isNotEmpty() && selectedDate.time > dateFormatter.parse(endDate)) {
+          endDate = Utils.EMPTY
+        }
+      },
+      calendar.get(Calendar.YEAR),
+      calendar.get(Calendar.MONTH),
+      calendar.get(Calendar.DAY_OF_MONTH)
+    ).show()
+  }
+
+  val openEndDatePicker = {
+    val calendar = Calendar.getInstance()
+
+    val minDate = startCalendar?.timeInMillis ?: calendar.timeInMillis
+
+    val datePicker = DatePickerDialog(
+      context,
+      { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+        val selectedDate = Calendar.getInstance().apply {
+          set(year, month, dayOfMonth)
+        }
+        endDate = dateFormatter.format(selectedDate.time)
+      },
+      calendar.get(Calendar.YEAR),
+      calendar.get(Calendar.MONTH),
+      calendar.get(Calendar.DAY_OF_MONTH)
+    )
+
+    datePicker.datePicker.minDate = minDate
+    datePicker.show()
+  }
+
+//  BottomSheetScaffold(
+//    scaffoldState = scaffoldState,
+//    sheetContent = {
+//      DestinationBottomSheet(
+//        destinations = destinations,
+//        onSelect = { destination ->
+//          selectedDestination = destination
+//          coroutineScope.launch { scaffoldState.bottomSheetState.hide() }
+//        }
+//      )
+//    }
+//  ) {
     Scaffold(topBar = {
       TopAppBar(
         title = {
@@ -150,22 +203,26 @@ fun ItineraryPage(
             color = Color.Black
           )
           Spacer(modifier = Modifier.height(4.dp))
-          OutlinedTextField(colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedBorderColor = Color.Black,
-            unfocusedLabelColor = Color.Black
-          ),
-            value = Utils.EMPTY,
-            onValueChange = { /* Handle start date input */ },
+          OutlinedTextField(
+            colors = OutlinedTextFieldDefaults.colors(
+              focusedContainerColor = Color.White,
+              unfocusedContainerColor = Color.White,
+              focusedBorderColor = Color.Black,
+              unfocusedLabelColor = Color.Black
+            ),
+            value = startDate,
+            onValueChange = {  },
             placeholder = {
               Text(stringResource(R.string.pilih_tanggal_pergi))
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+              .fillMaxWidth()
+              .clickable { openStartDatePicker() },
             trailingIcon = {
               Icon(
                 imageVector = Icons.Default.DateRange,
-                contentDescription = "Calendar Icon"
+                contentDescription = "Calendar Icon",
+                modifier = Modifier.clickable { openStartDatePicker() }
               )
             },
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -188,16 +245,19 @@ fun ItineraryPage(
             focusedBorderColor = Color.Black,
             unfocusedLabelColor = Color.Black
           ),
-            value = Utils.EMPTY,
-            onValueChange = { /* Handle end date input */ },
+            value = endDate,
+            onValueChange = {  },
             placeholder = {
               Text(stringResource(R.string.pilih_tanggal_pulang))
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+              .fillMaxWidth()
+              .clickable { openEndDatePicker() },
             trailingIcon = {
               Icon(
                 imageVector = Icons.Default.DateRange,
-                contentDescription = "Calendar Icon"
+                contentDescription = "Calendar Icon",
+                modifier = Modifier.clickable { openEndDatePicker() }
               )
             },
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -226,9 +286,11 @@ fun ItineraryPage(
               Text(stringResource(R.string.pilih_destinasi))
             },
             trailingIcon = {
-              Icon(Icons.Default.ArrowDropDown, contentDescription = "Dropdown Icon")
-            },
-            readOnly = true
+              Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = "Dropdown Icon"
+              )
+            }
           )
           Spacer(modifier = Modifier.height(16.dp))
         }
@@ -249,4 +311,4 @@ fun ItineraryPage(
       }
     }
   }
-}
+//}

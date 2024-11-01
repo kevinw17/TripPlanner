@@ -1,16 +1,15 @@
-package com.thesis.project.tripplanner
+package com.thesis.project.tripplanner.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.thesis.project.tripplanner.pages.HomePage
-import com.thesis.project.tripplanner.pages.ItineraryPage
-import com.thesis.project.tripplanner.pages.LoginPage
-import com.thesis.project.tripplanner.pages.RegisterPage
-import com.thesis.project.tripplanner.presentation.profile.ProfileScreen
-import com.thesis.project.tripplanner.presentation.sign_in.UserData
+import com.thesis.project.tripplanner.view.home.HomePage
+import com.thesis.project.tripplanner.view.itinerary.ItineraryPage
+import com.thesis.project.tripplanner.view.explore.ExplorePage
+import com.thesis.project.tripplanner.view.login_register.LoginPage
+import com.thesis.project.tripplanner.view.login_register.RegisterPage
 import com.thesis.project.tripplanner.viewmodel.AuthViewModel
 
 @Composable
@@ -47,6 +46,11 @@ fun TripPlannerNavigation(
       }
       composable("itinerary") {
         ItineraryPage(
+          navController = navController
+        )
+      }
+      composable("explore") {
+        ExplorePage(
           navController = navController
         )
       }

@@ -1,4 +1,4 @@
-package com.thesis.project.tripplanner.pages
+package com.thesis.project.tripplanner.view.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

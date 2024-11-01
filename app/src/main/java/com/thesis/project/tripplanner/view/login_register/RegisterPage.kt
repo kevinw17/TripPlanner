@@ -1,4 +1,4 @@
-package com.thesis.project.tripplanner.pages
+package com.thesis.project.tripplanner.view.login_register
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -43,26 +43,28 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.android.gms.auth.api.identity.Identity
 import com.thesis.project.tripplanner.R
-import com.thesis.project.tripplanner.Utils
-import com.thesis.project.tripplanner.presentation.sign_in.GoogleAuthUiClient
+import com.thesis.project.tripplanner.utils.Utils
+import com.thesis.project.tripplanner.view.google_sign_in.GoogleAuthUiClient
 import com.thesis.project.tripplanner.viewmodel.AuthState
 import com.thesis.project.tripplanner.viewmodel.AuthViewModel
 import com.thesis.project.tripplanner.viewmodel.SignInViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginPage(
+fun RegisterPage(
   modifier: Modifier = Modifier,
   navController: NavController,
   authViewModel: AuthViewModel,
   signInViewModel: SignInViewModel = viewModel()
 ) {
-
   var email by remember { mutableStateOf(Utils.EMPTY) }
   var password by remember { mutableStateOf(Utils.EMPTY) }
+  var confirmPassword by remember { mutableStateOf(Utils.EMPTY) }
+  var passwordError by remember { mutableStateOf(false) }
+  var confirmPasswordError by remember { mutableStateOf(false) }
   val authState = authViewModel.authState.observeAsState()
-  val signInState by signInViewModel.state.collectAsState()
   val context = LocalContext.current
+  val signInState by signInViewModel.state.collectAsState()
   val coroutineScope = rememberCoroutineScope()
 
   val oneTapClient = Identity.getSignInClient(context)
@@ -82,14 +84,17 @@ fun LoginPage(
     }
   }
 
+  val passwordErrorMessage = stringResource(R.string.password_character_minimum)
+
   LaunchedEffect(authState.value) {
-    when(authState.value) {
+    when (authState.value) {
       is AuthState.Authenticated -> navController.navigate("home")
-      is AuthState.Error -> Toast.makeText(
-        context,
-        (authState.value as AuthState.Error).message,
-        Toast.LENGTH_SHORT
-      ).show()
+      is AuthState.Error -> {
+        Toast.makeText(
+          context, (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
+        ).show()
+        authViewModel.resetErrorState()
+      }
       else -> Unit
     }
   }
@@ -117,7 +122,7 @@ fun LoginPage(
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Text(
-        text = stringResource(R.string.login_to_trip_planner_app),
+        text = stringResource(R.string.register),
         fontSize = 24.sp
       )
 
@@ -164,21 +169,58 @@ fun LoginPage(
 
         PasswordField(
           password = password,
-          onPasswordChange = { password = it },
-          isError = false
+          onPasswordChange = {
+            password = it
+            passwordError = password.length < 5
+          },
+          isError = passwordError,
+          errorMessage = passwordErrorMessage
         )
       }
 
       Spacer(modifier = Modifier.height(16.dp))
 
+      Column(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 54.dp)
+      ) {
+        Text(
+          text = stringResource(R.string.konfirmasi_password),
+          color = Color.Black
+        )
+
+        PasswordField(
+          password = confirmPassword,
+          onPasswordChange = {
+            confirmPassword = it
+            confirmPasswordError = confirmPassword.length < 5
+          },
+          isError = confirmPasswordError,
+          errorMessage = passwordErrorMessage
+        )
+      }
+
+      Spacer(modifier = Modifier.height(24.dp))
+
       Button(
-        onClick = { authViewModel.login(email, password) },
+        onClick = {
+          if (password.length >= 5) {
+            authViewModel.register(email, password, confirmPassword)
+          } else {
+            Toast.makeText(
+              context,
+              passwordErrorMessage,
+              Toast.LENGTH_SHORT
+            ).show()
+          }
+        },
         colors = ButtonDefaults.buttonColors(
           containerColor = Color.White,
           contentColor = Color.Black
         )
       ) {
-        Text(text = stringResource(R.string.login))
+        Text(text = stringResource(R.string.buat_akun))
       }
 
       Spacer(modifier = Modifier.height(16.dp))
@@ -216,11 +258,11 @@ fun LoginPage(
 
       TextButton(
         onClick = {
-          navController.navigate("register")
+          navController.navigate("login")
         }
       ) {
         Text(
-          text = stringResource(R.string.not_registered_hyperlink),
+          text = stringResource(R.string.have_account_hyperlink),
           color = Color(0xFF005FED)
         )
       }

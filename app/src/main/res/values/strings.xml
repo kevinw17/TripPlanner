@@ -39,4 +39,16 @@
     <string name="google_sign_in_failed">Google Sign-In failed: %1$s</string>
     <string name="google_sign_in_failed_to_initiate">Google Sign-In failed to initiate</string>
     <string name="login_dengan_akun_google">Login dengan akun Google</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="save_changes_dialog_description">Are you sure you want to save the changes?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="recommendation_dialog_description">Are you sure to recommend this?</string>
+    <string name="konfirmasi_rekomendasi">Konfirmasi Rekomendasi</string>
+    <string name="konfirmasi_penghapusan">Konfirmasi Penghapusan</string>
+    <string name="remove_picture_dialog_description">Are you sure to remove current picture?</string>
+    <string name="konfirmasi_pembatalan">Konfirmasi Pembatalan</string>
+    <string name="cancel_friend_request_dialog_description">Are you sure to cancel the request?</string>
+    <string name="explore">Explore</string>
+    <string name="explore_page_description">Jelajahi itinerary temanmu</string>
 </resources>

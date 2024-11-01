@@ -1,8 +1,8 @@
 package com.thesis.project.tripplanner.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.thesis.project.tripplanner.presentation.sign_in.SignInResult
-import com.thesis.project.tripplanner.presentation.sign_in.SignInState
+import com.thesis.project.tripplanner.view.google_sign_in.SignInResult
+import com.thesis.project.tripplanner.view.google_sign_in.SignInState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

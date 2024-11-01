@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -71,7 +72,11 @@ fun HomePage(
   Scaffold(
     topBar = {
       TopAppBar(
-        title = { Text("Trip Planner App") },
+        title = {
+          Text(
+            stringResource(R.string.trip_planner_app)
+          )
+        },
         colors = TopAppBarDefaults.topAppBarColors(
           containerColor = Color.White,
           titleContentColor = Color.Black
@@ -96,30 +101,21 @@ fun HomePage(
       }
 
       item {
-        Card(
-          modifier = Modifier.fillMaxWidth(),
-          colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF9C4)),
-          shape = RoundedCornerShape(8.dp)
-        ) {
-          Column(modifier = Modifier.padding(16.dp)) {
-            Text("Rencanakan perjalanan wisatamu sekarang juga", fontSize = 16.sp)
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { /* Navigate to itinerary creation */ }) {
-              Text("Buat Itinerary")
-            }
-          }
-        }
+        GoToItineraryCard(navController)
         Spacer(modifier = Modifier.height(16.dp))
       }
 
       item {
-        Text(text = "Itinerary dari wisatawan lain", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.itinerary_wisatawan_lain), fontSize = 18.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
       }
 
       items(2) {
         Card(
-          modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable {  },
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clickable { },
           shape = RoundedCornerShape(8.dp),
           elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
           colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0))
@@ -148,7 +144,7 @@ fun HomePage(
           contentAlignment = Alignment.Center
         ) {
           Text(
-            text = "Lihat lebih banyak",
+            text = stringResource(R.string.lihat_lebih_banyak),
             fontSize = 14.sp,
             color = Color.Blue,
             modifier = Modifier.clickable { /* Handle click action */ },
@@ -159,7 +155,7 @@ fun HomePage(
 
       item {
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Suggestions", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.suggestions), fontSize = 18.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
       }
 
@@ -171,7 +167,7 @@ fun HomePage(
             .fillMaxWidth()
             .height(80.dp)
             .padding(bottom = 16.dp)
-            .clickable {  },
+            .clickable { },
           colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0))
         ) {
           Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {

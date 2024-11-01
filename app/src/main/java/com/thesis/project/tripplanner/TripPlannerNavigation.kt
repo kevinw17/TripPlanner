@@ -9,6 +9,8 @@ import com.thesis.project.tripplanner.pages.HomePage
 import com.thesis.project.tripplanner.pages.ItineraryPage
 import com.thesis.project.tripplanner.pages.LoginPage
 import com.thesis.project.tripplanner.pages.RegisterPage
+import com.thesis.project.tripplanner.presentation.profile.ProfileScreen
+import com.thesis.project.tripplanner.presentation.sign_in.UserData
 import com.thesis.project.tripplanner.viewmodel.AuthViewModel
 
 @Composable

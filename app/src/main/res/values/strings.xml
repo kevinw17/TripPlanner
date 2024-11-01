@@ -17,4 +17,26 @@
     <string name="konfirmasi_password">Konfirmasi password</string>
     <string name="keluar">Keluar</string>
     <string name="registrasi_berhasil">Registrasi berhasil</string>
+    <string name="trip_planner_app">Trip Planner App</string>
+    <string name="itinerary_card_description">Rencanakan perjalanan wisatamu sekarang juga</string>
+    <string name="buat_itinerary">Buat Itinerary</string>
+    <string name="itinerary_wisatawan_lain">Itinerary dari wisatawan lain</string>
+    <string name="lihat_lebih_banyak">Lihat lebih banyak</string>
+    <string name="suggestions">Suggestions</string>
+    <string name="itinerary">Itinerary</string>
+    <string name="masukkan_judul">Masukkan judul</string>
+    <string name="judul_trip">Judul Trip</string>
+    <string name="deskripsi">Deskripsi</string>
+    <string name="masukkan_deskripsi">Masukkan deskripsi</string>
+    <string name="tanggal_pergi">Tanggal Pergi</string>
+    <string name="pilih_tanggal_pergi">Pilih tanggal pergi</string>
+    <string name="tanggal_pulang">Tanggal Pulang</string>
+    <string name="pilih_tanggal_pulang">Pilih tanggal pulang</string>
+    <string name="tujuan">Tujuan</string>
+    <string name="pilih_destinasi">Pilih destinasi</string>
+    <string name="simpan">Simpan</string>
+    <string name="google_sign_in_berhasil">Google Sign-In Berhasil</string>
+    <string name="google_sign_in_failed">Google Sign-In failed: %1$s</string>
+    <string name="google_sign_in_failed_to_initiate">Google Sign-In failed to initiate</string>
+    <string name="login_dengan_akun_google">Login dengan akun Google</string>
 </resources>

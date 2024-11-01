@@ -97,10 +97,12 @@ fun LoginPage(
   LaunchedEffect(signInState) {
     if (signInState.isSignInSuccessful) {
       authViewModel.setAuthenticated()
-      Toast.makeText(context, "Google Sign-In Successful", Toast.LENGTH_SHORT).show()
+      Toast.makeText(context,
+        context.getString(R.string.google_sign_in_berhasil), Toast.LENGTH_SHORT).show()
       navController.navigate("home")
     } else if (signInState.signInError != null) {
-      Toast.makeText(context, "Google Sign-In failed: ${signInState.signInError}", Toast.LENGTH_SHORT).show()
+      Toast.makeText(context,
+        context.getString(R.string.google_sign_in_failed, signInState.signInError), Toast.LENGTH_SHORT).show()
     }
   }
 
@@ -188,7 +190,8 @@ fun LoginPage(
             intentSender?.let {
               launcher.launch(IntentSenderRequest.Builder(it).build())
             } ?: run {
-              Toast.makeText(context, "Google Sign-In failed to initiate", Toast.LENGTH_SHORT).show()
+              Toast.makeText(context,
+                context.getString(R.string.google_sign_in_failed_to_initiate), Toast.LENGTH_SHORT).show()
             }
           }
         },
@@ -196,7 +199,8 @@ fun LoginPage(
           containerColor = Color.White,
           contentColor = Color.Black
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+          .fillMaxWidth()
           .padding(horizontal = 54.dp)
       ) {
         Icon(
@@ -205,7 +209,7 @@ fun LoginPage(
           modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = "Login dengan akun Google")
+        Text(text = stringResource(R.string.login_dengan_akun_google))
       }
 
       Spacer(modifier = Modifier.height(8.dp))

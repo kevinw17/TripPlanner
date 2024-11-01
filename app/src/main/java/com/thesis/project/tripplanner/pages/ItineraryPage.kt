@@ -34,11 +34,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.thesis.project.tripplanner.R
+import com.thesis.project.tripplanner.Utils
 import com.thesis.project.tripplanner.components.DestinationBottomSheet
 import kotlinx.coroutines.launch
 
@@ -50,7 +53,7 @@ fun ItineraryPage(
 
   val coroutineScope = rememberCoroutineScope()
   val scaffoldState = rememberBottomSheetScaffoldState()
-  var selectedDestination by remember { mutableStateOf("") }
+  var selectedDestination by remember { mutableStateOf(Utils.EMPTY) }
 
   val destinations = listOf("Jakarta", "Bandung", "Bali", "Surabaya", "Yogyakarta", "Medan", "Makassar")
 
@@ -67,7 +70,13 @@ fun ItineraryPage(
     }
   ) {
     Scaffold(topBar = {
-      TopAppBar(title = { Text("Itinerary", fontSize = 20.sp) }, navigationIcon = {
+      TopAppBar(
+        title = {
+          Text(
+            text = stringResource(R.string.itinerary),
+            fontSize = 20.sp)
+        },
+        navigationIcon = {
         IconButton(onClick = { navController.popBackStack() }) {
           Icon(Icons.Default.ArrowBack, contentDescription = "Back")
         }
@@ -77,16 +86,25 @@ fun ItineraryPage(
       BottomNavigationBar(navController)
     }) { paddingValues ->
       LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
+        modifier = Modifier
+          .fillMaxSize()
+          .padding(paddingValues)
+          .padding(16.dp),
         verticalArrangement = Arrangement.Top
       ) {
         item {
-          Text(text = "Buat Itinerary", fontSize = 20.sp)
+          Text(
+            text = stringResource(R.string.buat_itinerary),
+            fontSize = 20.sp
+          )
           Spacer(modifier = Modifier.height(32.dp))
         }
 
         item {
-          Text(text = "Judul Trip", color = Color.Black)
+          Text(
+            text = stringResource(R.string.judul_trip),
+            color = Color.Black
+          )
           Spacer(modifier = Modifier.height(4.dp))
           OutlinedTextField(colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color.White,
@@ -94,16 +112,21 @@ fun ItineraryPage(
             focusedBorderColor = Color.Black,
             unfocusedLabelColor = Color.Black
           ),
-            value = "",
+            value = Utils.EMPTY,
             onValueChange = { /* Handle title input */ },
-            placeholder = { Text("Masukkan judul") },
+            placeholder = {
+              Text(stringResource(R.string.masukkan_judul))
+            },
             modifier = Modifier.fillMaxWidth()
           )
           Spacer(modifier = Modifier.height(16.dp))
         }
 
         item {
-          Text(text = "Deskripsi", color = Color.Black)
+          Text(
+            text = stringResource(R.string.deskripsi),
+            color = Color.Black
+          )
           Spacer(modifier = Modifier.height(4.dp))
           OutlinedTextField(colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color.White,
@@ -113,14 +136,19 @@ fun ItineraryPage(
           ),
             value = "",
             onValueChange = { /* Handle description input */ },
-            placeholder = { Text("Masukkan deskripsi") },
+            placeholder = {
+              Text(stringResource(R.string.masukkan_deskripsi))
+            },
             modifier = Modifier.fillMaxWidth()
           )
           Spacer(modifier = Modifier.height(16.dp))
         }
 
         item {
-          Text(text = "Tanggal Pergi", color = Color.Black)
+          Text(
+            text = stringResource(R.string.tanggal_pergi),
+            color = Color.Black
+          )
           Spacer(modifier = Modifier.height(4.dp))
           OutlinedTextField(colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color.White,
@@ -128,22 +156,31 @@ fun ItineraryPage(
             focusedBorderColor = Color.Black,
             unfocusedLabelColor = Color.Black
           ),
-            value = "",
+            value = Utils.EMPTY,
             onValueChange = { /* Handle start date input */ },
-            placeholder = { Text("Pilih tanggal pergi") },
+            placeholder = {
+              Text(stringResource(R.string.pilih_tanggal_pergi))
+            },
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
-              Icon(Icons.Default.DateRange, contentDescription = "Calendar Icon")
+              Icon(
+                imageVector = Icons.Default.DateRange,
+                contentDescription = "Calendar Icon"
+              )
             },
             keyboardOptions = KeyboardOptions.Default.copy(
-              keyboardType = KeyboardType.Number, imeAction = ImeAction.Next
+              keyboardType = KeyboardType.Number,
+              imeAction = ImeAction.Next
             )
           )
           Spacer(modifier = Modifier.height(16.dp))
         }
 
         item {
-          Text(text = "Tanggal Pulang", color = Color.Black)
+          Text(
+            text = stringResource(R.string.tanggal_pulang),
+            color = Color.Black
+          )
           Spacer(modifier = Modifier.height(4.dp))
           OutlinedTextField(colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color.White,
@@ -151,22 +188,31 @@ fun ItineraryPage(
             focusedBorderColor = Color.Black,
             unfocusedLabelColor = Color.Black
           ),
-            value = "",
+            value = Utils.EMPTY,
             onValueChange = { /* Handle end date input */ },
-            placeholder = { Text("Pilih tanggal pulang") },
+            placeholder = {
+              Text(stringResource(R.string.pilih_tanggal_pulang))
+            },
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
-              Icon(Icons.Default.DateRange, contentDescription = "Calendar Icon")
+              Icon(
+                imageVector = Icons.Default.DateRange,
+                contentDescription = "Calendar Icon"
+              )
             },
             keyboardOptions = KeyboardOptions.Default.copy(
-              keyboardType = KeyboardType.Number, imeAction = ImeAction.Next
+              keyboardType = KeyboardType.Number,
+              imeAction = ImeAction.Next
             )
           )
           Spacer(modifier = Modifier.height(16.dp))
         }
 
         item {
-          Text("Tujuan", color = Color.Black)
+          Text(
+            text = stringResource(R.string.tujuan),
+            color = Color.Black
+          )
           Spacer(modifier = Modifier.height(4.dp))
           OutlinedTextField(
             value = selectedDestination,
@@ -176,7 +222,9 @@ fun ItineraryPage(
               .clickable {
                 coroutineScope.launch { scaffoldState.bottomSheetState.expand() }
               },
-            placeholder = { Text("Pilih destinasi") },
+            placeholder = {
+              Text(stringResource(R.string.pilih_destinasi))
+            },
             trailingIcon = {
               Icon(Icons.Default.ArrowDropDown, contentDescription = "Dropdown Icon")
             },
@@ -191,7 +239,10 @@ fun ItineraryPage(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(8.dp)
           ) {
-            Text("Simpan", fontSize = 16.sp)
+            Text(
+              text = stringResource(R.string.simpan),
+              fontSize = 16.sp
+            )
           }
           Spacer(modifier = Modifier.height(16.dp))
         }

@@ -69,7 +69,8 @@ fun HomePage(
       TopAppBar(
         title = {
           Text(
-            stringResource(R.string.trip_planner_app)
+            text = stringResource(R.string.trip_planner_app),
+            fontWeight = FontWeight.Bold
           )
         },
         colors = TopAppBarDefaults.topAppBarColors(

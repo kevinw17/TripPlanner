@@ -51,4 +51,13 @@
     <string name="cancel_friend_request_dialog_description">Are you sure to cancel the request?</string>
     <string name="explore">Explore</string>
     <string name="explore_page_description">Jelajahi itinerary temanmu</string>
+    <string name="suggestion">Suggestion</string>
+    <string name="account">Account</string>
+    <string name="friends">Friends</string>
+    <string name="itineraries_created">Itineraries Created</string>
+    <string name="lihat_semua">Lihat semua</string>
+    <string name="profile">Profile</string>
+    <string name="itineraries">Itineraries</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="change_password">Change Password</string>
 </resources>

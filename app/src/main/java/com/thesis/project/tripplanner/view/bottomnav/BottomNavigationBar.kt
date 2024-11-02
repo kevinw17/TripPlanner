@@ -38,12 +38,12 @@ fun BottomNavigationBar(navController: NavController) {
     BottomNavigationItem(
       icon = R.drawable.ic_suggestion,
       label = "Suggestions",
-      onClick = { /* Navigate to Suggestion */ }
+      onClick = { navController.navigate("suggestion")}
     )
     BottomNavigationItem(
       icon = R.drawable.ic_account,
       label = "Account",
-      onClick = { /* Navigate to Account */ }
+      onClick = { navController.navigate("account") }
     )
   }
 }

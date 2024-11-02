@@ -40,9 +40,9 @@ fun PasswordField(
     trailingIcon = {
       if (password.isNotEmpty()) {
         val image = if (passwordVisible) {
-          painterResource(R.drawable.eye)
+          painterResource(R.drawable.ic_eye)
         } else {
-          painterResource(R.drawable.eye_hidden)
+          painterResource(R.drawable.ic_eye_hidden)
         }
 
         Icon(

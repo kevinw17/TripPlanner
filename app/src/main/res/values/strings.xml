@@ -66,4 +66,9 @@
     <string name="new_password">New Password</string>
     <string name="confirmation_password">Confirmation Password</string>
     <string name="password_not_match">New password and confirmation password do not match.</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="request_has_been_sent">Request has been sent</string>
+    <string name="start_to_chat">Start to chat</string>
+    <string name="sign_out">Sign out</string>
+    <string name="messages">Messages</string>
 </resources>

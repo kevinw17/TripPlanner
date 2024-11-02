@@ -9,10 +9,13 @@ import com.thesis.project.tripplanner.view.account.AccountPage
 import com.thesis.project.tripplanner.view.account.ChangePasswordScreen
 import com.thesis.project.tripplanner.view.account.EditProfileScreen
 import com.thesis.project.tripplanner.view.account.FriendsPage
+import com.thesis.project.tripplanner.view.account.FriendshipStatus
 import com.thesis.project.tripplanner.view.account.ProfileScreen
+import com.thesis.project.tripplanner.view.account.UserProfileScreen
 import com.thesis.project.tripplanner.view.home.HomePage
 import com.thesis.project.tripplanner.view.itinerary.ItineraryPage
 import com.thesis.project.tripplanner.view.explore.ExplorePage
+import com.thesis.project.tripplanner.view.explore.Itinerary
 import com.thesis.project.tripplanner.view.login_register.LoginPage
 import com.thesis.project.tripplanner.view.login_register.RegisterPage
 import com.thesis.project.tripplanner.view.suggestion.SuggestionPage
@@ -99,6 +102,29 @@ fun TripPlannerNavigation(
         ChangePasswordScreen(
           navController = navController,
           authViewModel = authViewModel
+        )
+      }
+      composable("user_profile_screen") {
+        UserProfileScreen(
+          navController = navController,
+          username = "Brian",
+          bio = "I love travelling...",
+          itinerariesCount = 3,
+          friendsCount = 20,
+          friendStatus = FriendshipStatus.REQUEST_SENT,
+          itineraries = listOf(
+            Itinerary("Brian", "Liburan ke Bandung", "Jalan-jalan ke Bandung sangat seru!!"),
+            Itinerary("Brian", "Liburan ke Bandung", "Jalan-jalan ke Bandung sangat seru!!")
+          ),
+          onAddFriend = {
+            // Implement friend request logic
+          },
+          onCancelRequest = {
+            // Implement cancel request logic
+          },
+          onStartChat = {
+            // Implement chat initiation logic
+          }
         )
       }
     }

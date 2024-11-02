@@ -11,15 +11,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,30 +29,35 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
+import com.thesis.project.tripplanner.view.dialog.CancelFriendRequestDialog
 import com.thesis.project.tripplanner.view.explore.Itinerary
 import com.thesis.project.tripplanner.view.itinerary.ItineraryCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(
+fun UserProfileScreen(
   navController: NavController,
-  username: String = "andy123",
-  bio: String = "I love travelling...",
-  itinerariesCount: Int = 1,
-  friendsCount: Int = 10,
-  onEditProfile: () -> Unit,
-  onChangePassword: () -> Unit,
-  itineraries: List<Itinerary> = listOf(
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!")
-  )
+  username: String,
+  bio: String,
+  itinerariesCount: Int,
+  friendsCount: Int,
+  friendStatus: FriendshipStatus,
+  itineraries: List<Itinerary>,
+  onAddFriend: () -> Unit,
+  onCancelRequest: () -> Unit,
+  onStartChat: () -> Unit
 ) {
+  var isCancelDialogVisible by remember { mutableStateOf(false) }
+  var friendshipStatus by remember { mutableStateOf(friendStatus) }
+
   Scaffold(
     topBar = {
       TopAppBar(
         title = {
           Text(
-            text = stringResource(R.string.profile),
-            fontWeight = FontWeight.Bold, fontSize = 20.sp
+            text = username,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp
           )
         },
         navigationIcon = {
@@ -142,40 +144,53 @@ fun ProfileScreen(
       }
 
       item {
-        Row(
-          horizontalArrangement = Arrangement.spacedBy(8.dp),
-          modifier = Modifier.fillMaxWidth()
-        ) {
-          Button(
-            onClick = onEditProfile,
-            shape = RoundedCornerShape(24.dp),
-            colors = ButtonDefaults.buttonColors(
-              containerColor = Color(0xFFDFF9FF),
-              contentColor = Color.Black
-            ),
-            border = BorderStroke(
-              width = 1.dp,
-              color = Color.Black
-            ),
-            modifier = Modifier.weight(1f)
-          ) {
-            Text(text = stringResource(R.string.edit_profile))
+        when (friendshipStatus) {
+          FriendshipStatus.NOT_FRIEND -> {
+            Button(
+              onClick = {
+                friendshipStatus = FriendshipStatus.REQUEST_SENT
+                onAddFriend()
+              },
+              shape = RoundedCornerShape(24.dp),
+              colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFDFF9FF),
+                contentColor = Color.Black
+              ),
+              border = BorderStroke(1.dp, Color.Black),
+              modifier = Modifier.fillMaxWidth()
+            ) {
+              Text(stringResource(R.string.add_friend))
+            }
           }
-
-          Button(
-            onClick = onChangePassword,
-            shape = RoundedCornerShape(24.dp),
-            colors = ButtonDefaults.buttonColors(
-              containerColor = Color(0xFFDFF9FF),
-              contentColor = Color.Black
-            ),
-            border = BorderStroke(
-              width = 1.dp,
-              color = Color.Black
-            ),
-            modifier = Modifier.weight(1f)
-          ) {
-            Text(text = stringResource(R.string.change_password))
+          FriendshipStatus.REQUEST_SENT -> {
+            Button(
+              onClick = { isCancelDialogVisible = true },
+              shape = RoundedCornerShape(24.dp),
+              colors = ButtonDefaults.buttonColors(
+                containerColor = Color.LightGray,
+                contentColor = Color.Black
+              ),
+              border = BorderStroke(1.dp, Color.Gray),
+              modifier = Modifier.fillMaxWidth()
+            ) {
+              Text(stringResource(R.string.request_has_been_sent))
+            }
+          }
+          FriendshipStatus.FRIEND -> {
+            Button(
+              onClick = onStartChat,
+              shape = RoundedCornerShape(24.dp),
+              colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Blue,
+                contentColor = Color.White
+              ),
+              modifier = Modifier.fillMaxWidth()
+            ) {
+              Text(
+                text = stringResource(R.string.start_to_chat),
+                color = Color.White
+              )
+            }
           }
         }
       }
@@ -211,7 +226,18 @@ fun ProfileScreen(
         )
       }
     }
+
+    if (isCancelDialogVisible) {
+      CancelFriendRequestDialog(
+        onConfirm = {
+          friendshipStatus = FriendshipStatus.NOT_FRIEND
+          onCancelRequest()
+          isCancelDialogVisible = false
+        },
+        onDismiss = {
+          isCancelDialogVisible = false
+        }
+      )
+    }
   }
 }
-
-

@@ -56,7 +56,7 @@ fun AccountPage(
         },
         navigationIcon = {
           IconButton(onClick = { navController.popBackStack() }) {
-            androidx.compose.material3.Icon(
+            Icon(
               imageVector = Icons.Default.ArrowBack, contentDescription = "Back"
             )
           }
@@ -82,7 +82,7 @@ fun AccountPage(
 
       AccountOption(
         iconRes = R.drawable.ic_user_profile,
-        label = "Profile",
+        label = stringResource(R.string.profile),
         onClick = { navController.navigate("profile") }
       )
 
@@ -94,19 +94,21 @@ fun AccountPage(
 
       AccountOption(
         iconRes = R.drawable.ic_friends,
-        label = "Friends",
+        label = stringResource(R.string.friends),
         onClick = { navController.navigate("friends") }
       )
 
       Divider(
         color = Color.LightGray,
         thickness = 1.dp,
-        modifier = Modifier.padding(vertical = 12.dp).fillMaxWidth()
+        modifier = Modifier
+          .padding(vertical = 12.dp)
+          .fillMaxWidth()
       )
 
       AccountOption(
         iconRes = R.drawable.ic_message,
-        label = "Messages",
+        label = stringResource(R.string.messages),
         onClick = { /* Navigate to Messages */ }
       )
 
@@ -115,6 +117,12 @@ fun AccountPage(
         thickness = 1.dp,
         modifier = Modifier.padding(vertical = 8.dp)
       )
+
+      Spacer(modifier = Modifier.height(24.dp))
+
+      Button(
+        onClick = { navController.navigate("user_profile_screen") }
+      ) { Text(text = "User Profile (Temporary)") }
 
       Spacer(modifier = Modifier.height(24.dp))
 
@@ -133,7 +141,7 @@ fun AccountPage(
           color = Color.Black
         )
       ) {
-        Text(text = "Sign out")
+        Text(text = stringResource(R.string.sign_out))
       }
     }
   }
@@ -159,7 +167,9 @@ fun AccountOption(
         contentDescription = null,
         modifier = Modifier.size(32.dp)
       )
-      Spacer(modifier = Modifier.width(16.dp).height(48.dp))
+      Spacer(modifier = Modifier
+        .width(16.dp)
+        .height(48.dp))
       Text(text = label, fontSize = 18.sp)
     }
     Icon(

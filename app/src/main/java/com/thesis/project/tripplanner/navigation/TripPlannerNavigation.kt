@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.thesis.project.tripplanner.view.account.AccountPage
+import com.thesis.project.tripplanner.view.account.ChangePasswordScreen
+import com.thesis.project.tripplanner.view.account.EditProfileScreen
 import com.thesis.project.tripplanner.view.account.FriendsPage
 import com.thesis.project.tripplanner.view.account.ProfileScreen
 import com.thesis.project.tripplanner.view.home.HomePage
@@ -66,19 +68,37 @@ fun TripPlannerNavigation(
       composable("account") {
         AccountPage(
           navController = navController,
-          onSignOut = { authViewModel.signOut() }
+          onSignOut = {
+            authViewModel.signOut()
+            navController.navigate("login")
+          }
         )
       }
       composable("profile") {
         ProfileScreen(
           navController = navController,
-          onChangePassword = {},
-          onEditProfile = {}
+          onChangePassword = { navController.navigate("change_password") },
+          onEditProfile = { navController.navigate("edit_profile") }
         )
       }
       composable("friends") {
         FriendsPage(
           navController = navController
+        )
+      }
+      composable("edit_profile") {
+        EditProfileScreen(
+          navController = navController,
+          onSaveChanges = { newName, newBio ->
+            authViewModel.updateUserProfile(newName, newBio)
+            navController.popBackStack()
+          }
+        )
+      }
+      composable("change_password") {
+        ChangePasswordScreen(
+          navController = navController,
+          authViewModel = authViewModel
         )
       }
     }

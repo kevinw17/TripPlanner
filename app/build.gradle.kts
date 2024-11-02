@@ -67,6 +67,7 @@ dependencies {
   implementation(libs.core.splashscreen)
   implementation(libs.androidx.runtime.livedata)
   implementation(libs.androidx.material3.android)
+  implementation(libs.firebase.firestore.ktx)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)

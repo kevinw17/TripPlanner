@@ -12,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -138,7 +139,7 @@ fun ProfileScreen(
           Button(
             onClick = onEditProfile,
             shape = RoundedCornerShape(24.dp),
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            colors = ButtonDefaults.buttonColors(
               containerColor = Color(0xFFDFF9FF),
               contentColor = Color.Black
             ),
@@ -150,10 +151,11 @@ fun ProfileScreen(
           ) {
             Text(text = stringResource(R.string.edit_profile))
           }
+
           Button(
             onClick = onChangePassword,
             shape = RoundedCornerShape(24.dp),
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            colors = ButtonDefaults.buttonColors(
               containerColor = Color(0xFFDFF9FF),
               contentColor = Color.Black
             ),
@@ -177,7 +179,6 @@ fun ProfileScreen(
         )
       }
 
-      // Itineraries Created List
       items(itineraries) { itinerary ->
         ItineraryCard(
           username = itinerary.username,
@@ -188,7 +189,6 @@ fun ProfileScreen(
       }
 
       item {
-        // View All Itineraries link
         Text(
           text = stringResource(R.string.lihat_semua),
           fontSize = 14.sp,

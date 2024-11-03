@@ -109,7 +109,7 @@ fun AccountPage(
       AccountOption(
         iconRes = R.drawable.ic_message,
         label = stringResource(R.string.messages),
-        onClick = { /* Navigate to Messages */ }
+        onClick = { navController.navigate("message") }
       )
 
       Divider(

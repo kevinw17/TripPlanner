@@ -19,6 +19,7 @@ import com.thesis.project.tripplanner.view.explore.Itinerary
 import com.thesis.project.tripplanner.view.itinerary.ItineraryList
 import com.thesis.project.tripplanner.view.login_register.LoginPage
 import com.thesis.project.tripplanner.view.login_register.RegisterPage
+import com.thesis.project.tripplanner.view.messages.MessagesScreen
 import com.thesis.project.tripplanner.view.suggestion.SuggestionPage
 import com.thesis.project.tripplanner.viewmodel.AuthViewModel
 
@@ -130,6 +131,11 @@ fun TripPlannerNavigation(
       }
       composable("itinerary_list") {
         ItineraryList(
+          navController = navController
+        )
+      }
+      composable("message") {
+        MessagesScreen(
           navController = navController
         )
       }

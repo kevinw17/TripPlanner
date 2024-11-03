@@ -2,16 +2,24 @@ package com.thesis.project.tripplanner.view.itinerary
 
 import android.app.DatePickerDialog
 import android.widget.DatePicker
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Chip
+import androidx.compose.material.ChipDefaults
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -33,9 +41,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -51,7 +61,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ItineraryPage(
   navController: NavController
@@ -60,7 +70,7 @@ fun ItineraryPage(
   val coroutineScope = rememberCoroutineScope()
   val scaffoldState = rememberBottomSheetScaffoldState()
   val context = LocalContext.current
-  var selectedDestination by remember { mutableStateOf(Utils.EMPTY) }
+  var selectedDestination by remember { mutableStateOf(listOf("Jakarta", "Bandung")) }
   var startDate by remember { mutableStateOf(Utils.EMPTY) }
   var endDate by remember { mutableStateOf(Utils.EMPTY) }
   val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -277,7 +287,7 @@ fun ItineraryPage(
           )
           Spacer(modifier = Modifier.height(4.dp))
           OutlinedTextField(
-            value = selectedDestination,
+            value = selectedDestination[0],
             onValueChange = { /* Read-only field */ },
             modifier = Modifier
               .fillMaxWidth()
@@ -294,6 +304,24 @@ fun ItineraryPage(
               )
             }
           )
+          if (selectedDestination.isNotEmpty()) {
+            LazyRow(
+              modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+              horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+              items(selectedDestination.size) { index ->
+                val destination = selectedDestination[index]
+                ChipWithRemoveIcon(
+                  label = destination,
+                  onRemove = {
+                    selectedDestination = selectedDestination.toMutableList().apply {
+                      remove(destination)
+                    }
+                  }
+                )
+              }
+            }
+          }
           Spacer(modifier = Modifier.height(16.dp))
         }
 
@@ -314,3 +342,24 @@ fun ItineraryPage(
     }
   }
 //}
+
+@Composable
+fun ChipWithRemoveIcon(label: String, onRemove: () -> Unit) {
+  Row(
+    modifier = Modifier
+      .background(Color(0xFFDFF9FF), shape = RoundedCornerShape(16.dp))
+      .padding(horizontal = 8.dp, vertical = 4.dp),
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    Text(text = label, fontSize = 14.sp, color = Color.Black)
+    Spacer(modifier = Modifier.width(4.dp))
+    Icon(
+      painter = painterResource(id = R.drawable.ic_close),
+      contentDescription = "Remove",
+      modifier = Modifier
+        .size(12.dp)
+        .clickable { onRemove() },
+      tint = Color.Gray
+    )
+  }
+}

@@ -178,7 +178,10 @@ fun UserProfileScreen(
           }
           FriendshipStatus.FRIEND -> {
             Button(
-              onClick = onStartChat,
+              onClick = {
+                navController.navigate("chat_room")
+                onStartChat()
+              },
               shape = RoundedCornerShape(24.dp),
               colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Blue,

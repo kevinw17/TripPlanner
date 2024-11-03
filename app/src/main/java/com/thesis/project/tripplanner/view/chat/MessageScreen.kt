@@ -2,6 +2,7 @@ package com.thesis.project.tripplanner.view.messages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -86,18 +87,22 @@ fun MessagesScreen(
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
       items(messages) { message ->
-        MessageItem(message)
+        MessageItem(navController, message)
       }
     }
   }
 }
 
 @Composable
-fun MessageItem(message: Message) {
+fun MessageItem(
+  navController: NavController,
+  message: Message
+) {
   Row(
     modifier = Modifier
       .fillMaxWidth()
-      .padding(vertical = 8.dp),
+      .padding(vertical = 8.dp)
+      .clickable { navController.navigate("chat_room") },
     verticalAlignment = Alignment.CenterVertically
   ) {
     Image(

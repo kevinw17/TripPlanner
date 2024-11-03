@@ -12,6 +12,7 @@ import com.thesis.project.tripplanner.view.account.FriendsPage
 import com.thesis.project.tripplanner.view.account.FriendshipStatus
 import com.thesis.project.tripplanner.view.account.ProfileScreen
 import com.thesis.project.tripplanner.view.account.UserProfileScreen
+import com.thesis.project.tripplanner.view.chat.ChatRoomScreen
 import com.thesis.project.tripplanner.view.home.HomePage
 import com.thesis.project.tripplanner.view.itinerary.ItineraryPage
 import com.thesis.project.tripplanner.view.explore.ExplorePage
@@ -114,7 +115,7 @@ fun TripPlannerNavigation(
           bio = "I love travelling...",
           itinerariesCount = 3,
           friendsCount = 20,
-          friendStatus = FriendshipStatus.REQUEST_SENT,
+          friendStatus = FriendshipStatus.FRIEND,
           itineraries = listOf(
             Itinerary("Brian", "Liburan ke Bandung", "Jalan-jalan ke Bandung sangat seru!!"),
             Itinerary("Brian", "Liburan ke Bandung", "Jalan-jalan ke Bandung sangat seru!!")
@@ -143,6 +144,12 @@ fun TripPlannerNavigation(
       composable("detail_itinerary") {
         DetailItineraryScreen(
           navController = navController
+        )
+      }
+      composable("chat_room") {
+        ChatRoomScreen(
+          navController = navController,
+          onSendMessage = {}
         )
       }
     }

@@ -111,7 +111,7 @@ fun HomePage(
           username = "andy123",
           title = "Liburan ke Bali",
           description = "Jalan-jalan ke Bali sangat seru!",
-          onClick = { /* Handle click */ }
+          onClick = { navController.navigate("detail_itinerary") }
         )
         Spacer(modifier = Modifier.height(16.dp))
       }

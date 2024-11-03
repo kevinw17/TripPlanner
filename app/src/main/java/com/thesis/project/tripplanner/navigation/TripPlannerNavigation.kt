@@ -16,6 +16,7 @@ import com.thesis.project.tripplanner.view.home.HomePage
 import com.thesis.project.tripplanner.view.itinerary.ItineraryPage
 import com.thesis.project.tripplanner.view.explore.ExplorePage
 import com.thesis.project.tripplanner.view.explore.Itinerary
+import com.thesis.project.tripplanner.view.itinerary.DetailItineraryScreen
 import com.thesis.project.tripplanner.view.itinerary.ItineraryList
 import com.thesis.project.tripplanner.view.login_register.LoginPage
 import com.thesis.project.tripplanner.view.login_register.RegisterPage
@@ -136,6 +137,11 @@ fun TripPlannerNavigation(
       }
       composable("message") {
         MessagesScreen(
+          navController = navController
+        )
+      }
+      composable("detail_itinerary") {
+        DetailItineraryScreen(
           navController = navController
         )
       }

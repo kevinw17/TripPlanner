@@ -151,7 +151,7 @@ fun SuggestionPage(
           username = itinerary.username,
           title = itinerary.title,
           description = itinerary.description,
-          onClick = { /* Handle click */ }
+          onClick = { navController.navigate("detail_itinerary") }
         )
       }
     }

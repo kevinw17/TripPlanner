@@ -194,7 +194,7 @@ fun ProfileScreen(
           username = itinerary.username,
           title = itinerary.title,
           description = itinerary.description,
-          onClick = { /* Handle card click */ }
+          onClick = { navController.navigate("detail_itinerary") }
         )
       }
 

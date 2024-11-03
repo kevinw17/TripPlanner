@@ -78,31 +78,12 @@ fun ItineraryList(
       }
 
       items(itineraries) { itinerary ->
-        Card(
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clickable { /* Handle click on itinerary */ },
-          shape = RoundedCornerShape(8.dp),
-          elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-          colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0))
-        ) {
-          Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Image(
-              painter = painterResource(R.drawable.ic_user_profile),
-              contentDescription = "User Avatar",
-              modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column {
-              Text(text = itinerary.username, fontWeight = FontWeight.Bold)
-              Text(text = itinerary.title)
-              Text(text = itinerary.description, color = Color.Gray, fontSize = 12.sp)
-            }
-          }
-        }
+        ItineraryCard(
+          username = itinerary.username,
+          title = itinerary.title,
+          description = itinerary.description,
+          onClick = { navController.navigate("detail_itinerary") }
+        )
       }
     }
   }

@@ -206,7 +206,7 @@ fun ProfileScreen(
           modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable { /* Handle view all action */ },
+            .clickable { navController.navigate("itinerary_list") },
           textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
       }

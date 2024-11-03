@@ -16,6 +16,7 @@ import com.thesis.project.tripplanner.view.home.HomePage
 import com.thesis.project.tripplanner.view.itinerary.ItineraryPage
 import com.thesis.project.tripplanner.view.explore.ExplorePage
 import com.thesis.project.tripplanner.view.explore.Itinerary
+import com.thesis.project.tripplanner.view.itinerary.ItineraryList
 import com.thesis.project.tripplanner.view.login_register.LoginPage
 import com.thesis.project.tripplanner.view.login_register.RegisterPage
 import com.thesis.project.tripplanner.view.suggestion.SuggestionPage
@@ -125,6 +126,11 @@ fun TripPlannerNavigation(
           onStartChat = {
             // Implement chat initiation logic
           }
+        )
+      }
+      composable("itinerary_list") {
+        ItineraryList(
+          navController = navController
         )
       }
     }

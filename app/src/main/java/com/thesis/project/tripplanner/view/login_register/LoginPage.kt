@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -108,8 +110,8 @@ fun LoginPage(
 
   Box(
     modifier = Modifier
+      .background(color = Color(0xFFDFF9FF))
       .fillMaxSize()
-      .background(Color(0xFFDFF9FF))
   ) {
     Column(
       modifier = modifier.fillMaxSize(),
@@ -133,11 +135,16 @@ fun LoginPage(
           color = Color.Black
         )
 
+        Spacer(modifier = Modifier.height(4.dp))
+
         OutlinedTextField(
+          modifier = Modifier.fillMaxWidth(),
           colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
             focusedBorderColor = Color.Black,
+            unfocusedBorderColor = Color.Black,
+            focusedLabelColor = Color.Black,
             unfocusedLabelColor = Color.Black
           ),
           value = email,
@@ -162,6 +169,8 @@ fun LoginPage(
           color = Color.Black
         )
 
+        Spacer(modifier = Modifier.height(4.dp))
+
         PasswordField(
           password = password,
           onPasswordChange = { password = it },
@@ -176,10 +185,22 @@ fun LoginPage(
         colors = ButtonDefaults.buttonColors(
           containerColor = Color.White,
           contentColor = Color.Black
+        ),
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(
+          width = 1.dp,
+          color = Color.Black
         )
       ) {
         Text(text = stringResource(R.string.login))
       }
+
+      Spacer(modifier = Modifier.height(16.dp))
+
+      Text(
+        text = stringResource(R.string.atau),
+        color = Color.Black
+      )
 
       Spacer(modifier = Modifier.height(16.dp))
 
@@ -199,6 +220,11 @@ fun LoginPage(
           containerColor = Color.White,
           contentColor = Color.Black
         ),
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(
+          width = 1.dp,
+          color = Color.Black
+        ),
         modifier = Modifier
           .fillMaxWidth()
           .padding(horizontal = 54.dp)
@@ -206,7 +232,7 @@ fun LoginPage(
         Icon(
           painter = painterResource(R.drawable.ic_google),
           contentDescription = "Google Sign-In",
-          modifier = Modifier.size(24.dp)
+          modifier = Modifier.size(16.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = stringResource(R.string.login_dengan_akun_google))

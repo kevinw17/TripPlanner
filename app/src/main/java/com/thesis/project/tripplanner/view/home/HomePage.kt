@@ -1,6 +1,8 @@
 package com.thesis.project.tripplanner.view.home
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,16 +41,24 @@ import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
 import com.thesis.project.tripplanner.view.itinerary.ItineraryCard
 import com.thesis.project.tripplanner.viewmodel.AuthState
 import com.thesis.project.tripplanner.viewmodel.AuthViewModel
+import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class) @Composable
 fun HomePage(
   modifier: Modifier = Modifier,
   navController: NavController,
-  authViewModel: AuthViewModel
+  authViewModel: AuthViewModel,
+  itineraryViewModel: ItineraryViewModel
 ) {
 
+  val itineraries by itineraryViewModel.itineraries.collectAsState()
   val authState = authViewModel.authState.observeAsState()
+  val username = authViewModel.username.collectAsState()
   val context = LocalContext.current
+
+  LaunchedEffect(Unit) {
+    itineraryViewModel.loadItineraries()
+  }
 
   LaunchedEffect(authState.value) {
     when (authState.value) {
@@ -86,13 +98,14 @@ fun HomePage(
     LazyColumn(
       modifier = modifier
         .fillMaxSize()
+        .background(Color.White)
         .padding(paddingValues)
         .padding(horizontal = 16.dp),
       verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.Start
     ) {
       item {
-        Text(text = "Selamat datang, [username]", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.welcome_user, username.value), fontSize = 18.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
       }
 
@@ -106,11 +119,11 @@ fun HomePage(
         Spacer(modifier = Modifier.height(8.dp))
       }
 
-      items(2) {
+      items(itineraries) { itinerary ->
         ItineraryCard(
-          username = "andy123",
-          title = "Liburan ke Bali",
-          description = "Jalan-jalan ke Bali sangat seru!",
+          username = itinerary.username,
+          title = itinerary.title,
+          description = itinerary.description,
           onClick = { navController.navigate("detail_itinerary") }
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -146,7 +159,11 @@ fun HomePage(
             .height(80.dp)
             .padding(bottom = 16.dp)
             .clickable { },
-          colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0))
+          colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF)),
+          border = BorderStroke(
+            width = 1.dp,
+            color = Color.Black
+          )
         ) {
           Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             Text(place, fontSize = 16.sp, color = Color.Black)

@@ -58,6 +58,8 @@ fun PasswordField(
       focusedContainerColor = Color.White,
       unfocusedContainerColor = Color.White,
       focusedBorderColor = Color.Black,
+      unfocusedBorderColor = Color.Black,
+      focusedLabelColor = Color.Black,
       unfocusedLabelColor = Color.Black
     ),
     isError = isError,

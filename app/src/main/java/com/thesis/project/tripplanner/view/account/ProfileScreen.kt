@@ -20,6 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +37,7 @@ import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
 import com.thesis.project.tripplanner.view.explore.Itinerary
 import com.thesis.project.tripplanner.view.itinerary.ItineraryCard
+import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,14 +45,19 @@ fun ProfileScreen(
   navController: NavController,
   username: String = "andy123",
   bio: String = "I love travelling...",
-  itinerariesCount: Int = 1,
   friendsCount: Int = 10,
   onEditProfile: () -> Unit,
   onChangePassword: () -> Unit,
-  itineraries: List<Itinerary> = listOf(
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!")
-  )
+  itineraryViewModel: ItineraryViewModel
 ) {
+
+  val itineraries by itineraryViewModel.itineraries.collectAsState()
+  val itinerariesCount by itineraryViewModel.itineraryCount.collectAsState()
+
+  LaunchedEffect(Unit) {
+    itineraryViewModel.loadItineraries()
+  }
+
   Scaffold(
     topBar = {
       TopAppBar(
@@ -189,7 +198,7 @@ fun ProfileScreen(
         )
       }
 
-      items(itineraries) { itinerary ->
+      items(itineraries.take(2)) { itinerary ->
         ItineraryCard(
           username = itinerary.username,
           title = itinerary.title,

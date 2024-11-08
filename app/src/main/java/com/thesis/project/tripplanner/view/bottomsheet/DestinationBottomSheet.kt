@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,18 +24,23 @@ fun DestinationBottomSheet(
   Column(modifier = Modifier.padding(16.dp)) {
     Text(text = "Select destinations", fontSize = 18.sp)
     Spacer(modifier = Modifier.height(8.dp))
+  }
 
-    LazyColumn {
-      items(destinations) { destination ->
-        Text(
-          text = destination,
-          modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onSelect(destination) }
-            .padding(vertical = 12.dp)
-        )
-        Divider()
-      }
+  LazyColumn(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(bottom = 72.dp, start = 16.dp, end = 16.dp)
+      .heightIn(max = 400.dp)
+  ) {
+    items(destinations) { destination ->
+      Text(
+        text = destination,
+        modifier = Modifier
+          .fillMaxWidth()
+          .clickable { onSelect(destination) }
+          .padding(vertical = 12.dp)
+      )
+      Divider()
     }
   }
 }

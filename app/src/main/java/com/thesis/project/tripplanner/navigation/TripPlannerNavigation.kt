@@ -24,11 +24,13 @@ import com.thesis.project.tripplanner.view.login_register.RegisterPage
 import com.thesis.project.tripplanner.view.messages.MessagesScreen
 import com.thesis.project.tripplanner.view.suggestion.SuggestionPage
 import com.thesis.project.tripplanner.viewmodel.AuthViewModel
+import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 
 @Composable
 fun TripPlannerNavigation(
   modifier: Modifier = Modifier,
-  authViewModel: AuthViewModel
+  authViewModel: AuthViewModel,
+  itineraryViewModel: ItineraryViewModel
 ) {
   val navController = rememberNavController()
 
@@ -54,12 +56,15 @@ fun TripPlannerNavigation(
         HomePage(
           modifier = modifier,
           navController = navController,
-          authViewModel = authViewModel
+          authViewModel = authViewModel,
+          itineraryViewModel = itineraryViewModel
         )
       }
       composable("itinerary") {
         ItineraryPage(
-          navController = navController
+          navController = navController,
+          itineraryViewModel = itineraryViewModel,
+          authViewModel = authViewModel
         )
       }
       composable("explore") {
@@ -85,7 +90,8 @@ fun TripPlannerNavigation(
         ProfileScreen(
           navController = navController,
           onChangePassword = { navController.navigate("change_password") },
-          onEditProfile = { navController.navigate("edit_profile") }
+          onEditProfile = { navController.navigate("edit_profile") },
+          itineraryViewModel = itineraryViewModel
         )
       }
       composable("friends") {

@@ -5,6 +5,9 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.thesis.project.tripplanner.utils.Utils
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class AuthViewModel: ViewModel() {
 
@@ -15,6 +18,9 @@ class AuthViewModel: ViewModel() {
   val authState: MutableLiveData<AuthState?> = _authState
   var isNewUser = false
 
+  private val _username = MutableStateFlow(Utils.EMPTY)
+  val username = _username.asStateFlow()
+
   init {
     checkAuthStatus()
   }
@@ -24,6 +30,7 @@ class AuthViewModel: ViewModel() {
       _authState.value = AuthState.Unauthenticated
     } else {
       _authState.value = AuthState.Authenticated
+      initializeUsernameFromEmail(auth.currentUser?.email)
     }
   }
 
@@ -142,6 +149,13 @@ class AuthViewModel: ViewModel() {
       } else {
         onError("Old password is incorrect.")
       }
+    }
+  }
+
+  fun initializeUsernameFromEmail(email: String?) {
+    email?.let {
+      val username = it.substringBefore("@")
+      _username.value = username
     }
   }
 }

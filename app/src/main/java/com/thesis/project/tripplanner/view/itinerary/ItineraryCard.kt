@@ -1,5 +1,6 @@
 package com.thesis.project.tripplanner.view.itinerary
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,7 +24,7 @@ fun ItineraryCard(
   username: String,
   title: String,
   description: String,
-  onClick: () -> Unit = {}
+  onClick: () -> Unit
 ) {
   Card(
     modifier = Modifier
@@ -32,7 +33,11 @@ fun ItineraryCard(
       .clickable { onClick() },
     shape = RoundedCornerShape(8.dp),
     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-    colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0))
+    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF)),
+    border = BorderStroke(
+      width = 1.dp,
+      color = Color.Black
+    )
   ) {
     Column(modifier = Modifier.padding(16.dp)) {
       Row(verticalAlignment = Alignment.CenterVertically) {
@@ -40,15 +45,16 @@ fun ItineraryCard(
           painter = painterResource(R.drawable.ic_user_profile),
           contentDescription = "User Avatar",
           modifier = Modifier
-            .size(40.dp)
+            .size(24.dp)
             .clip(CircleShape)
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Column {
-          Text(text = username, fontWeight = FontWeight.Bold)
-          Text(text = title)
-          Text(text = description, color = Color.Gray)
-        }
+        Text(text = username, fontWeight = FontWeight.Bold)
+      }
+      Spacer(modifier = Modifier.height(2.dp))
+      Column {
+        Text(text = title)
+        Text(text = description, color = Color.Gray)
       }
     }
   }

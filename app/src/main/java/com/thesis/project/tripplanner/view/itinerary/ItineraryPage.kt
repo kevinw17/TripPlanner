@@ -2,9 +2,12 @@ package com.thesis.project.tripplanner.view.itinerary
 
 import android.app.DatePickerDialog
 import android.widget.DatePicker
+import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,26 +19,28 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Chip
-import androidx.compose.material.ChipDefaults
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,35 +53,47 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import com.thesis.project.tripplanner.R
+import com.thesis.project.tripplanner.components.DestinationBottomSheet
 import com.thesis.project.tripplanner.utils.Utils
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
+import com.thesis.project.tripplanner.view.dialog.SaveChangesDialog
+import com.thesis.project.tripplanner.viewmodel.AuthViewModel
+import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItineraryPage(
-  navController: NavController
+  navController: NavController,
+  itineraryViewModel: ItineraryViewModel,
+  authViewModel: AuthViewModel
 ) {
 
   val coroutineScope = rememberCoroutineScope()
   val scaffoldState = rememberBottomSheetScaffoldState()
   val context = LocalContext.current
-  var selectedDestination by remember { mutableStateOf(listOf("Jakarta", "Bandung")) }
+  var title by remember { mutableStateOf(Utils.EMPTY) }
+  var description by remember { mutableStateOf(Utils.EMPTY) }
   var startDate by remember { mutableStateOf(Utils.EMPTY) }
   var endDate by remember { mutableStateOf(Utils.EMPTY) }
+  var selectedDestination by remember { mutableStateOf(emptyList<String>()) }
   val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
   var startCalendar by remember { mutableStateOf<Calendar?>(null) }
-
-  val destinations = listOf("Jakarta", "Bandung", "Bali", "Surabaya", "Yogyakarta", "Medan", "Makassar")
+  var showDialog by remember { mutableStateOf(false) }
+  var showOverlay by remember { mutableStateOf(false) }
+  val firestore = Firebase.firestore
+  val destinations = firestore.collection("destinations").document("h836meLJxOaVKOD1uHwk")
+  var destinationsList by remember { mutableStateOf(listOf<String>()) }
+  val username = authViewModel.username.collectAsState()
 
   val openStartDatePicker = {
     val calendar = Calendar.getInstance()
@@ -101,10 +118,8 @@ fun ItineraryPage(
 
   val openEndDatePicker = {
     val calendar = Calendar.getInstance()
-
     val minDate = startCalendar?.timeInMillis ?: calendar.timeInMillis
-
-    val datePicker = DatePickerDialog(
+    DatePickerDialog(
       context,
       { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
         val selectedDate = Calendar.getInstance().apply {
@@ -115,239 +130,294 @@ fun ItineraryPage(
       calendar.get(Calendar.YEAR),
       calendar.get(Calendar.MONTH),
       calendar.get(Calendar.DAY_OF_MONTH)
-    )
-
-    datePicker.datePicker.minDate = minDate
-    datePicker.show()
+    ).apply {
+      datePicker.minDate = minDate
+    }.show()
   }
 
-//  BottomSheetScaffold(
-//    scaffoldState = scaffoldState,
-//    sheetContent = {
-//      DestinationBottomSheet(
-//        destinations = destinations,
-//        onSelect = { destination ->
-//          selectedDestination = destination
-//          coroutineScope.launch { scaffoldState.bottomSheetState.hide() }
-//        }
-//      )
-//    }
-//  ) {
-    Scaffold(topBar = {
-      TopAppBar(
-        title = {
+  LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
+    showOverlay = scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded
+  }
+
+  LaunchedEffect(Unit) {
+    destinations.get().addOnSuccessListener { document ->
+      if (document != null && document.exists()) {
+        val fetchedList = (document.get("list") as? List<*>)?.mapNotNull { it as? String } ?: emptyList()
+        destinationsList = fetchedList
+      }
+    }.addOnFailureListener { exception ->
+      exception.printStackTrace()
+    }
+  }
+
+  Scaffold(
+    bottomBar = { BottomNavigationBar(navController) }
+  ) { innerPadding ->
+    BottomSheetScaffold(
+      scaffoldState = scaffoldState,
+      topBar = {
+        TopAppBar(title = {
           Text(
             text = stringResource(R.string.itinerary),
             fontWeight = FontWeight.Bold
           )
-        },
-        navigationIcon = {
-        IconButton(onClick = { navController.popBackStack() }) {
-          Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+        }, navigationIcon = {
+          IconButton(onClick = { navController.popBackStack() }) {
+            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+          }
+        }, colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+        )
+      },
+      sheetContent = {
+        DestinationBottomSheet(destinations = destinationsList) { destination ->
+          if (destination !in selectedDestination) {
+            selectedDestination = selectedDestination + destination
+          }
+          coroutineScope.launch { scaffoldState.bottomSheetState.partialExpand() }
         }
-      }, colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
-      )
-    }, bottomBar = {
-      BottomNavigationBar(navController)
-    }) { paddingValues ->
-      LazyColumn(
+      }, sheetPeekHeight = 0.dp
+    ) { paddingValues ->
+      Box(
         modifier = Modifier
           .fillMaxSize()
-          .padding(paddingValues)
-          .padding(16.dp),
-        verticalArrangement = Arrangement.Top
+          .background(Color.White)
       ) {
-        item {
-          Text(
-            text = stringResource(R.string.buat_itinerary),
-            fontSize = 20.sp
-          )
-          Spacer(modifier = Modifier.height(32.dp))
-        }
+        LazyColumn(
+          modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .padding(paddingValues)
+            .padding(horizontal = 16.dp), verticalArrangement = Arrangement.Top
+        ) {
+          item {
+            Text(text = stringResource(R.string.buat_itinerary), fontSize = 20.sp)
+            Spacer(modifier = Modifier.height(24.dp))
+          }
 
-        item {
-          Text(
-            text = stringResource(R.string.judul_trip),
-            color = Color.Black
-          )
-          Spacer(modifier = Modifier.height(4.dp))
-          OutlinedTextField(colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedBorderColor = Color.Black,
-            unfocusedLabelColor = Color.Black
-          ),
-            value = Utils.EMPTY,
-            onValueChange = { /* Handle title input */ },
-            placeholder = {
-              Text(stringResource(R.string.masukkan_judul))
-            },
-            modifier = Modifier.fillMaxWidth()
-          )
-          Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        item {
-          Text(
-            text = stringResource(R.string.deskripsi),
-            color = Color.Black
-          )
-          Spacer(modifier = Modifier.height(4.dp))
-          OutlinedTextField(colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedBorderColor = Color.Black,
-            unfocusedLabelColor = Color.Black
-          ),
-            value = "",
-            onValueChange = { /* Handle description input */ },
-            placeholder = {
-              Text(stringResource(R.string.masukkan_deskripsi))
-            },
-            modifier = Modifier.fillMaxWidth()
-          )
-          Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        item {
-          Text(
-            text = stringResource(R.string.tanggal_pergi),
-            color = Color.Black
-          )
-          Spacer(modifier = Modifier.height(4.dp))
-          OutlinedTextField(
-            colors = OutlinedTextFieldDefaults.colors(
-              focusedContainerColor = Color.White,
-              unfocusedContainerColor = Color.White,
-              focusedBorderColor = Color.Black,
-              unfocusedLabelColor = Color.Black
-            ),
-            value = startDate,
-            onValueChange = {  },
-            placeholder = {
-              Text(stringResource(R.string.pilih_tanggal_pergi))
-            },
-            modifier = Modifier
-              .fillMaxWidth()
-              .clickable { openStartDatePicker() },
-            trailingIcon = {
-              Icon(
-                imageVector = Icons.Default.DateRange,
-                contentDescription = "Calendar Icon",
-                modifier = Modifier.clickable { openStartDatePicker() }
+          item {
+            Text(text = stringResource(R.string.judul_trip), color = Color.Black)
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(value = title,
+              onValueChange = { title = it },
+              placeholder = { Text(stringResource(R.string.masukkan_judul)) },
+              modifier = Modifier.fillMaxWidth(),
+              colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Black,
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.Black
               )
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-              keyboardType = KeyboardType.Number,
-              imeAction = ImeAction.Next
             )
-          )
-          Spacer(modifier = Modifier.height(16.dp))
-        }
+            Spacer(modifier = Modifier.height(16.dp))
+          }
 
-        item {
-          Text(
-            text = stringResource(R.string.tanggal_pulang),
-            color = Color.Black
-          )
-          Spacer(modifier = Modifier.height(4.dp))
-          OutlinedTextField(colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedBorderColor = Color.Black,
-            unfocusedLabelColor = Color.Black
-          ),
-            value = endDate,
-            onValueChange = {  },
-            placeholder = {
-              Text(stringResource(R.string.pilih_tanggal_pulang))
-            },
-            modifier = Modifier
-              .fillMaxWidth()
-              .clickable { openEndDatePicker() },
-            trailingIcon = {
-              Icon(
-                imageVector = Icons.Default.DateRange,
-                contentDescription = "Calendar Icon",
-                modifier = Modifier.clickable { openEndDatePicker() }
+          item {
+            Text(text = stringResource(R.string.deskripsi), color = Color.Black)
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(value = description,
+              onValueChange = { description = it },
+              placeholder = { Text(stringResource(R.string.masukkan_deskripsi)) },
+              modifier = Modifier.fillMaxWidth(),
+              colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Black,
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.Black
               )
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-              keyboardType = KeyboardType.Number,
-              imeAction = ImeAction.Next
             )
-          )
-          Spacer(modifier = Modifier.height(16.dp))
-        }
+            Spacer(modifier = Modifier.height(16.dp))
+          }
 
-        item {
-          Text(
-            text = stringResource(R.string.tujuan),
-            color = Color.Black
-          )
-          Spacer(modifier = Modifier.height(4.dp))
-          OutlinedTextField(
-            value = selectedDestination[0],
-            onValueChange = { /* Read-only field */ },
-            modifier = Modifier
-              .fillMaxWidth()
-              .clickable {
-                coroutineScope.launch { scaffoldState.bottomSheetState.expand() }
+          item {
+            Text(text = stringResource(R.string.tanggal_pergi), color = Color.Black)
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(value = startDate,
+              onValueChange = {},
+              placeholder = { Text(stringResource(R.string.pilih_tanggal_pergi)) },
+              modifier = Modifier
+                .fillMaxWidth()
+                .clickable { openStartDatePicker() },
+              enabled = false,
+              trailingIcon = {
+                Icon(
+                  painter = painterResource(R.drawable.ic_calendar),
+                  contentDescription = "Calendar Icon",
+                  modifier = Modifier
+                    .size(20.dp)
+                    .clickable { openStartDatePicker() })
               },
-            placeholder = {
-              Text(stringResource(R.string.pilih_destinasi))
-            },
-            trailingIcon = {
-              Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Dropdown Icon"
+              colors = TextFieldDefaults.colors(
+                disabledTextColor = Color.Black,
+                disabledPlaceholderColor = Color.Black,
+                disabledTrailingIconColor = Color.Black,
+                disabledContainerColor = Color.White,
+                disabledIndicatorColor = Color.Gray,
+                disabledLabelColor = Color.Black
               )
-            }
-          )
-          if (selectedDestination.isNotEmpty()) {
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+          }
+
+          item {
+            Text(text = stringResource(R.string.tanggal_pulang), color = Color.Black)
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(value = endDate,
+              onValueChange = {},
+              placeholder = { Text(stringResource(R.string.pilih_tanggal_pulang)) },
+              modifier = Modifier
+                .fillMaxWidth()
+                .clickable { openEndDatePicker() },
+              enabled = false,
+              trailingIcon = {
+                Icon(
+                  painter = painterResource(R.drawable.ic_calendar),
+                  contentDescription = "Calendar Icon",
+                  modifier = Modifier
+                    .size(20.dp)
+                    .clickable { openEndDatePicker() })
+              },
+              colors = TextFieldDefaults.colors(
+                disabledTextColor = Color.Black,
+                disabledPlaceholderColor = Color.Black,
+                disabledTrailingIconColor = Color.Black,
+                disabledContainerColor = Color.White,
+                disabledIndicatorColor = Color.Gray,
+                disabledLabelColor = Color.Black
+              )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+          }
+
+          item {
+            Text(text = stringResource(R.string.tujuan), color = Color.Black)
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(
+              value = Utils.EMPTY,
+              onValueChange = {},
+              modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                  showOverlay = true
+                  coroutineScope.launch {
+                    kotlinx.coroutines.delay(100)
+                    scaffoldState.bottomSheetState.expand()
+                  }
+                },
+              enabled = false,
+              placeholder = { Text(stringResource(R.string.pilih_destinasi)) },
+              trailingIcon = {
+                Icon(
+                  painter = painterResource(R.drawable.ic_chevron_bottom),
+                  contentDescription = "Dropdown Icon",
+                  modifier = Modifier.size(20.dp)
+                )
+              },
+              colors = TextFieldDefaults.colors(
+                disabledPlaceholderColor = Color.Black,
+                disabledTrailingIconColor = Color.Black,
+                disabledContainerColor = Color.White,
+                disabledIndicatorColor = Color.Gray,
+                disabledLabelColor = Color.Black
+              )
+            )
             LazyRow(
-              modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+              modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
               horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
               items(selectedDestination.size) { index ->
                 val destination = selectedDestination[index]
-                ChipWithRemoveIcon(
-                  label = destination,
-                  onRemove = {
-                    selectedDestination = selectedDestination.toMutableList().apply {
-                      remove(destination)
-                    }
+                ChipWithRemoveIcon(label = destination, onRemove = {
+                  selectedDestination = selectedDestination.toMutableList().apply {
+                    remove(destination)
                   }
-                )
+                })
               }
             }
+            Spacer(modifier = Modifier.height(16.dp))
           }
-          Spacer(modifier = Modifier.height(16.dp))
-        }
 
-        item {
-          Button(
-            onClick = { /* Handle save action */ },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
-          ) {
-            Text(
-              text = stringResource(R.string.simpan),
-              fontSize = 16.sp
-            )
+          item {
+            Button(
+              onClick = {
+                if (title.isBlank() ||
+                  description.isBlank() ||
+                  startDate.isBlank() ||
+                  endDate.isBlank() ||
+                  selectedDestination.isEmpty()
+                ) {
+                  Toast.makeText(
+                    context, context.getString(R.string.no_empty_field),
+                    Toast.LENGTH_SHORT
+                  ).show()
+                } else {
+                  showDialog = true
+                }
+              },
+              modifier = Modifier.fillMaxWidth(),
+              shape = RoundedCornerShape(8.dp),
+              colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFDFF9FF),
+                contentColor = Color.Black
+              ),
+              border = BorderStroke(
+                width = 1.dp,
+                color = Color.Black
+              )
+            ) {
+              Text(text = stringResource(R.string.simpan), fontSize = 16.sp)
+            }
+            Spacer(modifier = Modifier.height(16.dp))
           }
-          Spacer(modifier = Modifier.height(16.dp))
+        }
+        if (showOverlay) {
+          Box(
+            modifier = Modifier
+              .fillMaxSize()
+              .background(Color.Black.copy(alpha = 0.5f))
+              .clickable { coroutineScope.launch { scaffoldState.bottomSheetState.partialExpand() } }
+          )
         }
       }
     }
   }
-//}
+
+  if (showDialog) {
+    SaveChangesDialog(
+      onConfirm = {
+        showDialog = false
+        itineraryViewModel.saveItinerary(
+          username.value,
+          title,
+          description,
+          startDate,
+          endDate,
+          selectedDestination
+        )
+        Toast.makeText(
+          context,
+          "Rencana perjalanan Anda berhasil dibuat",
+          Toast.LENGTH_SHORT
+        ).show()
+        navController.popBackStack()
+      },
+      onDismiss = {
+        showDialog = false
+      }
+    )
+  }
+}
 
 @Composable
 fun ChipWithRemoveIcon(label: String, onRemove: () -> Unit) {
   Row(
     modifier = Modifier
-      .background(Color(0xFFDFF9FF), shape = RoundedCornerShape(16.dp))
+      .background(Color(0xFFDFF9FF), shape = RoundedCornerShape(8.dp))
       .padding(horizontal = 8.dp, vertical = 4.dp),
     verticalAlignment = Alignment.CenterVertically
   ) {
@@ -357,9 +427,9 @@ fun ChipWithRemoveIcon(label: String, onRemove: () -> Unit) {
       painter = painterResource(id = R.drawable.ic_close),
       contentDescription = "Remove",
       modifier = Modifier
-        .size(12.dp)
+        .size(8.dp)
         .clickable { onRemove() },
-      tint = Color.Gray
+      tint = Color.Black
     )
   }
 }

@@ -16,9 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -57,7 +54,9 @@ fun AccountPage(
         navigationIcon = {
           IconButton(onClick = { navController.popBackStack() }) {
             Icon(
-              imageVector = Icons.Default.ArrowBack, contentDescription = "Back"
+              painter = painterResource(R.drawable.ic_arrow_left),
+              contentDescription = "Back",
+              modifier = Modifier.size(24.dp)
             )
           }
         },

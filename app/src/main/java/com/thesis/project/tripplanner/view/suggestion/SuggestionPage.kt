@@ -7,13 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,8 +63,9 @@ fun SuggestionPage(
         navigationIcon = {
           IconButton(onClick = { navController.popBackStack() }) {
             Icon(
-              imageVector = Icons.Default.ArrowBack,
-              contentDescription = "Back"
+              painter = painterResource(R.drawable.ic_arrow_left),
+              contentDescription = "Back",
+              modifier = Modifier.size(24.dp)
             )
           }
         },

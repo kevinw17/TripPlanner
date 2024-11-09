@@ -19,10 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -163,7 +159,11 @@ fun ItineraryPage(
           )
         }, navigationIcon = {
           IconButton(onClick = { navController.popBackStack() }) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            Icon(
+              painter = painterResource(R.drawable.ic_arrow_left),
+              contentDescription = "Back",
+              modifier = Modifier.size(24.dp)
+            )
           }
         }, colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
         )

@@ -1,6 +1,7 @@
 package com.thesis.project.tripplanner.view.account
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -116,12 +117,6 @@ fun AccountPage(
         thickness = 1.dp,
         modifier = Modifier.padding(vertical = 8.dp)
       )
-
-      Spacer(modifier = Modifier.height(24.dp))
-
-      Button(
-        onClick = { navController.navigate("user_profile_screen") }
-      ) { Text(text = "User Profile (Temporary)") }
 
       Spacer(modifier = Modifier.height(24.dp))
 

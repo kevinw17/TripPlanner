@@ -1,7 +1,7 @@
 package com.thesis.project.tripplanner.data
 
 data class Itinerary(
-  val username: String = "",
+  val userId: String = "",
   val title: String = "",
   val description: String = "",
   val startDate: String = "",

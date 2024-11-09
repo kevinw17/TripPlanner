@@ -2,6 +2,7 @@ package com.thesis.project.tripplanner.view.account
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -30,38 +32,63 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.firestore.FirebaseFirestore
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
 import com.thesis.project.tripplanner.view.itinerary.ItineraryCard
+import com.thesis.project.tripplanner.viewmodel.AuthState
+import com.thesis.project.tripplanner.viewmodel.AuthViewModel
 import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
   navController: NavController,
-  username: String = "andy123",
-  bio: String = "I love travelling...",
-  friendsCount: Int = 10,
   onEditProfile: () -> Unit,
   onChangePassword: () -> Unit,
+  authViewModel: AuthViewModel,
   itineraryViewModel: ItineraryViewModel
 ) {
 
+  val username by authViewModel.username.collectAsState()
+  val bio by authViewModel.bio.collectAsState()
   val itineraries by itineraryViewModel.itineraries.collectAsState()
   val itinerariesCount by itineraryViewModel.itineraryCount.collectAsState()
+  val authState by authViewModel.authState.observeAsState()
+  val friendsCount = 10
 
   LaunchedEffect(Unit) {
-    itineraryViewModel.loadItineraries()
+    authViewModel.loadUserProfile()
+  }
+
+  LaunchedEffect(authState) {
+    if (authState is AuthState.Authenticated) {
+      authViewModel.userId?.let { userId ->
+        authViewModel.loadUserProfile()
+        itineraryViewModel.loadItineraries(userId)
+      }
+    } else {
+      itineraryViewModel.clearItineraries()
+    }
   }
 
   Scaffold(
@@ -95,13 +122,16 @@ fun ProfileScreen(
       modifier = Modifier
         .fillMaxSize()
         .padding(paddingValues)
-        .padding(16.dp),
+        .padding(16.dp)
+        .background(Color.White),
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
       item {
         Row{
           Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+              .padding(start = 8.dp, top = 16.dp)
+              .widthIn(max = 100.dp)
           ) {
             Box(
               modifier = Modifier
@@ -111,7 +141,7 @@ fun ProfileScreen(
                 painter = painterResource(R.drawable.ic_user_profile),
                 contentDescription = "User Avatar",
                 modifier = Modifier
-                  .size(64.dp)
+                  .size(36.dp)
                   .clip(CircleShape)
               )
             }
@@ -119,7 +149,7 @@ fun ProfileScreen(
             Text(
               text = username,
               fontWeight = FontWeight.Bold,
-              fontSize = 20.sp,
+              fontSize = 14.sp,
               modifier = Modifier.padding(horizontal = 8.dp)
             )
           }
@@ -205,26 +235,38 @@ fun ProfileScreen(
         )
       }
 
-      items(itineraries.take(2)) { itinerary ->
-        ItineraryCard(
-          username = itinerary.username,
-          title = itinerary.title,
-          description = itinerary.description,
-          onClick = { navController.navigate("detail_itinerary") }
-        )
-      }
+      if (itineraries.isEmpty()) {
+        item {
+          Text(
+            text = stringResource(R.string.no_itineraries_created),
+            fontSize = 14.sp,
+            color = Color.Black,
+            modifier = Modifier
+              .fillMaxWidth()
+              .padding(vertical = 16.dp),
+            textAlign = TextAlign.Center
+          )
+        }
+      } else {
+        items(itineraries.take(2)) { itinerary ->
+          ItineraryCard(
+            username = username,
+            title = itinerary.title,
+            description = itinerary.description,
+            onClick = { navController.navigate("detail_itinerary") }
+          )
 
-      item {
-        Text(
-          text = stringResource(R.string.lihat_semua),
-          fontSize = 14.sp,
-          color = Color.Blue,
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable { navController.navigate("itinerary_list") },
-          textAlign = androidx.compose.ui.text.style.TextAlign.Center
-        )
+          Text(
+            text = stringResource(R.string.lihat_semua),
+            fontSize = 14.sp,
+            color = Color.Blue,
+            modifier = Modifier
+              .fillMaxWidth()
+              .padding(vertical = 8.dp)
+              .clickable { navController.navigate("itinerary_list") },
+            textAlign = TextAlign.Center
+          )
+        }
       }
     }
   }

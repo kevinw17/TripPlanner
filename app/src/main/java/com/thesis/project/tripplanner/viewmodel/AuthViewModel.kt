@@ -1,10 +1,12 @@
 package com.thesis.project.tripplanner.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.utils.Utils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,8 +20,14 @@ class AuthViewModel: ViewModel() {
   val authState: MutableLiveData<AuthState?> = _authState
   var isNewUser = false
 
+  val userId: String?
+    get() = auth.currentUser?.uid
+
   private val _username = MutableStateFlow(Utils.EMPTY)
   val username = _username.asStateFlow()
+
+  private val _bio = MutableStateFlow(Utils.EMPTY)
+  val bio = _bio.asStateFlow()
 
   init {
     checkAuthStatus()
@@ -31,6 +39,7 @@ class AuthViewModel: ViewModel() {
     } else {
       _authState.value = AuthState.Authenticated
       initializeUsernameFromEmail(auth.currentUser?.email)
+      loadUserProfile()
     }
   }
 
@@ -49,6 +58,7 @@ class AuthViewModel: ViewModel() {
       .addOnCompleteListener { task ->
         if(task.isSuccessful) {
           _authState.value = AuthState.Authenticated
+          initializeUsernameFromEmail(email)
         } else {
           _authState.value = AuthState.Error("Email atau password salah")
         }
@@ -82,6 +92,7 @@ class AuthViewModel: ViewModel() {
         if(task.isSuccessful) {
           isNewUser = true
           _authState.value = AuthState.Authenticated
+          initializeUsernameFromEmail(email)
         } else {
           _authState.value = AuthState.Error("Autentikasi gagal")
         }
@@ -91,6 +102,7 @@ class AuthViewModel: ViewModel() {
   fun signOut() {
     auth.signOut()
     _authState.value = AuthState.Unauthenticated
+    clearUserData()
   }
 
   fun resetErrorState() {
@@ -101,21 +113,39 @@ class AuthViewModel: ViewModel() {
     _authState.value = AuthState.Authenticated
   }
 
-  fun updateUserProfile(name: String, bio: String) {
-    val userId = auth.currentUser?.uid
+  fun loadUserProfile() {
+    userId?.let { uid ->
+      firestore.collection("users").document(uid).get()
+        .addOnSuccessListener { document ->
+          if (document.exists()) {
+            _username.value = document.getString("name") ?: Utils.EMPTY
+            _bio.value = document.getString("bio") ?: "Anda bisa menambahkan bio Anda melalui edit profile"
+          } else {
+            initializeUsernameFromEmail(auth.currentUser?.email)
+            _bio.value = "Anda bisa menambahkan bio Anda melalui edit profile"
+          }
+        }
+        .addOnFailureListener {
+          _authState.value = AuthState.Error("Failed to load user profile")
+        }
+    }
+  }
+
+  fun updateUserProfile(bio: String) {
     if (userId == null) {
       _authState.value = AuthState.Error("User not authenticated")
       return
     }
 
     val userProfileData = mapOf(
-      "name" to name,
+      "name" to _username.value,
       "bio" to bio
     )
 
-    firestore.collection("users").document(userId)
+    firestore.collection("users").document(userId!!)
       .set(userProfileData)
       .addOnSuccessListener {
+        _bio.value = bio
         _authState.value = AuthState.ProfileUpdated("Profile updated successfully")
       }
       .addOnFailureListener {
@@ -157,6 +187,12 @@ class AuthViewModel: ViewModel() {
       val username = it.substringBefore("@")
       _username.value = username
     }
+  }
+
+  private fun clearUserData() {
+    _username.value = Utils.EMPTY
+    _bio.value = Utils.EMPTY
+    isNewUser = false
   }
 }
 

@@ -17,9 +17,10 @@ class ItineraryViewModel : ViewModel() {
   private val _itineraryCount = MutableStateFlow(0)
   val itineraryCount = _itineraryCount.asStateFlow()
 
-  fun loadItineraries() {
+  fun loadItineraries(userId: String) {
     viewModelScope.launch {
       firestore.collection("itineraries")
+        .whereEqualTo("userId", userId)
         .get()
         .addOnSuccessListener { result ->
           val itineraryList = result.documents.mapNotNull { it.toObject(Itinerary::class.java) }
@@ -32,8 +33,15 @@ class ItineraryViewModel : ViewModel() {
     }
   }
 
-  fun saveItinerary(username: String, title: String, description: String, startDate: String, endDate: String, destinations: List<String>) {
-    val itinerary = Itinerary(username, title, description, startDate, endDate, destinations)
+  fun saveItinerary(
+    userId: String,
+    title: String,
+    description: String,
+    startDate: String,
+    endDate: String,
+    destinations: List<String>
+  ) {
+    val itinerary = Itinerary(userId, title, description, startDate, endDate, destinations)
     firestore.collection("itineraries").add(itinerary)
       .addOnSuccessListener {
         //Will add implementation later
@@ -41,5 +49,10 @@ class ItineraryViewModel : ViewModel() {
       .addOnFailureListener { exception ->
         exception.printStackTrace()
       }
+  }
+
+  fun clearItineraries() {
+    _itineraries.value = emptyList()
+    _itineraryCount.value = 0
   }
 }

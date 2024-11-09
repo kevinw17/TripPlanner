@@ -91,7 +91,8 @@ fun TripPlannerNavigation(
           navController = navController,
           onChangePassword = { navController.navigate("change_password") },
           onEditProfile = { navController.navigate("edit_profile") },
-          itineraryViewModel = itineraryViewModel
+          itineraryViewModel = itineraryViewModel,
+          authViewModel = authViewModel
         )
       }
       composable("friends") {
@@ -102,10 +103,11 @@ fun TripPlannerNavigation(
       composable("edit_profile") {
         EditProfileScreen(
           navController = navController,
-          onSaveChanges = { newName, newBio ->
-            authViewModel.updateUserProfile(newName, newBio)
+          onSaveChanges = { newBio ->
+            authViewModel.updateUserProfile(newBio)
             navController.popBackStack()
-          }
+          },
+          authViewModel = authViewModel
         )
       }
       composable("change_password") {

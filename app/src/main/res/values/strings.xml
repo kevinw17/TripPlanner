@@ -78,4 +78,5 @@
     <string name="welcome_user">Selamat datang, %s</string>
     <string name="delete_itinerary">Delete Itinerary</string>
     <string name="delete_itinerary_dialog_desc">Are you sure to delete this itinerary?</string>
+    <string name="no_itineraries_created">Belum ada rencana perjalanan yang dibuat</string>
 </resources>

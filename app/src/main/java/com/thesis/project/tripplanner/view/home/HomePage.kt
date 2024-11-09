@@ -53,11 +53,13 @@ fun HomePage(
 
   val itineraries by itineraryViewModel.itineraries.collectAsState()
   val authState = authViewModel.authState.observeAsState()
-  val username = authViewModel.username.collectAsState()
+  val username by authViewModel.username.collectAsState()
   val context = LocalContext.current
 
-  LaunchedEffect(Unit) {
-    itineraryViewModel.loadItineraries()
+  LaunchedEffect(authViewModel.userId) {
+    authViewModel.userId?.let { userId ->
+      itineraryViewModel.loadItineraries(userId)
+    }
   }
 
   LaunchedEffect(authState.value) {
@@ -105,7 +107,7 @@ fun HomePage(
       horizontalAlignment = Alignment.Start
     ) {
       item {
-        Text(text = stringResource(R.string.welcome_user, username.value), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.welcome_user, username), fontSize = 18.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
       }
 
@@ -119,28 +121,39 @@ fun HomePage(
         Spacer(modifier = Modifier.height(8.dp))
       }
 
-      items(itineraries) { itinerary ->
-        ItineraryCard(
-          username = itinerary.username,
-          title = itinerary.title,
-          description = itinerary.description,
-          onClick = { navController.navigate("detail_itinerary") }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-      }
-
-      item {
-        Box(
-          modifier = Modifier.fillMaxWidth(),
-          contentAlignment = Alignment.Center
-        ) {
-          Text(
-            text = stringResource(R.string.lihat_lebih_banyak),
+      if (itineraries.isEmpty()) {
+        item {
+          androidx.compose.material.Text(
+            text = stringResource(R.string.no_itineraries_created),
             fontSize = 14.sp,
-            color = Color.Blue,
-            modifier = Modifier.clickable { navController.navigate("itinerary_list") },
+            color = Color.Black,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
             textAlign = TextAlign.Center
           )
+        }
+      } else {
+        items(itineraries) { itinerary ->
+          ItineraryCard(
+            username = username,
+            title = itinerary.title,
+            description = itinerary.description,
+            onClick = { navController.navigate("detail_itinerary") }
+          )
+
+          Spacer(modifier = Modifier.height(16.dp))
+
+          Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+          ) {
+            Text(
+              text = stringResource(R.string.lihat_lebih_banyak),
+              fontSize = 14.sp,
+              color = Color.Blue,
+              modifier = Modifier.clickable { navController.navigate("itinerary_list") },
+              textAlign = TextAlign.Center
+            )
+          }
         }
       }
 

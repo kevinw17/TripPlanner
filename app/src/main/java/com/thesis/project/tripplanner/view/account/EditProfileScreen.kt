@@ -16,10 +16,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -33,18 +36,20 @@ import androidx.navigation.NavController
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
 import com.thesis.project.tripplanner.view.dialog.SaveChangesDialog
+import com.thesis.project.tripplanner.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
   navController: NavController,
-  currentName: String = "andy123",
-  currentBio: String = "I love travelling...",
-  onSaveChanges: (String, String) -> Unit
+  authViewModel: AuthViewModel,
+  onSaveChanges: (String) -> Unit
 ) {
-  val nameState = remember { mutableStateOf(TextFieldValue(currentName)) }
-  val bioState = remember { mutableStateOf(TextFieldValue(currentBio)) }
-  val showDialog = remember { mutableStateOf(false) } // State to control dialog visibility
+  val username by authViewModel.username.collectAsState()
+  val bio by authViewModel.bio.collectAsState()
+
+  val bioState = remember { mutableStateOf(TextFieldValue(bio)) }
+  val showDialog = remember { mutableStateOf(false) }
 
   Scaffold(
     topBar = {
@@ -84,11 +89,16 @@ fun EditProfileScreen(
       )
 
       OutlinedTextField(
-        value = nameState.value,
-        onValueChange = { nameState.value = it },
+        value = username,
+        onValueChange = {},
         placeholder = { Text(stringResource(R.string.name)) },
+        enabled = false,
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+          focusedBorderColor = Color.Black,
+          unfocusedBorderColor = Color.Black
+        )
       )
 
       Spacer(modifier = Modifier.height(8.dp))
@@ -128,7 +138,7 @@ fun EditProfileScreen(
   if (showDialog.value) {
     SaveChangesDialog(
       onConfirm = {
-        onSaveChanges(nameState.value.text, bioState.value.text)
+        onSaveChanges(bioState.value.text)
         showDialog.value = false
       },
       onDismiss = {

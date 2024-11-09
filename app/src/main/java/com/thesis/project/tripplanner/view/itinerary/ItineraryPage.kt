@@ -89,7 +89,7 @@ fun ItineraryPage(
   val firestore = Firebase.firestore
   val destinations = firestore.collection("destinations").document("h836meLJxOaVKOD1uHwk")
   var destinationsList by remember { mutableStateOf(listOf<String>()) }
-  val username = authViewModel.username.collectAsState()
+  val userId = authViewModel.userId
 
   val openStartDatePicker = {
     val calendar = Calendar.getInstance()
@@ -391,14 +391,16 @@ fun ItineraryPage(
     SaveChangesDialog(
       onConfirm = {
         showDialog = false
-        itineraryViewModel.saveItinerary(
-          username.value,
-          title,
-          description,
-          startDate,
-          endDate,
-          selectedDestination
-        )
+        userId?.let {
+          itineraryViewModel.saveItinerary(
+            userId = it,
+            title = title,
+            description = description,
+            startDate = startDate,
+            endDate = endDate,
+            destinations = selectedDestination
+          )
+        }
         Toast.makeText(
           context,
           "Rencana perjalanan Anda berhasil dibuat",

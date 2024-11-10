@@ -141,7 +141,9 @@ fun TripPlannerNavigation(
       }
       composable("itinerary_list") {
         ItineraryList(
-          navController = navController
+          navController = navController,
+          itineraryViewModel = itineraryViewModel,
+          authViewModel = authViewModel
         )
       }
       composable("message") {

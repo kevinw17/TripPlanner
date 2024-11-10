@@ -79,4 +79,7 @@
     <string name="delete_itinerary">Delete Itinerary</string>
     <string name="delete_itinerary_dialog_desc">Are you sure to delete this itinerary?</string>
     <string name="no_itineraries_created">Belum ada rencana perjalanan yang dibuat</string>
+    <string name="password_successfully_changed">Password berhasil diganti</string>
+    <string name="success_remove_profile_picture">Foto profil berhasil dihapus</string>
+    <string name="new_photo_profile_changed">Foto profil berhasil diganti</string>
 </resources>

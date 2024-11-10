@@ -102,6 +102,7 @@ fun LoginPage(
       Toast.makeText(context,
         context.getString(R.string.google_sign_in_berhasil), Toast.LENGTH_SHORT).show()
       navController.navigate("home")
+      authViewModel.loadUserProfile()
     } else if (signInState.signInError != null) {
       Toast.makeText(context,
         context.getString(R.string.google_sign_in_failed, signInState.signInError), Toast.LENGTH_SHORT).show()

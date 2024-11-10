@@ -14,6 +14,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -24,18 +26,21 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
-import com.thesis.project.tripplanner.view.explore.Itinerary
+import com.thesis.project.tripplanner.viewmodel.AuthViewModel
+import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItineraryList(
   navController: NavController,
-  itineraries: List<Itinerary> = listOf(
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!"),
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!"),
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!")
-  )
+  itineraryViewModel: ItineraryViewModel,
+  authViewModel: AuthViewModel
 ) {
+
+  val itineraries by itineraryViewModel.itineraries.collectAsState()
+  val itinerariesCount by itineraryViewModel.itineraryCount.collectAsState()
+  val username by authViewModel.username.collectAsState()
+
   Scaffold(
     topBar = {
       TopAppBar(
@@ -71,7 +76,7 @@ fun ItineraryList(
     ) {
       item {
         Text(
-          text = "${itineraries.size} ${stringResource(R.string.itineraries)}",
+          text = "$itinerariesCount ${stringResource(R.string.itineraries)}",
           fontWeight = FontWeight.Bold,
           fontSize = 18.sp,
           modifier = Modifier.padding(vertical = 8.dp)
@@ -80,7 +85,7 @@ fun ItineraryList(
 
       items(itineraries) { itinerary ->
         ItineraryCard(
-          username = itinerary.username,
+          username = username,
           title = itinerary.title,
           description = itinerary.description,
           onClick = { navController.navigate("detail_itinerary") }

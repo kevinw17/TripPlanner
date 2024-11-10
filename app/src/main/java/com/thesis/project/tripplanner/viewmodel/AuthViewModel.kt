@@ -1,11 +1,14 @@
 package com.thesis.project.tripplanner.viewmodel
 
 import android.content.Context
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.utils.Utils
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +31,9 @@ class AuthViewModel: ViewModel() {
 
   private val _bio = MutableStateFlow(Utils.EMPTY)
   val bio = _bio.asStateFlow()
+
+  private val _profileImageUrl = MutableStateFlow<Uri?>(null)
+  val profileImageUrl = _profileImageUrl.asStateFlow()
 
   init {
     checkAuthStatus()
@@ -118,7 +124,7 @@ class AuthViewModel: ViewModel() {
       firestore.collection("users").document(uid).get()
         .addOnSuccessListener { document ->
           if (document.exists()) {
-            _username.value = document.getString("name") ?: Utils.EMPTY
+            _username.value = document.getString("name") ?: initializeUsernameFromEmail(auth.currentUser?.email).toString()
             _bio.value = document.getString("bio") ?: "Anda bisa menambahkan bio Anda melalui edit profile"
           } else {
             initializeUsernameFromEmail(auth.currentUser?.email)
@@ -131,6 +137,7 @@ class AuthViewModel: ViewModel() {
     }
   }
 
+
   fun updateUserProfile(bio: String) {
     if (userId == null) {
       _authState.value = AuthState.Error("User not authenticated")
@@ -139,7 +146,8 @@ class AuthViewModel: ViewModel() {
 
     val userProfileData = mapOf(
       "name" to _username.value,
-      "bio" to bio
+      "bio" to bio,
+      "profileImageUrl" to _profileImageUrl.value?.toString()
     )
 
     firestore.collection("users").document(userId!!)
@@ -182,17 +190,71 @@ class AuthViewModel: ViewModel() {
     }
   }
 
-  fun initializeUsernameFromEmail(email: String?) {
-    email?.let {
-      val username = it.substringBefore("@")
-      _username.value = username
-    }
+  private fun initializeUsernameFromEmail(email: String?): String {
+    val username = email?.substringBefore("@") ?: Utils.EMPTY
+    _username.value = username
+    return username
   }
 
   private fun clearUserData() {
     _username.value = Utils.EMPTY
     _bio.value = Utils.EMPTY
     isNewUser = false
+  }
+
+  fun saveProfileImageUri(uri: Uri) {
+    val uriString = uri.toString()
+    userId?.let { uid ->
+      val userRef = firestore.collection("users").document(uid)
+      userRef.get().addOnSuccessListener { document ->
+        if (document.exists()) {
+          userRef.update("profileImageUrl", uriString)
+            .addOnSuccessListener {
+              _profileImageUrl.value = uri
+            }
+            .addOnFailureListener { exception ->
+              exception.printStackTrace()
+            }
+        } else {
+          userRef.set(mapOf("profileImageUrl" to uriString))
+            .addOnSuccessListener {
+              _profileImageUrl.value = uri
+            }
+            .addOnFailureListener { exception ->
+              exception.printStackTrace()
+            }
+        }
+      }.addOnFailureListener { exception ->
+        exception.printStackTrace()
+      }
+    }
+  }
+
+
+  fun loadProfileImageUri() {
+    userId?.let { uid ->
+      firestore.collection("users").document(uid).get()
+        .addOnSuccessListener { document ->
+          val uriString = document.getString("profileImageUrl")
+          _profileImageUrl.value = uriString?.let { Uri.parse(it) }
+        }
+        .addOnFailureListener { exception ->
+          exception.printStackTrace()
+        }
+    }
+  }
+
+  fun removeProfileImage() {
+    userId?.let { uid ->
+      val userRef = firestore.collection("users").document(uid)
+      userRef.update("profileImageUrl", null)
+        .addOnSuccessListener {
+          _profileImageUrl.value = null
+        }
+        .addOnFailureListener { exception ->
+          exception.printStackTrace()
+        }
+    }
   }
 }
 

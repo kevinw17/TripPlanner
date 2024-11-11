@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
@@ -95,7 +96,7 @@ fun ProfileScreen(
   val scaffoldState = rememberBottomSheetScaffoldState()
   var showOverlay by remember { mutableStateOf(false) }
   var showRemovePictureDialog by remember { mutableStateOf(false) }
-  var profileImage by remember { mutableStateOf(R.drawable.ic_user_profile) }
+  val isLoadingProfile by authViewModel.isLoadingProfile.collectAsState()
   val context = LocalContext.current
   val profileImageUrl by authViewModel.profileImageUrl.collectAsState()
   val galleryLauncher = rememberLauncherForActivityResult(
@@ -176,181 +177,194 @@ fun ProfileScreen(
       },
       sheetPeekHeight = 0.dp
     ) { innerPadding ->
-      Box(
-        modifier = Modifier
-          .fillMaxSize()
-          .background(Color.White)
-      ) {
-        LazyColumn(
+      if (isLoadingProfile) {
+        Box(
           modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)
-            .padding(innerPadding)
-            .padding(16.dp)
             .background(Color.White),
-          verticalArrangement = Arrangement.spacedBy(16.dp)
+          contentAlignment = Alignment.Center
         ) {
-          item {
-            Row {
-              Column(
-                modifier = Modifier
-                  .padding(start = 8.dp, top = 16.dp)
-                  .widthIn(max = 100.dp)
-              ) {
-                Box(
+          CircularProgressIndicator()
+        }
+      } else {
+        Box(
+          modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+        ) {
+          LazyColumn(
+            modifier = Modifier
+              .fillMaxSize()
+              .padding(paddingValues)
+              .padding(innerPadding)
+              .padding(16.dp)
+              .background(Color.White),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+          ) {
+            item {
+              Row {
+                Column(
                   modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .padding(start = 8.dp, top = 16.dp)
+                    .widthIn(max = 100.dp)
                 ) {
-                  Image(
-                    painter = if (profileImageUrl != null) {
-                      rememberAsyncImagePainter(profileImageUrl)
-                    } else {
-                      painterResource(R.drawable.ic_user_profile)
-                    },
-                    contentDescription = "User Avatar",
+                  Box(
                     modifier = Modifier
-                      .size(48.dp)
-                      .clip(CircleShape)
-                      .clickable {
-                        showOverlay = true
-                        coroutineScope.launch {
-                          delay(100)
-                          scaffoldState.bottomSheetState.expand()
+                      .align(Alignment.CenterHorizontally)
+                  ) {
+                    Image(
+                      painter = if (profileImageUrl != null) {
+                        rememberAsyncImagePainter(profileImageUrl)
+                      } else {
+                        painterResource(R.drawable.ic_user_profile)
+                      },
+                      contentDescription = "User Avatar",
+                      modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                          showOverlay = true
+                          coroutineScope.launch {
+                            delay(100)
+                            scaffoldState.bottomSheetState.expand()
+                          }
                         }
-                      }
+                    )
+                  }
+                  Spacer(modifier = Modifier.height(8.dp))
+                  Text(
+                    text = username,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(horizontal = 8.dp)
                   )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+
+                Box(
+                  modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.CenterVertically)
+                ) {
+                  Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier
+                      .fillMaxWidth()
+                      .align(Alignment.Center)
+                  ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                      Text(text = "$itinerariesCount", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                      Text(text = "Itineraries", fontSize = 18.sp, color = Color.Gray)
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                      Text(text = "$friendsCount", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                      Text(text = "Friends", fontSize = 18.sp, color = Color.Gray)
+                    }
+                  }
+                }
+              }
+            }
+
+            item {
+              Text(
+                text = bio,
+                fontSize = 14.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)
+              )
+            }
+
+            item {
+              Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+              ) {
+                Button(
+                  onClick = onEditProfile,
+                  shape = RoundedCornerShape(24.dp),
+                  colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFDFF9FF),
+                    contentColor = Color.Black
+                  ),
+                  border = BorderStroke(
+                    width = 1.dp,
+                    color = Color.Black
+                  ),
+                  modifier = Modifier.weight(1f)
+                ) {
+                  Text(text = stringResource(R.string.edit_profile))
+                }
+
+                Button(
+                  onClick = onChangePassword,
+                  shape = RoundedCornerShape(24.dp),
+                  colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFDFF9FF),
+                    contentColor = Color.Black
+                  ),
+                  border = BorderStroke(
+                    width = 1.dp,
+                    color = Color.Black
+                  ),
+                  modifier = Modifier.weight(1f)
+                ) {
+                  Text(text = stringResource(R.string.change_password))
+                }
+              }
+            }
+
+            item {
+              Text(
+                text = stringResource(R.string.itineraries_created),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(vertical = 8.dp)
+              )
+            }
+
+            if (itineraries.isEmpty()) {
+              item {
                 Text(
-                  text = username,
-                  fontWeight = FontWeight.Bold,
+                  text = stringResource(R.string.no_itineraries_created),
                   fontSize = 14.sp,
-                  modifier = Modifier.padding(horizontal = 8.dp)
+                  color = Color.Black,
+                  modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                  textAlign = TextAlign.Center
+                )
+              }
+            } else {
+              items(itineraries.take(2)) { itinerary ->
+                ItineraryCard(
+                  username = username,
+                  title = itinerary.title,
+                  description = itinerary.description,
+                  onClick = { navController.navigate("detail_itinerary") }
                 )
               }
 
-              Box(
-                modifier = Modifier
-                  .padding(16.dp)
-                  .align(Alignment.CenterVertically)
-              ) {
-                Row(
-                  horizontalArrangement = Arrangement.SpaceEvenly,
+              item {
+                Text(
+                  text = stringResource(R.string.lihat_semua),
+                  fontSize = 14.sp,
+                  color = Color.Blue,
                   modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.Center)
-                ) {
-                  Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "$itinerariesCount", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text(text = "Itineraries", fontSize = 18.sp, color = Color.Gray)
-                  }
-                  Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "$friendsCount", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text(text = "Friends", fontSize = 18.sp, color = Color.Gray)
-                  }
-                }
+                    .padding(vertical = 8.dp)
+                    .clickable { navController.navigate("itinerary_list") },
+                  textAlign = TextAlign.Center
+                )
               }
             }
           }
-
-          item {
-            Text(
-              text = bio,
-              fontSize = 14.sp,
-              color = Color.Gray,
-              modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)
+          if (showOverlay) {
+            Box(
+              modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .clickable { coroutineScope.launch { scaffoldState.bottomSheetState.partialExpand() } }
             )
           }
-
-          item {
-            Row(
-              horizontalArrangement = Arrangement.spacedBy(8.dp),
-              modifier = Modifier.fillMaxWidth()
-            ) {
-              Button(
-                onClick = onEditProfile,
-                shape = RoundedCornerShape(24.dp),
-                colors = ButtonDefaults.buttonColors(
-                  containerColor = Color(0xFFDFF9FF),
-                  contentColor = Color.Black
-                ),
-                border = BorderStroke(
-                  width = 1.dp,
-                  color = Color.Black
-                ),
-                modifier = Modifier.weight(1f)
-              ) {
-                Text(text = stringResource(R.string.edit_profile))
-              }
-
-              Button(
-                onClick = onChangePassword,
-                shape = RoundedCornerShape(24.dp),
-                colors = ButtonDefaults.buttonColors(
-                  containerColor = Color(0xFFDFF9FF),
-                  contentColor = Color.Black
-                ),
-                border = BorderStroke(
-                  width = 1.dp,
-                  color = Color.Black
-                ),
-                modifier = Modifier.weight(1f)
-              ) {
-                Text(text = stringResource(R.string.change_password))
-              }
-            }
-          }
-
-          item {
-            Text(
-              text = stringResource(R.string.itineraries_created),
-              fontWeight = FontWeight.Bold,
-              fontSize = 18.sp,
-              modifier = Modifier.padding(vertical = 8.dp)
-            )
-          }
-
-          if (itineraries.isEmpty()) {
-            item {
-              Text(
-                text = stringResource(R.string.no_itineraries_created),
-                fontSize = 14.sp,
-                color = Color.Black,
-                modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(vertical = 16.dp),
-                textAlign = TextAlign.Center
-              )
-            }
-          } else {
-            items(itineraries.take(2)) { itinerary ->
-              ItineraryCard(
-                username = username,
-                title = itinerary.title,
-                description = itinerary.description,
-                onClick = { navController.navigate("detail_itinerary") }
-              )
-
-              Text(
-                text = stringResource(R.string.lihat_semua),
-                fontSize = 14.sp,
-                color = Color.Blue,
-                modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(vertical = 8.dp)
-                  .clickable { navController.navigate("itinerary_list") },
-                textAlign = TextAlign.Center
-              )
-            }
-          }
-        }
-        if (showOverlay) {
-          Box(
-            modifier = Modifier
-              .fillMaxSize()
-              .background(Color.Black.copy(alpha = 0.5f))
-              .clickable { coroutineScope.launch { scaffoldState.bottomSheetState.partialExpand() } }
-          )
         }
       }
     }

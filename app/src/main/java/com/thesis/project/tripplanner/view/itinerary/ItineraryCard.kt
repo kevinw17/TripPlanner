@@ -16,7 +16,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import com.thesis.project.tripplanner.R
 
 @Composable
@@ -54,7 +56,12 @@ fun ItineraryCard(
       Spacer(modifier = Modifier.height(2.dp))
       Column {
         Text(text = title)
-        Text(text = description, color = Color.Gray)
+        Text(
+          text = description,
+          color = Color.Gray,
+          maxLines = 2,
+          overflow = TextOverflow.Ellipsis
+        )
       }
     }
   }

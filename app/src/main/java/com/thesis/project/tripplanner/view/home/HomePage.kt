@@ -141,7 +141,9 @@ fun HomePage(
           )
 
           Spacer(modifier = Modifier.height(16.dp))
+        }
 
+        item {
           Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center

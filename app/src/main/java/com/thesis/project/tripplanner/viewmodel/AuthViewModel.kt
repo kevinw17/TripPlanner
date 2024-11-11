@@ -35,6 +35,9 @@ class AuthViewModel: ViewModel() {
   private val _profileImageUrl = MutableStateFlow<Uri?>(null)
   val profileImageUrl = _profileImageUrl.asStateFlow()
 
+  private val _isLoadingProfile = MutableStateFlow(false)
+  val isLoadingProfile = _isLoadingProfile.asStateFlow()
+
   init {
     checkAuthStatus()
   }
@@ -120,23 +123,36 @@ class AuthViewModel: ViewModel() {
   }
 
   fun loadUserProfile() {
+    _isLoadingProfile.value = true
+
     userId?.let { uid ->
       firestore.collection("users").document(uid).get()
         .addOnSuccessListener { document ->
           if (document.exists()) {
-            _username.value = document.getString("name") ?: initializeUsernameFromEmail(auth.currentUser?.email).toString()
+            _username.value = document.getString("name") ?: initializeUsernameFromEmail(auth.currentUser?.email)
             _bio.value = document.getString("bio") ?: "Anda bisa menambahkan bio Anda melalui edit profile"
+            val uriString = document.getString("profileImageUrl")
+            _profileImageUrl.value = if (!uriString.isNullOrEmpty()) {
+              Uri.parse(uriString)
+            } else {
+              Uri.parse("android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}")
+            }
           } else {
             initializeUsernameFromEmail(auth.currentUser?.email)
             _bio.value = "Anda bisa menambahkan bio Anda melalui edit profile"
+            _profileImageUrl.value = Uri.parse("android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}")
           }
+          _isLoadingProfile.value = false
         }
         .addOnFailureListener {
           _authState.value = AuthState.Error("Failed to load user profile")
+          _isLoadingProfile.value = false
+          _profileImageUrl.value = Uri.parse("android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}")
         }
+    } ?: run {
+      _isLoadingProfile.value = false
     }
   }
-
 
   fun updateUserProfile(bio: String) {
     if (userId == null) {
@@ -147,11 +163,11 @@ class AuthViewModel: ViewModel() {
     val userProfileData = mapOf(
       "name" to _username.value,
       "bio" to bio,
-      "profileImageUrl" to _profileImageUrl.value?.toString()
+      "profileImageUrl" to (_profileImageUrl.value?.toString() ?: Uri.parse("android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}").toString())
     )
 
     firestore.collection("users").document(userId!!)
-      .set(userProfileData)
+      .set(userProfileData, SetOptions.merge())
       .addOnSuccessListener {
         _bio.value = bio
         _authState.value = AuthState.ProfileUpdated("Profile updated successfully")
@@ -199,6 +215,7 @@ class AuthViewModel: ViewModel() {
   private fun clearUserData() {
     _username.value = Utils.EMPTY
     _bio.value = Utils.EMPTY
+    _profileImageUrl.value = Uri.parse("android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}")
     isNewUser = false
   }
 

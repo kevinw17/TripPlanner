@@ -216,7 +216,8 @@ fun ItineraryPage(
           item {
             Text(text = stringResource(R.string.deskripsi), color = Color.Black)
             Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(value = description,
+            OutlinedTextField(
+              value = description,
               onValueChange = { description = it },
               placeholder = { Text(stringResource(R.string.masukkan_deskripsi)) },
               modifier = Modifier.fillMaxWidth(),
@@ -227,7 +228,8 @@ fun ItineraryPage(
                 unfocusedBorderColor = Color.Black,
                 focusedLabelColor = Color.Black,
                 unfocusedLabelColor = Color.Black
-              )
+              ),
+              maxLines = 5
             )
             Spacer(modifier = Modifier.height(16.dp))
           }

@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.thesis.project.tripplanner.data.Itinerary
 import com.thesis.project.tripplanner.view.account.AccountPage
 import com.thesis.project.tripplanner.view.account.ChangePasswordScreen
 import com.thesis.project.tripplanner.view.account.EditProfileScreen
@@ -16,7 +17,6 @@ import com.thesis.project.tripplanner.view.chat.ChatRoomScreen
 import com.thesis.project.tripplanner.view.home.HomePage
 import com.thesis.project.tripplanner.view.itinerary.ItineraryPage
 import com.thesis.project.tripplanner.view.explore.ExplorePage
-import com.thesis.project.tripplanner.view.explore.Itinerary
 import com.thesis.project.tripplanner.view.itinerary.DetailItineraryScreen
 import com.thesis.project.tripplanner.view.itinerary.ItineraryList
 import com.thesis.project.tripplanner.view.login_register.LoginPage
@@ -69,7 +69,9 @@ fun TripPlannerNavigation(
       }
       composable("explore") {
         ExplorePage(
-          navController = navController
+          navController = navController,
+          itineraryViewModel = itineraryViewModel,
+          authViewModel = authViewModel
         )
       }
       composable("suggestion") {

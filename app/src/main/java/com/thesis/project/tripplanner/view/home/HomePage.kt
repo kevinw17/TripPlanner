@@ -153,7 +153,7 @@ fun HomePage(
               text = stringResource(R.string.lihat_lebih_banyak),
               fontSize = 14.sp,
               color = Color.Blue,
-              modifier = Modifier.clickable { navController.navigate("itinerary_list") },
+              modifier = Modifier.clickable { navController.navigate("explore") },
               textAlign = TextAlign.Center
             )
           }

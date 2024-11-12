@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.thesis.project.tripplanner.R
+import com.thesis.project.tripplanner.data.Itinerary
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
-import com.thesis.project.tripplanner.view.explore.Itinerary
 import com.thesis.project.tripplanner.view.itinerary.ItineraryCard
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)

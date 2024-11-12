@@ -51,14 +51,14 @@ fun HomePage(
   itineraryViewModel: ItineraryViewModel
 ) {
 
-  val itineraries by itineraryViewModel.itineraries.collectAsState()
+  val otherUserItinerary by itineraryViewModel.otherUserItinerary.collectAsState()
   val authState = authViewModel.authState.observeAsState()
   val username by authViewModel.username.collectAsState()
   val context = LocalContext.current
 
   LaunchedEffect(authViewModel.userId) {
     authViewModel.userId?.let { userId ->
-      itineraryViewModel.loadItineraries(userId)
+      itineraryViewModel.loadOtherUsersItineraries(userId)
     }
   }
 
@@ -121,7 +121,7 @@ fun HomePage(
         Spacer(modifier = Modifier.height(8.dp))
       }
 
-      if (itineraries.isEmpty()) {
+      if (otherUserItinerary.isEmpty()) {
         item {
           androidx.compose.material.Text(
             text = stringResource(R.string.no_itineraries_created),
@@ -132,11 +132,12 @@ fun HomePage(
           )
         }
       } else {
-        items(itineraries) { itinerary ->
+        items(otherUserItinerary.shuffled().take(3)) { otherUserItinerary ->
           ItineraryCard(
-            username = username,
-            title = itinerary.title,
-            description = itinerary.description,
+            username = otherUserItinerary.username,
+            profileImageUrl = otherUserItinerary.profileImageUrl,
+            title = otherUserItinerary.itinerary.title,
+            description = otherUserItinerary.itinerary.description,
             onClick = { navController.navigate("detail_itinerary") }
           )
 

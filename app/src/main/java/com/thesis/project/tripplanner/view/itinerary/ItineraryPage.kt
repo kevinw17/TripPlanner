@@ -77,6 +77,8 @@ fun ItineraryPage(
   val coroutineScope = rememberCoroutineScope()
   val scaffoldState = rememberBottomSheetScaffoldState()
   val context = LocalContext.current
+  val profileImageUrl by authViewModel.profileImageUrl.collectAsState()
+  val username by authViewModel.username.collectAsState()
   var title by remember { mutableStateOf(Utils.EMPTY) }
   var description by remember { mutableStateOf(Utils.EMPTY) }
   var startDate by remember { mutableStateOf(Utils.EMPTY) }
@@ -396,6 +398,8 @@ fun ItineraryPage(
         userId?.let {
           itineraryViewModel.saveItinerary(
             userId = it,
+            username = username,
+            profileImageUrl = profileImageUrl.toString(),
             title = title,
             description = description,
             startDate = startDate,

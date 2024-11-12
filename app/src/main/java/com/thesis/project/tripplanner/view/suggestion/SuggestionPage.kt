@@ -46,9 +46,9 @@ fun SuggestionPage(
   val selectedCity = remember { mutableStateOf(cities[0]) }
   val cityDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
   val itineraries = listOf<Itinerary>(
-    Itinerary("bud456", "Liburan ke ${selectedCity.value}", "Jalan-jalan ke ${selectedCity.value} sangat seru! apalagi kalau bareng keluarga"),
-    Itinerary("bud456", "Liburan ke ${selectedCity.value}", "Jalan-jalan ke ${selectedCity.value} sangat seru! apalagi kalau bareng keluarga"),
-    Itinerary("bud456", "Liburan ke ${selectedCity.value}", "Jalan-jalan ke ${selectedCity.value} sangat seru! apalagi kalau bareng keluarga"),
+    Itinerary("bud456", "Liburan ke ${selectedCity.value}", "Jalan-jalan ke ${selectedCity.value} sangat seru! apalagi kalau bareng keluarga", ""),
+    Itinerary("bud456", "Liburan ke ${selectedCity.value}", "Jalan-jalan ke ${selectedCity.value} sangat seru! apalagi kalau bareng keluarga", ""),
+    Itinerary("bud456", "Liburan ke ${selectedCity.value}", "Jalan-jalan ke ${selectedCity.value} sangat seru! apalagi kalau bareng keluarga", ""),
   )
 
   Scaffold(
@@ -151,6 +151,7 @@ fun SuggestionPage(
           username = itinerary.username,
           title = itinerary.title,
           description = itinerary.description,
+          profileImageUrl = itinerary.profileImageUrl,
           onClick = { navController.navigate("detail_itinerary") }
         )
       }

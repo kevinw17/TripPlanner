@@ -19,11 +19,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import coil.compose.rememberAsyncImagePainter
 import com.thesis.project.tripplanner.R
 
 @Composable
 fun ItineraryCard(
   username: String,
+  profileImageUrl : String?,
   title: String,
   description: String,
   onClick: () -> Unit
@@ -44,7 +46,11 @@ fun ItineraryCard(
     Column(modifier = Modifier.padding(16.dp)) {
       Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
-          painter = painterResource(R.drawable.ic_user_profile),
+          painter = rememberAsyncImagePainter(
+            model = profileImageUrl ?: R.drawable.ic_user_profile,
+            placeholder = painterResource(R.drawable.ic_user_profile),
+            error = painterResource(R.drawable.ic_user_profile)
+          ),
           contentDescription = "User Avatar",
           modifier = Modifier
             .size(24.dp)

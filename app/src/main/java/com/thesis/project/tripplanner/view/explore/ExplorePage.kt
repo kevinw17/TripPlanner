@@ -33,14 +33,14 @@ import com.thesis.project.tripplanner.view.itinerary.ItineraryCard
 fun ExplorePage(
   navController: NavController,
   itineraries: List<Itinerary> = listOf(
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!"),
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!"),
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!"),
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!"),
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!"),
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!"),
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!"),
-    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!")
+    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!", ""),
+    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!", ""),
+    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!", ""),
+    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!", ""),
+    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!", ""),
+    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!", ""),
+    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!", ""),
+    Itinerary("andy123", "Liburan ke Bali", "Jalan-jalan ke Bali sangat seru!!", "")
   )
 ) {
   Scaffold(
@@ -91,6 +91,7 @@ fun ExplorePage(
           username = itinerary.username,
           title = itinerary.title,
           description = itinerary.description,
+          profileImageUrl = itinerary.profileImageUrl,
           onClick = { navController.navigate("detail_itinerary") }
         )
       }
@@ -101,6 +102,7 @@ fun ExplorePage(
 data class Itinerary(
   val username: String,
   val title: String,
-  val description: String
+  val description: String,
+  val profileImageUrl: String?
 )
 

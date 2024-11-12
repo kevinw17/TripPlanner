@@ -125,8 +125,8 @@ fun TripPlannerNavigation(
           friendsCount = 20,
           friendStatus = FriendshipStatus.FRIEND,
           itineraries = listOf(
-            Itinerary("Brian", "Liburan ke Bandung", "Jalan-jalan ke Bandung sangat seru!!"),
-            Itinerary("Brian", "Liburan ke Bandung", "Jalan-jalan ke Bandung sangat seru!!")
+            Itinerary("Brian", "Liburan ke Bandung", "Jalan-jalan ke Bandung sangat seru!!", ""),
+            Itinerary("Brian", "Liburan ke Bandung", "Jalan-jalan ke Bandung sangat seru!!", "")
           ),
           onAddFriend = {
             // Implement friend request logic

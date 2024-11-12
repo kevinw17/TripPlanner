@@ -339,6 +339,7 @@ fun ProfileScreen(
                   username = username,
                   title = itinerary.title,
                   description = itinerary.description,
+                  profileImageUrl = itinerary.profileImageUrl,
                   onClick = { navController.navigate("detail_itinerary") }
                 )
               }

@@ -2,13 +2,13 @@ package com.thesis.project.tripplanner.view.suggestion
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
@@ -22,6 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -29,27 +32,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.thesis.project.tripplanner.R
-import com.thesis.project.tripplanner.data.Itinerary
+import com.thesis.project.tripplanner.utils.Utils
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
 import com.thesis.project.tripplanner.view.itinerary.ItineraryCard
+import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun SuggestionPage(
-  navController: NavController
+  navController: NavController,
+  itineraryViewModel: ItineraryViewModel
 ) {
-  val cities = listOf("Jakarta", "Bandung", "Bali")
-  val selectedCity = remember { mutableStateOf(cities[0]) }
-  val cityDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-  val itineraries = listOf<Itinerary>(
-    Itinerary("bud456", "Liburan ke ${selectedCity.value}", "Jalan-jalan ke ${selectedCity.value} sangat seru! apalagi kalau bareng keluarga", ""),
-    Itinerary("bud456", "Liburan ke ${selectedCity.value}", "Jalan-jalan ke ${selectedCity.value} sangat seru! apalagi kalau bareng keluarga", ""),
-    Itinerary("bud456", "Liburan ke ${selectedCity.value}", "Jalan-jalan ke ${selectedCity.value} sangat seru! apalagi kalau bareng keluarga", ""),
-  )
+  val selectedDestination = remember { mutableStateOf(Utils.EMPTY) }
+  val destinations by itineraryViewModel.destinations.collectAsState()
+  val selectedDestinationDescription = destinations.find { it.name == selectedDestination.value }?.description
+  val filteredItineraries by itineraryViewModel.filteredItineraries.collectAsState()
+
+  LaunchedEffect(Unit) {
+    itineraryViewModel.loadDestinations()
+  }
+
+  LaunchedEffect(destinations) {
+    if (destinations.isNotEmpty()) {
+      selectedDestination.value = destinations[0].name
+      itineraryViewModel.loadItinerariesByDestination(destinations[0].name)
+    }
+  }
 
   Scaffold(
     topBar = {
@@ -86,14 +99,17 @@ fun SuggestionPage(
       verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
       item {
-        Row(
+        LazyRow(
           modifier = Modifier.fillMaxWidth(),
           horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-          cities.forEach { city ->
+          items(destinations) { destination ->
             Chip(
-              onClick = { selectedCity.value = city },
-              colors = if (selectedCity.value == city) {
+              onClick = {
+                selectedDestination.value = destination.name
+                itineraryViewModel.loadItinerariesByDestination(destination.name)
+              },
+              colors = if (selectedDestination.value == destination.name) {
                 ChipDefaults.chipColors(
                   backgroundColor = Color(0xFFDFF9FF),
                   contentColor = Color.Black
@@ -105,14 +121,14 @@ fun SuggestionPage(
                 )
               }
             ) {
-              Text(city)
+              Text(destination.name)
             }
           }
         }
       }
 
       item {
-        val cityImageRes = when (selectedCity.value) {
+        val cityImageRes = when (selectedDestination.value) {
           "Jakarta" -> R.drawable.jakarta
           "Bandung" -> R.drawable.bandung
           "Bali" -> R.drawable.bali
@@ -120,7 +136,7 @@ fun SuggestionPage(
         }
         Image(
           painter = painterResource(cityImageRes),
-          contentDescription = selectedCity.value,
+          contentDescription = selectedDestination.value,
           modifier = Modifier
             .fillMaxWidth()
             .height(300.dp)
@@ -129,31 +145,45 @@ fun SuggestionPage(
       }
 
       item {
-        Text(text = selectedCity.value, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Text(text = selectedDestination.value, fontWeight = FontWeight.Bold, fontSize = 20.sp)
         Text(
-          text = cityDescription,
+          text = selectedDestinationDescription.orEmpty(),
           style = MaterialTheme.typography.bodyMedium,
           modifier = Modifier.padding(top = 4.dp)
         )
       }
 
-      item {
-        Text(
-          text = "Rekomendasi Itinerary ${selectedCity.value}",
-          fontWeight = FontWeight.Bold,
-          fontSize = 18.sp,
-          modifier = Modifier.padding(vertical = 8.dp)
-        )
-      }
+      if (selectedDestination.value.isNotEmpty()) {
+        item {
+          Text(
+            text = "Rekomendasi Itinerary untuk ${selectedDestination.value}",
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(vertical = 8.dp)
+          )
+        }
 
-      items(itineraries) { itinerary ->
-        ItineraryCard(
-          username = itinerary.username,
-          title = itinerary.title,
-          description = itinerary.description,
-          profileImageUrl = itinerary.profileImageUrl,
-          onClick = { navController.navigate("detail_itinerary") }
-        )
+        if (filteredItineraries.isEmpty()) {
+          item {
+            Text(
+              text = "Tidak ada itinerary untuk tujuan ${selectedDestination.value} saat ini",
+              fontSize = 16.sp,
+              color = Color.DarkGray,
+              modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+              textAlign = TextAlign.Center
+            )
+          }
+        } else {
+          items(filteredItineraries) { itinerary ->
+            ItineraryCard(
+              username = itinerary.username,
+              title = itinerary.title,
+              description = itinerary.description,
+              profileImageUrl = itinerary.profileImageUrl,
+              onClick = { navController.navigate("detail_itinerary") }
+            )
+          }
+        }
       }
     }
   }

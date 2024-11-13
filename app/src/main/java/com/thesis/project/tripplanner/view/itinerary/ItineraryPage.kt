@@ -89,8 +89,7 @@ fun ItineraryPage(
   var showDialog by remember { mutableStateOf(false) }
   var showOverlay by remember { mutableStateOf(false) }
   val firestore = Firebase.firestore
-  val destinations = firestore.collection("destinations").document("h836meLJxOaVKOD1uHwk")
-  var destinationsList by remember { mutableStateOf(listOf<String>()) }
+  val destinationsList by itineraryViewModel.destinations.collectAsState()
   val userId = authViewModel.userId
 
   val openStartDatePicker = {
@@ -138,14 +137,7 @@ fun ItineraryPage(
   }
 
   LaunchedEffect(Unit) {
-    destinations.get().addOnSuccessListener { document ->
-      if (document != null && document.exists()) {
-        val fetchedList = (document.get("list") as? List<*>)?.mapNotNull { it as? String } ?: emptyList()
-        destinationsList = fetchedList
-      }
-    }.addOnFailureListener { exception ->
-      exception.printStackTrace()
-    }
+    itineraryViewModel.loadDestinations()
   }
 
   Scaffold(
@@ -171,7 +163,7 @@ fun ItineraryPage(
         )
       },
       sheetContent = {
-        DestinationBottomSheet(destinations = destinationsList) { destination ->
+        DestinationBottomSheet(destinations = destinationsList.map { it.name }) { destination ->
           if (destination !in selectedDestination) {
             selectedDestination = selectedDestination + destination
           }

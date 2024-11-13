@@ -3,6 +3,7 @@ package com.thesis.project.tripplanner.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
+import com.thesis.project.tripplanner.data.Destination
 import com.thesis.project.tripplanner.data.Itinerary
 import com.thesis.project.tripplanner.data.OtherUserItinerary
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +21,12 @@ class ItineraryViewModel : ViewModel() {
 
   private val _otherUserItinerary = MutableStateFlow<List<OtherUserItinerary>>(emptyList())
   val otherUserItinerary = _otherUserItinerary.asStateFlow()
+
+  private val _destinations = MutableStateFlow<List<Destination>>(emptyList())
+  val destinations = _destinations.asStateFlow()
+
+  private val _filteredItineraries = MutableStateFlow<List<Itinerary>>(emptyList())
+  val filteredItineraries = _filteredItineraries.asStateFlow()
 
   fun loadItineraries(userId: String) {
     viewModelScope.launch {
@@ -84,5 +91,42 @@ class ItineraryViewModel : ViewModel() {
           exception.printStackTrace()
         }
     }
+  }
+
+  fun loadDestinations() {
+    firestore.collection("destinations").document("h836meLJxOaVKOD1uHwk")
+      .get()
+      .addOnSuccessListener { document ->
+        val rawList = document.get("list") as? List<*>
+        val destinations = rawList?.mapNotNull { item ->
+          (item as? Map<*, *>)?.let { map ->
+            val name = map["name"] as? String
+            val description = map["description"] as? String
+            if (name != null && description != null) {
+              Destination(name, description)
+            } else {
+              null
+            }
+          }
+        } ?: emptyList()
+
+        _destinations.value = destinations
+      }
+      .addOnFailureListener { exception ->
+        exception.printStackTrace()
+      }
+  }
+
+  fun loadItinerariesByDestination(selectedDestination: String) {
+    firestore.collection("itineraries")
+      .whereArrayContains("destinations", selectedDestination)
+      .get()
+      .addOnSuccessListener { result ->
+        val itineraryList = result.documents.mapNotNull { it.toObject(Itinerary::class.java) }
+        _filteredItineraries.value = itineraryList
+      }
+      .addOnFailureListener { exception ->
+        exception.printStackTrace()
+      }
   }
 }

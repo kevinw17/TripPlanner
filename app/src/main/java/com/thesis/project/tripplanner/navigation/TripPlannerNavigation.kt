@@ -76,7 +76,8 @@ fun TripPlannerNavigation(
       }
       composable("suggestion") {
         SuggestionPage(
-          navController = navController
+          navController = navController,
+          itineraryViewModel = itineraryViewModel
         )
       }
       composable("account") {

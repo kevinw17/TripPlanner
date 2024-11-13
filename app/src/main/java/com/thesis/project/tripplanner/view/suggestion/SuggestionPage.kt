@@ -40,18 +40,21 @@ import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.utils.Utils
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
 import com.thesis.project.tripplanner.view.itinerary.ItineraryCard
+import com.thesis.project.tripplanner.viewmodel.AuthViewModel
 import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun SuggestionPage(
   navController: NavController,
-  itineraryViewModel: ItineraryViewModel
+  itineraryViewModel: ItineraryViewModel,
+  authViewModel: AuthViewModel
 ) {
   val selectedDestination = remember { mutableStateOf(Utils.EMPTY) }
   val destinations by itineraryViewModel.destinations.collectAsState()
   val selectedDestinationDescription = destinations.find { it.name == selectedDestination.value }?.description
   val filteredItineraries by itineraryViewModel.filteredItineraries.collectAsState()
+  val currentUserId = authViewModel.userId
 
   LaunchedEffect(Unit) {
     itineraryViewModel.loadDestinations()
@@ -60,7 +63,9 @@ fun SuggestionPage(
   LaunchedEffect(destinations) {
     if (destinations.isNotEmpty()) {
       selectedDestination.value = destinations[0].name
-      itineraryViewModel.loadItinerariesByDestination(destinations[0].name)
+      currentUserId?.let {
+        itineraryViewModel.loadItinerariesByDestination(destinations[0].name, it)
+      }
     }
   }
 
@@ -107,7 +112,9 @@ fun SuggestionPage(
             Chip(
               onClick = {
                 selectedDestination.value = destination.name
-                itineraryViewModel.loadItinerariesByDestination(destination.name)
+                currentUserId?.let {
+                  itineraryViewModel.loadItinerariesByDestination(destination.name, it)
+                }
               },
               colors = if (selectedDestination.value == destination.name) {
                 ChipDefaults.chipColors(

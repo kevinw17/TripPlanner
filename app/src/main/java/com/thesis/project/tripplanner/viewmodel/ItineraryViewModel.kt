@@ -117,12 +117,15 @@ class ItineraryViewModel : ViewModel() {
       }
   }
 
-  fun loadItinerariesByDestination(selectedDestination: String) {
+  fun loadItinerariesByDestination(selectedDestination: String, currentUserId: String) {
     firestore.collection("itineraries")
       .whereArrayContains("destinations", selectedDestination)
       .get()
       .addOnSuccessListener { result ->
-        val itineraryList = result.documents.mapNotNull { it.toObject(Itinerary::class.java) }
+        val itineraryList = result.documents.mapNotNull { document ->
+          val itinerary = document.toObject(Itinerary::class.java)
+          if (itinerary?.userId != currentUserId) itinerary else null
+        }
         _filteredItineraries.value = itineraryList
       }
       .addOnFailureListener { exception ->

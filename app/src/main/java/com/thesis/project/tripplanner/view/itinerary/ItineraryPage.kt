@@ -88,7 +88,6 @@ fun ItineraryPage(
   var startCalendar by remember { mutableStateOf<Calendar?>(null) }
   var showDialog by remember { mutableStateOf(false) }
   var showOverlay by remember { mutableStateOf(false) }
-  val firestore = Firebase.firestore
   val destinationsList by itineraryViewModel.destinations.collectAsState()
   val userId = authViewModel.userId
 

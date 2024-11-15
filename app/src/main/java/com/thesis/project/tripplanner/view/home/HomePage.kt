@@ -54,12 +54,17 @@ fun HomePage(
   val otherUserItinerary by itineraryViewModel.otherUserItinerary.collectAsState()
   val authState = authViewModel.authState.observeAsState()
   val username by authViewModel.username.collectAsState()
+  val destinations by itineraryViewModel.destinations.collectAsState()
   val context = LocalContext.current
 
   LaunchedEffect(authViewModel.userId) {
     authViewModel.userId?.let { userId ->
       itineraryViewModel.loadOtherUsersItineraries(userId)
     }
+  }
+
+  LaunchedEffect(Unit) {
+    itineraryViewModel.loadDestinations()
   }
 
   LaunchedEffect(authState.value) {
@@ -166,7 +171,7 @@ fun HomePage(
         Spacer(modifier = Modifier.height(8.dp))
       }
 
-      items(listOf("Jakarta", "Bandung", "Bali")) { place ->
+      items(destinations.take(3)) { destination ->
         Card(
           shape = RoundedCornerShape(8.dp),
           elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -174,7 +179,9 @@ fun HomePage(
             .fillMaxWidth()
             .height(80.dp)
             .padding(bottom = 16.dp)
-            .clickable { },
+            .clickable {
+              navController.navigate("suggestion/${destination.name}")
+            },
           colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF)),
           border = BorderStroke(
             width = 1.dp,
@@ -182,7 +189,7 @@ fun HomePage(
           )
         ) {
           Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            Text(place, fontSize = 16.sp, color = Color.Black)
+            Text(destination.name, fontSize = 16.sp, color = Color.Black)
           }
         }
       }
@@ -196,7 +203,7 @@ fun HomePage(
             text = "Lihat lebih banyak",
             fontSize = 14.sp,
             color = Color.Blue,
-            modifier = Modifier.clickable { /* Handle click action */ },
+            modifier = Modifier.clickable { navController.navigate("suggestion") },
             textAlign = TextAlign.Center
           )
         }

@@ -48,7 +48,8 @@ import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 fun SuggestionPage(
   navController: NavController,
   itineraryViewModel: ItineraryViewModel,
-  authViewModel: AuthViewModel
+  authViewModel: AuthViewModel,
+  selectedDestinationName: String? = null
 ) {
   val selectedDestination = remember { mutableStateOf(Utils.EMPTY) }
   val destinations by itineraryViewModel.destinations.collectAsState()
@@ -62,9 +63,11 @@ fun SuggestionPage(
 
   LaunchedEffect(destinations) {
     if (destinations.isNotEmpty()) {
-      selectedDestination.value = destinations[0].name
-      currentUserId?.let {
-        itineraryViewModel.loadItinerariesByDestination(destinations[0].name, it)
+      selectedDestination.value = selectedDestinationName ?: destinations[0].name
+      selectedDestination.value.let { destinationName ->
+        currentUserId?.let { userId ->
+          itineraryViewModel.loadItinerariesByDestination(destinationName, userId)
+        }
       }
     }
   }

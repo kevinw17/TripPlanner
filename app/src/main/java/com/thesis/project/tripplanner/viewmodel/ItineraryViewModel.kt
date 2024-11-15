@@ -54,7 +54,21 @@ class ItineraryViewModel : ViewModel() {
     endDate: String,
     destinations: List<String>
   ) {
-    val itinerary = Itinerary(userId, username, profileImageUrl, title, description, startDate, endDate, destinations)
+    val itineraryRef = firestore.collection("itineraries").document()
+    val itineraryId = itineraryRef.id
+
+    val itinerary = Itinerary(
+      itineraryId = itineraryId,
+      userId =userId,
+      username = username,
+      profileImageUrl = profileImageUrl,
+      title = title,
+      description = description,
+      startDate = startDate,
+      endDate = endDate,
+      destinations = destinations,
+      likeCount = 0,
+      recommendationCount = 0)
     firestore.collection("itineraries").add(itinerary)
       .addOnSuccessListener {
         //Will add implementation later
@@ -131,5 +145,9 @@ class ItineraryViewModel : ViewModel() {
       .addOnFailureListener { exception ->
         exception.printStackTrace()
       }
+  }
+
+  fun getTopDestinations(): List<Destination> {
+    return _destinations.value.take(3)
   }
 }

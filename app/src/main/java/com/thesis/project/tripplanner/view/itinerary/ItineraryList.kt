@@ -89,7 +89,9 @@ fun ItineraryList(
           title = itinerary.title,
           description = itinerary.description,
           profileImageUrl = itinerary.profileImageUrl,
-          onClick = { navController.navigate("detail_itinerary") }
+          onClick = {
+            navController.navigate("detail_itinerary")
+          }
         )
       }
     }

@@ -82,4 +82,5 @@
     <string name="password_successfully_changed">Password berhasil diganti</string>
     <string name="success_remove_profile_picture">Foto profil berhasil dihapus</string>
     <string name="new_photo_profile_changed">Foto profil berhasil diganti</string>
+    <string name="itinerary_recommended">Itinerary berhasil direkomendasikan</string>
 </resources>

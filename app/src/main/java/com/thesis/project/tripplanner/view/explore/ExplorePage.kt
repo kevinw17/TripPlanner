@@ -108,8 +108,8 @@ fun ExplorePage(
       } else {
         items(otherUserItinerary.shuffled()) { otherUserItinerary ->
           ItineraryCard(
-            username = otherUserItinerary.username,
-            profileImageUrl = otherUserItinerary.profileImageUrl,
+            username = otherUserItinerary.itinerary.username,
+            profileImageUrl = otherUserItinerary.itinerary.profileImageUrl,
             title = otherUserItinerary.itinerary.title,
             description = otherUserItinerary.itinerary.description,
             onClick = { navController.navigate("detail_itinerary") }

@@ -2,9 +2,11 @@ package com.thesis.project.tripplanner.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.thesis.project.tripplanner.data.Itinerary
 import com.thesis.project.tripplanner.view.account.AccountPage
 import com.thesis.project.tripplanner.view.account.ChangePasswordScreen
@@ -79,6 +81,15 @@ fun TripPlannerNavigation(
           navController = navController,
           itineraryViewModel = itineraryViewModel,
           authViewModel = authViewModel
+        )
+      }
+      composable("suggestion/{destinationName}") { backStackEntry ->
+        val destinationName = backStackEntry.arguments?.getString("destinationName") ?: ""
+        SuggestionPage(
+          navController = navController,
+          itineraryViewModel = itineraryViewModel,
+          authViewModel = authViewModel,
+          selectedDestinationName = destinationName
         )
       }
       composable("account") {

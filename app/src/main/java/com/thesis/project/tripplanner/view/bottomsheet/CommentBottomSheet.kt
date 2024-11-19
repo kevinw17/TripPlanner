@@ -46,7 +46,8 @@ fun CommentBottomSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(bottom = 72.dp, start = 16.dp, end = 16.dp)
+            .heightIn(max = 400.dp)
     ) {
         Text(text = "Comments", fontSize = 20.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
         Spacer(modifier = Modifier.height(16.dp))

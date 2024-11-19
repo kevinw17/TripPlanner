@@ -131,27 +131,14 @@ fun TripPlannerNavigation(
           authViewModel = authViewModel
         )
       }
-      composable("user_profile_screen") {
+      composable("user_profile_screen/{userId}") { backStackEntry ->
+        val userId = backStackEntry.arguments?.getString("userId") ?: ""
         UserProfileScreen(
           navController = navController,
-          username = "Brian",
-          bio = "I love travelling...",
-          itinerariesCount = 3,
-          friendsCount = 20,
-          friendStatus = FriendshipStatus.FRIEND,
-          itineraries = listOf(
-            Itinerary("Brian", "Liburan ke Bandung", "Jalan-jalan ke Bandung sangat seru!!", ""),
-            Itinerary("Brian", "Liburan ke Bandung", "Jalan-jalan ke Bandung sangat seru!!", "")
-          ),
-          onAddFriend = {
-            // Implement friend request logic
-          },
-          onCancelRequest = {
-            // Implement cancel request logic
-          },
-          onStartChat = {
-            // Implement chat initiation logic
-          }
+          itineraryViewModel = itineraryViewModel,
+          authViewModel = authViewModel,
+          currentUserId = authViewModel.userId ?: "",
+          targetUserId = userId
         )
       }
       composable("itinerary_list") {
@@ -166,9 +153,21 @@ fun TripPlannerNavigation(
           navController = navController
         )
       }
-      composable("detail_itinerary") {
+      composable(
+        route = "detail_itinerary/{userId}/{itineraryId}",
+        arguments = listOf(
+          navArgument("userId") { type = NavType.StringType },
+          navArgument("itineraryId") { type = NavType.StringType }
+        )
+      ) { backStackEntry ->
+        val userId = backStackEntry.arguments?.getString("userId") ?: ""
+        val itineraryId = backStackEntry.arguments?.getString("itineraryId") ?: ""
+
         DetailItineraryScreen(
-          navController = navController
+          navController = navController,
+          itineraryViewModel = itineraryViewModel,
+          itineraryId = itineraryId,
+          currentUserId = userId
         )
       }
       composable("chat_room") {

@@ -16,8 +16,8 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class AuthViewModel: ViewModel() {
 
-  private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-  private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+  val auth: FirebaseAuth = FirebaseAuth.getInstance()
+  val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
   private val _authState = MutableLiveData<AuthState?>()
   val authState: MutableLiveData<AuthState?> = _authState
@@ -37,6 +37,9 @@ class AuthViewModel: ViewModel() {
 
   private val _isLoadingProfile = MutableStateFlow(false)
   val isLoadingProfile = _isLoadingProfile.asStateFlow()
+
+  private val _targetUsername = MutableStateFlow(Utils.EMPTY)
+  val targetUsername = _targetUsername.asStateFlow()
 
   init {
     checkAuthStatus()
@@ -68,6 +71,31 @@ class AuthViewModel: ViewModel() {
         if(task.isSuccessful) {
           _authState.value = AuthState.Authenticated
           initializeUsernameFromEmail(email)
+
+          val userId = auth.currentUser?.uid
+          val defaultUsername = email.substringBefore("@")
+          val defaultBio = "Anda bisa menambahkan bio Anda melalui edit profile"
+          val defaultProfileImageUrl = Uri.parse("android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}")
+
+          if (userId != null) {
+            val userProfileData = mapOf(
+              "name" to defaultUsername,
+              "bio" to defaultBio,
+              "profileImageUrl" to defaultProfileImageUrl.toString()
+            )
+
+            firestore.collection("users").document(userId)
+              .set(userProfileData, SetOptions.merge())
+              .addOnSuccessListener {
+                Log.d("AuthViewModel", "Default user profile created successfully")
+                initializeUsernameFromEmail(email)
+                _bio.value = defaultBio
+                _profileImageUrl.value = defaultProfileImageUrl
+              }
+              .addOnFailureListener { exception ->
+                Log.e("AuthViewModel", "Failed to create default user profile: ${exception.message}")
+              }
+          }
         } else {
           _authState.value = AuthState.Error("Email atau password salah")
         }
@@ -102,6 +130,32 @@ class AuthViewModel: ViewModel() {
           isNewUser = true
           _authState.value = AuthState.Authenticated
           initializeUsernameFromEmail(email)
+
+          val currentUserId = auth.currentUser?.uid
+          val defaultUsername = email.substringBefore("@")
+          val defaultBio = "Anda bisa menambahkan bio Anda melalui edit profile"
+          val defaultProfileImageUrl = Uri.parse("android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}")
+
+          if (currentUserId != null) {
+            val userProfileData = mapOf(
+              "name" to defaultUsername,
+              "bio" to defaultBio,
+              "profileImageUrl" to defaultProfileImageUrl.toString()
+            )
+
+            firestore.collection("users").document(currentUserId)
+              .set(userProfileData)
+              .addOnSuccessListener {
+                Log.d("AuthViewModel", "User profile created successfully")
+                _username.value = defaultUsername
+                _bio.value = defaultBio
+                _profileImageUrl.value = defaultProfileImageUrl
+              }
+              .addOnFailureListener { exception ->
+                Log.e("AuthViewModel", "Failed to create user profile: ${exception.message}")
+                _authState.value = AuthState.Error("Failed to create user profile")
+              }
+          }
         } else {
           _authState.value = AuthState.Error("Autentikasi gagal")
         }
@@ -273,6 +327,73 @@ class AuthViewModel: ViewModel() {
         }
     }
   }
+
+  fun loadUserProfileById(userId: String) {
+    if (userId.isEmpty()) return
+
+    Log.d("AuthViewModel", "Fetching user profile for userId: $userId")
+    _isLoadingProfile.value = true
+
+    firestore.collection("users").document(userId).get()
+      .addOnSuccessListener { document ->
+        if (document.exists()) {
+          Log.d("AuthViewModel", "User profile fetched: ${document.data}")
+          _targetUsername.value = document.getString("name") ?: "Unknown User"
+          _bio.value = document.getString("bio") ?: "No bio available"
+          val uriString = document.getString("profileImageUrl")
+          _profileImageUrl.value = if (!uriString.isNullOrEmpty()) {
+            Uri.parse(uriString)
+          } else {
+            Uri.parse("android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}")
+          }
+        } else {
+          Log.e("AuthViewModel", "User profile not found for userId: $userId")
+          _targetUsername.value = "Unknown User"
+          _bio.value = "No bio available"
+          _profileImageUrl.value = Uri.parse("android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}")
+        }
+        _isLoadingProfile.value = false
+      }
+      .addOnFailureListener { exception ->
+        Log.e("AuthViewModel", "Failed to fetch user profile: ${exception.message}")
+        _targetUsername.value = "Unknown User"
+        _bio.value = "No bio available"
+        _profileImageUrl.value = Uri.parse("android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}")
+        _isLoadingProfile.value = false
+      }
+  }
+
+  fun handleGoogleSignInSuccess(userId: String?, email: String?, displayName: String?) {
+    if (userId == null || email == null) {
+      Log.e("AuthViewModel", "Google Sign-In failed: User ID or email is null")
+      _authState.value = AuthState.Error("Google Sign-In failed")
+      return
+    }
+
+    val defaultBio = "Anda bisa menambahkan bio Anda melalui edit profile"
+    val defaultProfileImageUrl = Uri.parse("android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}")
+
+    val userProfileData = mapOf(
+      "name" to (displayName ?: email.substringBefore("@")),
+      "bio" to defaultBio,
+      "profileImageUrl" to defaultProfileImageUrl.toString()
+    )
+
+    firestore.collection("users").document(userId)
+      .set(userProfileData, SetOptions.merge())
+      .addOnSuccessListener {
+        Log.d("AuthViewModel", "User profile created successfully for Google Sign-In")
+        _username.value = displayName ?: email.substringBefore("@")
+        _bio.value = defaultBio
+        _profileImageUrl.value = defaultProfileImageUrl
+        _authState.value = AuthState.Authenticated
+      }
+      .addOnFailureListener { exception ->
+        Log.e("AuthViewModel", "Failed to create user profile for Google Sign-In: ${exception.message}")
+        _authState.value = AuthState.Error("Failed to create user profile for Google Sign-In")
+      }
+  }
+
 }
 
 sealed class AuthState {

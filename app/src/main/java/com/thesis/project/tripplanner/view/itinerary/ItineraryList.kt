@@ -90,7 +90,7 @@ fun ItineraryList(
           description = itinerary.description,
           profileImageUrl = itinerary.profileImageUrl,
           onClick = {
-            navController.navigate("detail_itinerary")
+            navController.navigate("detail_itinerary/${itinerary.userId}/${itinerary.itineraryId}")
           }
         )
       }

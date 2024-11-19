@@ -143,7 +143,7 @@ fun HomePage(
             profileImageUrl = otherUserItinerary.profileImageUrl,
             title = otherUserItinerary.itinerary.title,
             description = otherUserItinerary.itinerary.description,
-            onClick = { navController.navigate("detail_itinerary") }
+            onClick = { navController.navigate("detail_itinerary/${otherUserItinerary.itinerary.userId}/${otherUserItinerary.itinerary.itineraryId}") }
           )
 
           Spacer(modifier = Modifier.height(16.dp))

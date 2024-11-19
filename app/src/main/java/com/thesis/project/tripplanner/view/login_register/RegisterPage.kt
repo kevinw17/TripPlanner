@@ -104,12 +104,64 @@ fun RegisterPage(
   LaunchedEffect(signInState) {
     if (signInState.isSignInSuccessful) {
       authViewModel.setAuthenticated()
-      Toast.makeText(context,
-        context.getString(R.string.google_sign_in_berhasil), Toast.LENGTH_SHORT).show()
-      navController.navigate("home")
+      val user = googleAuthUiClient.getSignedInUser()
+      if (user != null) {
+        val userId = user.userId
+        val username = user.username
+        val profilePictureUrl = user.profilePictureUrl
+        val defaultBio = "Anda bisa menambahkan bio Anda melalui edit profile"
+
+        // Cek apakah dokumen user sudah ada di Firestore
+        authViewModel.firestore.collection("users").document(userId).get()
+          .addOnSuccessListener { document ->
+            if (!document.exists()) {
+              // Jika dokumen belum ada, buat dokumen baru
+              val userProfileData = mapOf(
+                "name" to username,
+                "bio" to defaultBio,
+                "profileImageUrl" to (profilePictureUrl ?: "android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}")
+              )
+
+              authViewModel.firestore.collection("users").document(userId)
+                .set(userProfileData)
+                .addOnSuccessListener {
+                  authViewModel.loadUserProfile()
+                  Toast.makeText(
+                    context,
+                    context.getString(R.string.google_sign_in_berhasil),
+                    Toast.LENGTH_SHORT
+                  ).show()
+                  navController.navigate("home")
+                }
+                .addOnFailureListener { exception ->
+                  // Gagal menyimpan data user
+                  Toast.makeText(
+                    context,
+                    context.getString(R.string.failed_save_user_account),
+                    Toast.LENGTH_SHORT
+                  ).show()
+                }
+            } else {
+              // Jika dokumen sudah ada, langsung navigasi ke halaman home
+              navController.navigate("home")
+            }
+          }
+          .addOnFailureListener { exception ->
+            // Gagal memeriksa dokumen Firestore
+            Toast.makeText(
+              context,
+              context.getString(R.string.failed_fetch_user_document),
+              Toast.LENGTH_SHORT
+            ).show()
+          }
+      }
     } else if (signInState.signInError != null) {
-      Toast.makeText(context,
-        context.getString(R.string.google_sign_in_failed, signInState.signInError), Toast.LENGTH_SHORT).show()
+      // Tangani error saat sign-in
+      Toast.makeText(
+        context,
+        context.getString(R.string.google_sign_in_failed, signInState.signInError),
+        Toast.LENGTH_SHORT
+      ).show()
     }
   }
 

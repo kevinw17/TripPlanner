@@ -99,13 +99,61 @@ fun LoginPage(
   LaunchedEffect(signInState) {
     if (signInState.isSignInSuccessful) {
       authViewModel.setAuthenticated()
-      Toast.makeText(context,
-        context.getString(R.string.google_sign_in_berhasil), Toast.LENGTH_SHORT).show()
-      navController.navigate("home")
-      authViewModel.loadUserProfile()
+      val user = googleAuthUiClient.getSignedInUser()
+      if (user != null) {
+        val userId = user.userId
+        val googleEmail = authViewModel.auth.currentUser?.email
+        val username = googleEmail?.substringBefore("@") ?: "Pengguna Baru"
+        val profilePictureUrl = user.profilePictureUrl
+          ?: "android.resource://com.thesis.project.tripplanner/${R.drawable.ic_user_profile}"
+        val defaultBio = "Anda bisa menambahkan bio Anda melalui edit profile"
+
+        authViewModel.firestore.collection("users").document(userId).get()
+          .addOnSuccessListener { document ->
+            if (!document.exists()) {
+              val userProfileData = mapOf(
+                "name" to username,
+                "bio" to defaultBio,
+                "profileImageUrl" to profilePictureUrl
+              )
+
+              authViewModel.firestore.collection("users").document(userId)
+                .set(userProfileData)
+                .addOnSuccessListener {
+                  Toast.makeText(
+                    context,
+                    context.getString(R.string.google_sign_in_berhasil),
+                    Toast.LENGTH_SHORT
+                  ).show()
+                  navController.navigate("home")
+                }
+                .addOnFailureListener {
+                  Toast.makeText(
+                    context,
+                    context.getString(R.string.failed_save_user_account),
+                    Toast.LENGTH_SHORT
+                  ).show()
+                }
+              authViewModel.loadUserProfile()
+            } else {
+              authViewModel.loadUserProfile()
+              navController.navigate("home")
+            }
+          }
+          .addOnFailureListener {
+            Toast.makeText(
+              context,
+              context.getString(R.string.failed_fetch_user_document),
+              Toast.LENGTH_SHORT
+            ).show()
+          }
+      }
     } else if (signInState.signInError != null) {
-      Toast.makeText(context,
-        context.getString(R.string.google_sign_in_failed, signInState.signInError), Toast.LENGTH_SHORT).show()
+      Toast.makeText(
+        context,
+        context.getString(R.string.google_sign_in_failed, signInState.signInError),
+        Toast.LENGTH_SHORT
+      ).show()
     }
   }
 

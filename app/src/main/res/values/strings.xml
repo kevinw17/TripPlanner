@@ -83,4 +83,7 @@
     <string name="success_remove_profile_picture">Foto profil berhasil dihapus</string>
     <string name="new_photo_profile_changed">Foto profil berhasil diganti</string>
     <string name="itinerary_recommended">Itinerary berhasil direkomendasikan</string>
+    <string name="no_friends_found">No friends found</string>
+    <string name="failed_save_user_account">Gagal menyimpan data user</string>
+    <string name="failed_fetch_user_document">Gagal memeriksa dokumen Firestore</string>
 </resources>

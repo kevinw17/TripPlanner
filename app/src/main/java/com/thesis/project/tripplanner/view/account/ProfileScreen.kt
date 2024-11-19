@@ -1,7 +1,6 @@
 package com.thesis.project.tripplanner.view.account
 
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,7 +36,6 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -60,10 +58,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
-import com.google.firebase.storage.FirebaseStorage
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.components.EditProfilePictureBottomSheet
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
@@ -74,7 +68,6 @@ import com.thesis.project.tripplanner.viewmodel.AuthViewModel
 import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -341,7 +334,7 @@ fun ProfileScreen(
                   description = itinerary.description,
                   profileImageUrl = itinerary.profileImageUrl,
                   onClick = {
-                    navController.navigate("detail_itinerary")
+                    navController.navigate("detail_itinerary/${itinerary.userId}/${itinerary.itineraryId}")
                   }
                 )
               }

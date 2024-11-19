@@ -84,7 +84,7 @@ fun ProfileScreen(
   val itineraries by itineraryViewModel.itineraries.collectAsState()
   val itinerariesCount by itineraryViewModel.itineraryCount.collectAsState()
   val authState by authViewModel.authState.observeAsState()
-  val friendsCount = 10
+  val friendsCount by itineraryViewModel.friendsCount.collectAsState()
   val coroutineScope = rememberCoroutineScope()
   val scaffoldState = rememberBottomSheetScaffoldState()
   var showOverlay by remember { mutableStateOf(false) }
@@ -122,6 +122,7 @@ fun ProfileScreen(
       authViewModel.userId?.let { userId ->
         authViewModel.loadUserProfile()
         itineraryViewModel.loadItineraries(userId)
+        itineraryViewModel.loadFriends(userId)
         authViewModel.loadProfileImageUri()
       }
     } else {

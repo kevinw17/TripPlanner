@@ -168,6 +168,7 @@ fun TripPlannerNavigation(
         DetailItineraryScreen(
           navController = navController,
           itineraryViewModel = itineraryViewModel,
+          authViewModel = authViewModel,
           itineraryId = itineraryId,
           currentUserId = userId
         )

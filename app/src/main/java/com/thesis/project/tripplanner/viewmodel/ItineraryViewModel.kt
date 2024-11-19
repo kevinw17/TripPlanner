@@ -44,6 +44,9 @@ class ItineraryViewModel : ViewModel() {
   private val _friendshipStatus = MutableStateFlow(FriendshipStatus.NOT_FRIEND)
   val friendshipStatus = _friendshipStatus.asStateFlow()
 
+  private val _friendsCount = MutableStateFlow(0)
+  val friendsCount = _friendsCount.asStateFlow()
+
   fun loadItineraries(userId: String) {
     viewModelScope.launch {
       firestore.collection("itineraries")
@@ -359,7 +362,7 @@ class ItineraryViewModel : ViewModel() {
   }
 
   fun loadFriends(userId: String) {
-    _friends.value = emptyList() // Kosongkan daftar teman sebelum memuat data
+    _friends.value = emptyList()
     firestore.collection("friendships")
       .whereEqualTo("userId", userId)
       .whereEqualTo("status", FriendshipStatus.FRIEND.name)
@@ -376,6 +379,7 @@ class ItineraryViewModel : ViewModel() {
                 val friendName = userDocument.getString("name") ?: "Unknown"
                 friendList.add(Friend(id = friendId, name = friendName))
                 _friends.value = friendList
+                _friendsCount.value = friendList.size
               }
               .addOnFailureListener { exception ->
                 exception.printStackTrace()
@@ -385,6 +389,37 @@ class ItineraryViewModel : ViewModel() {
       }
       .addOnFailureListener { exception ->
         exception.printStackTrace()
+      }
+  }
+
+  fun deleteItinerary(itineraryId: String, currentUserId: String, onSuccess: () -> Unit) {
+    firestore.collection("itineraries")
+      .whereEqualTo("itineraryId", itineraryId)
+      .get()
+      .addOnSuccessListener { querySnapshot ->
+        if (!querySnapshot.isEmpty) {
+          val document = querySnapshot.documents.first()
+          val itineraryOwnerId = document.getString("userId")
+
+          if (itineraryOwnerId == currentUserId) {
+            firestore.collection("itineraries").document(document.id)
+              .delete()
+              .addOnSuccessListener {
+                Log.d("ItineraryViewModel", "Itinerary deleted successfully: $itineraryId")
+                onSuccess()
+              }
+              .addOnFailureListener { exception ->
+                Log.e("ItineraryViewModel", "Failed to delete itinerary: ${exception.message}")
+              }
+          } else {
+            Log.e("ItineraryViewModel", "Unauthorized deletion attempt by userId: $currentUserId")
+          }
+        } else {
+          Log.e("ItineraryViewModel", "Itinerary not found: $itineraryId")
+        }
+      }
+      .addOnFailureListener { exception ->
+        Log.e("ItineraryViewModel", "Error finding itinerary: ${exception.message}")
       }
   }
 }

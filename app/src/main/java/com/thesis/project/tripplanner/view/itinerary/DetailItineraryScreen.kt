@@ -49,7 +49,9 @@ import coil.compose.rememberAsyncImagePainter
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.components.DestinationBottomSheet
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
+import com.thesis.project.tripplanner.view.dialog.DeleteItineraryDialog
 import com.thesis.project.tripplanner.view.dialog.RecommendationDialog
+import com.thesis.project.tripplanner.viewmodel.AuthViewModel
 import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 import kotlinx.coroutines.launch
 
@@ -58,6 +60,7 @@ import kotlinx.coroutines.launch
 fun DetailItineraryScreen(
     navController: NavController,
     itineraryViewModel: ItineraryViewModel,
+    authViewModel: AuthViewModel,
     itineraryId: String,
     currentUserId: String
 ) {
@@ -67,6 +70,7 @@ fun DetailItineraryScreen(
     var isRecommended by remember { mutableStateOf(false) }
     var isDialogVisible by remember { mutableStateOf(false) }
     var showOverlay by remember { mutableStateOf(false) }
+    var isDeleteDialogVisible by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
     val context = LocalContext.current
@@ -76,14 +80,17 @@ fun DetailItineraryScreen(
     }
 
     LaunchedEffect(selectedItinerary) {
+        Log.d("DetailItineraryScreen", "Selected itinerary: $selectedItinerary")
         selectedItinerary?.let {
             isLiked = it.likedBy.contains(currentUserId)
             isRecommended = it.recommendedBy.contains(currentUserId)
+            Log.d("DetailItineraryScreen", "UserId of selected itinerary: ${it.userId}")
         }
     }
 
     LaunchedEffect(itineraryId) {
         itineraryViewModel.loadItineraryById(currentUserId, itineraryId)
+        Log.d("DetailItineraryScreen", "Loading itineraryId: $itineraryId for user: $currentUserId")
     }
 
     Scaffold(
@@ -97,6 +104,22 @@ fun DetailItineraryScreen(
                             contentDescription = "Back",
                             modifier = Modifier.size(24.dp)
                         )
+                    }
+                },
+                actions = {
+                    selectedItinerary?.let { itinerary ->
+                        if (itinerary.userId == authViewModel.userId) {
+                            IconButton(
+                                onClick = { isDeleteDialogVisible = true }
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_remove),
+                                    contentDescription = "Delete Itinerary",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = Color.Red
+                                )
+                            }
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
@@ -155,7 +178,9 @@ fun DetailItineraryScreen(
                                 .size(20.dp)
                                 .clickable {
                                     isLiked = !isLiked
-                                    itineraryViewModel.updateLikeCount(itineraryId, currentUserId, isLiked)
+                                    itineraryViewModel.updateLikeCount(
+                                        itineraryId, currentUserId, isLiked
+                                    )
                                 }
                         )
                         Spacer(modifier = Modifier.width(16.dp))
@@ -210,6 +235,22 @@ fun DetailItineraryScreen(
                         Toast.makeText(context, "Itinerary berhasil direkomendasikan", Toast.LENGTH_SHORT).show()
                     },
                     onDismiss = { isDialogVisible = false }
+                )
+            }
+            if (isDeleteDialogVisible) {
+                DeleteItineraryDialog(
+                    onConfirm = {
+                        isDeleteDialogVisible = false
+                        itineraryViewModel.deleteItinerary(itineraryId, currentUserId) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.itinerary_deleted),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            navController.navigate("profile")
+                        }
+                    },
+                    onDismiss = { isDeleteDialogVisible = false }
                 )
             }
         }

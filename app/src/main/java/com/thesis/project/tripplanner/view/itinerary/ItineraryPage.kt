@@ -403,7 +403,7 @@ fun ItineraryPage(
           "Rencana perjalanan Anda berhasil dibuat",
           Toast.LENGTH_SHORT
         ).show()
-        navController.popBackStack()
+        navController.navigate("home")
       },
       onDismiss = {
         showDialog = false

@@ -271,48 +271,41 @@ class ItineraryViewModel : ViewModel() {
       }
   }
 
-  fun loadFriends(userId: String) {
-    firestore.collection("friends")
-      .whereEqualTo("userId", userId)
-      .get()
-      .addOnSuccessListener { result ->
-        val friendList = result.documents.mapNotNull { it.toObject(Friend::class.java) }
-        _friends.value = friendList
-      }
-      .addOnFailureListener { exception ->
-        exception.printStackTrace()
-      }
-  }
-
-  fun checkFriendshipStatus(currentUserId: String, targetUserId: String) {
-    firestore.collection("friendships")
-      .whereEqualTo("userId", currentUserId)
-      .whereEqualTo("friendId", targetUserId)
-      .get()
-      .addOnSuccessListener { querySnapshot ->
-        _friendshipStatus.value = when {
-          querySnapshot.isEmpty -> FriendshipStatus.NOT_FRIEND
-          querySnapshot.documents.first().getBoolean("isFriend") == true -> FriendshipStatus.FRIEND
-          else -> FriendshipStatus.REQUEST_SENT
-        }
-      }
-      .addOnFailureListener {
-        _friendshipStatus.value = FriendshipStatus.NOT_FRIEND
-      }
-  }
-
-  fun addFriend(currentUserId: String, targetUserId: String) {
+  fun sendFriendRequest(currentUserId: String, targetUserId: String) {
     firestore.collection("friendships").add(
       mapOf(
         "userId" to currentUserId,
         "friendId" to targetUserId,
-        "isFriend" to false
+        "status" to FriendshipStatus.REQUEST_SENT.name
       )
     ).addOnSuccessListener {
       _friendshipStatus.value = FriendshipStatus.REQUEST_SENT
     }.addOnFailureListener {
-      Log.e("AddFriend", "Failed to send friend request: ${it.message}")
+      Log.e("ItineraryViewModel", "Failed to send friend request: ${it.message}")
     }
+  }
+
+  fun acceptFriendRequest(currentUserId: String, targetUserId: String) {
+    firestore.collection("friendships")
+      .whereEqualTo("userId", targetUserId)
+      .whereEqualTo("friendId", currentUserId)
+      .get()
+      .addOnSuccessListener { querySnapshot ->
+        val document = querySnapshot.documents.firstOrNull()
+        document?.reference?.update("status", FriendshipStatus.FRIEND.name)
+
+        firestore.collection("friendships").add(
+          mapOf(
+            "userId" to currentUserId,
+            "friendId" to targetUserId,
+            "status" to FriendshipStatus.FRIEND.name
+          )
+        ).addOnSuccessListener {
+          _friendshipStatus.value = FriendshipStatus.FRIEND
+        }
+      }.addOnFailureListener {
+        Log.e("ItineraryViewModel", "Failed to accept friend request: ${it.message}")
+      }
   }
 
   fun cancelFriendRequest(currentUserId: String, targetUserId: String) {
@@ -323,30 +316,75 @@ class ItineraryViewModel : ViewModel() {
       .addOnSuccessListener { querySnapshot ->
         querySnapshot.documents.firstOrNull()?.reference?.delete()
         _friendshipStatus.value = FriendshipStatus.NOT_FRIEND
-      }
-      .addOnFailureListener {
-        Log.e("CancelFriendRequest", "Failed to cancel friend request: ${it.message}")
+      }.addOnFailureListener {
+        Log.e("ItineraryViewModel", "Failed to cancel friend request: ${it.message}")
       }
   }
 
-  fun acceptFriendRequest(currentUserId: String, targetUserId: String) {
+  fun checkFriendshipStatus(currentUserId: String, targetUserId: String) {
     firestore.collection("friendships")
-      .whereEqualTo("userId", targetUserId)
-      .whereEqualTo("friendId", currentUserId)
+      .whereEqualTo("userId", currentUserId)
+      .whereEqualTo("friendId", targetUserId)
       .get()
       .addOnSuccessListener { querySnapshot ->
-        querySnapshot.documents.firstOrNull()?.reference?.update("isFriend", true)
-        firestore.collection("friendships").add(
-          mapOf(
-            "userId" to currentUserId,
-            "friendId" to targetUserId,
-            "isFriend" to true
-          )
-        )
-        _friendshipStatus.value = FriendshipStatus.FRIEND
+        val status = querySnapshot.documents.firstOrNull()?.getString("status")
+        if (status == FriendshipStatus.REQUEST_SENT.name) {
+          _friendshipStatus.value = FriendshipStatus.REQUEST_SENT
+        } else if (status == FriendshipStatus.FRIEND.name) {
+          _friendshipStatus.value = FriendshipStatus.FRIEND
+        } else {
+          // Periksa apakah targetUserId mengirim permintaan ke currentUserId
+          firestore.collection("friendships")
+            .whereEqualTo("userId", targetUserId)
+            .whereEqualTo("friendId", currentUserId)
+            .get()
+            .addOnSuccessListener { reverseSnapshot ->
+              val reverseStatus = reverseSnapshot.documents.firstOrNull()?.getString("status")
+              if (reverseStatus == FriendshipStatus.REQUEST_SENT.name) {
+                _friendshipStatus.value = FriendshipStatus.ACCEPT_REQUEST
+              } else if (reverseStatus == FriendshipStatus.FRIEND.name) {
+                _friendshipStatus.value = FriendshipStatus.FRIEND
+              } else {
+                _friendshipStatus.value = FriendshipStatus.NOT_FRIEND
+              }
+            }
+            .addOnFailureListener {
+              _friendshipStatus.value = FriendshipStatus.NOT_FRIEND
+            }
+        }
       }
       .addOnFailureListener {
-        Log.e("AcceptFriendRequest", "Failed to accept friend request: ${it.message}")
+        _friendshipStatus.value = FriendshipStatus.NOT_FRIEND
+      }
+  }
+
+  fun loadFriends(userId: String) {
+    _friends.value = emptyList() // Kosongkan daftar teman sebelum memuat data
+    firestore.collection("friendships")
+      .whereEqualTo("userId", userId)
+      .whereEqualTo("status", FriendshipStatus.FRIEND.name)
+      .get()
+      .addOnSuccessListener { result ->
+        val friendList = mutableListOf<Friend>()
+        result.documents.forEach { document ->
+          val friendId = document.getString("friendId")
+          if (friendId != null) {
+            firestore.collection("users")
+              .document(friendId)
+              .get()
+              .addOnSuccessListener { userDocument ->
+                val friendName = userDocument.getString("name") ?: "Unknown"
+                friendList.add(Friend(id = friendId, name = friendName))
+                _friends.value = friendList
+              }
+              .addOnFailureListener { exception ->
+                exception.printStackTrace()
+              }
+          }
+        }
+      }
+      .addOnFailureListener { exception ->
+        exception.printStackTrace()
       }
   }
 }

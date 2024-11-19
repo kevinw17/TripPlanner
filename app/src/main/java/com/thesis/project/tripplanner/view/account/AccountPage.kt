@@ -95,7 +95,8 @@ fun AccountPage(
       AccountOption(
         iconRes = R.drawable.ic_friends,
         label = stringResource(R.string.friends),
-        onClick = { navController.navigate("friends") }
+        onClick = { navController.navigate("friends")
+        }
       )
 
       Divider(

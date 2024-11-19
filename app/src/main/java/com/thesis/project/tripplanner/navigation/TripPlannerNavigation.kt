@@ -112,7 +112,9 @@ fun TripPlannerNavigation(
       }
       composable("friends") {
         FriendsPage(
-          navController = navController
+          navController = navController,
+          itineraryViewModel = itineraryViewModel,
+          currentUserId = authViewModel.userId ?: ""
         )
       }
       composable("edit_profile") {

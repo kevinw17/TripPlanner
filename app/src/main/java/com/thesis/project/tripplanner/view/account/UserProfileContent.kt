@@ -27,18 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.data.Itinerary
 import com.thesis.project.tripplanner.view.dialog.CancelFriendRequestDialog
 import com.thesis.project.tripplanner.view.itinerary.ItineraryCard
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun UserProfileContent(
@@ -50,10 +46,11 @@ fun UserProfileContent(
   friendsCount: Int,
   friendStatus: FriendshipStatus,
   itineraries: List<Itinerary>,
+  isCancelDialogVisible: Boolean,
   onAddFriend: () -> Unit,
   onCancelRequest: () -> Unit,
+  onAcceptFriendRequest: () -> Unit,
   onStartChat: () -> Unit,
-  isCancelDialogVisible: Boolean,
   onConfirmCancelRequest: () -> Unit,
   onDismissCancelDialog: () -> Unit,
   paddingValues: PaddingValues
@@ -164,9 +161,23 @@ fun UserProfileContent(
               contentColor = Color.Black
             ),
             shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, Color.Gray)
+            border = BorderStroke(1.dp, Color.Black)
           ) {
             Text(text = "Request Sent")
+          }
+        }
+        FriendshipStatus.ACCEPT_REQUEST -> {
+          Button(
+            onClick = onAcceptFriendRequest,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+              containerColor = Color(0xFFDFF9FF),
+              contentColor = Color.Black
+            ),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, Color.Black)
+          ) {
+            Text(text = "Accept Request")
           }
         }
         FriendshipStatus.FRIEND -> {
@@ -174,18 +185,18 @@ fun UserProfileContent(
             onClick = onStartChat,
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-              containerColor = Color.Blue,
+              containerColor = Color(0xFF005FED),
               contentColor = Color.White
             ),
-            shape = RoundedCornerShape(24.dp)
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, Color.Black)
           ) {
-            Text(text = "Start Chat")
+            Text(text = "Start to Chat")
           }
         }
       }
     }
 
-    // Section: Itineraries Created
     item {
       Text(
         text = "Itineraries Created",
@@ -218,7 +229,6 @@ fun UserProfileContent(
         )
       }
 
-      // See All Button
       item {
         Text(
           text = "See All",
@@ -234,7 +244,6 @@ fun UserProfileContent(
     }
   }
 
-  // Dialog for Cancel Friend Request
   if (isCancelDialogVisible) {
     CancelFriendRequestDialog(
       onConfirm = onConfirmCancelRequest,

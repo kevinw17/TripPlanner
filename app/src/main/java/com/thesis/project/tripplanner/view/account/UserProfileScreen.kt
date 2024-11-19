@@ -43,13 +43,22 @@ fun UserProfileScreen(
   val profileImageUrl by authViewModel.profileImageUrl.collectAsState()
   val itineraries by itineraryViewModel.itineraries.collectAsState()
   val itinerariesCount by itineraryViewModel.itineraryCount.collectAsState()
+  val friends by itineraryViewModel.friends.collectAsState()
   val friendshipStatus by itineraryViewModel.friendshipStatus.collectAsState()
   var isCancelDialogVisible by remember { mutableStateOf(false) }
 
   LaunchedEffect(targetUserId) {
     if (targetUserId.isNotEmpty()) {
-      Log.d("UserProfileScreen", "Target userId: $targetUserId")
+      itineraryViewModel.clearItineraries()
       authViewModel.loadUserProfileById(targetUserId)
+      itineraryViewModel.loadItineraries(targetUserId)
+      itineraryViewModel.checkFriendshipStatus(currentUserId, targetUserId)
+    }
+  }
+
+  LaunchedEffect(friendshipStatus) {
+    if (friendshipStatus == FriendshipStatus.FRIEND) {
+      itineraryViewModel.loadFriends(currentUserId)
     }
   }
 
@@ -87,13 +96,14 @@ fun UserProfileScreen(
       profileImageUrl = profileImageUrl.toString(),
       bio = bio,
       itinerariesCount = itinerariesCount,
-      friendsCount = 10,
+      friendsCount = friends.size,
       friendStatus = friendshipStatus,
       itineraries = itineraries,
-      onAddFriend = { itineraryViewModel.addFriend(currentUserId, targetUserId) },
-      onCancelRequest = { isCancelDialogVisible = true },
-      onStartChat = { navController.navigate("chat_room/$targetUserId") },
       isCancelDialogVisible = isCancelDialogVisible,
+      onAddFriend = { itineraryViewModel.sendFriendRequest(currentUserId, targetUserId) },
+      onCancelRequest = { isCancelDialogVisible = true },
+      onAcceptFriendRequest = { itineraryViewModel.acceptFriendRequest(currentUserId, targetUserId) },
+      onStartChat = { navController.navigate("chat_room/$targetUserId") },
       onConfirmCancelRequest = {
         itineraryViewModel.cancelFriendRequest(currentUserId, targetUserId)
         isCancelDialogVisible = false

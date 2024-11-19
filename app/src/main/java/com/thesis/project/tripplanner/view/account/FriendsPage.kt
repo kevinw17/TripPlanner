@@ -20,6 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,20 +34,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
+import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 
-data class Friend(val name: String)
+data class Friend(val id: String, val name: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FriendsPage(
   navController: NavController,
-  friends: List<Friend> = listOf(
-    Friend("Brian"), Friend("Charlie"), Friend("David"),
-    Friend("Fred"), Friend("George"), Friend("Ian"),
-    Friend("Jack"), Friend("Ryan"), Friend("Fredy"),
-    Friend("Paul"), Friend("Steph"), Friend("Jacky")
-  )
+  itineraryViewModel: ItineraryViewModel,
+  currentUserId: String
 ) {
+  val friends by itineraryViewModel.friends.collectAsState()
+
+  LaunchedEffect(Unit) {
+    itineraryViewModel.loadFriends(currentUserId)
+  }
+
   Scaffold(
     topBar = {
       TopAppBar(
@@ -91,7 +97,9 @@ fun FriendsPage(
         modifier = Modifier.fillMaxSize()
       ) {
         items(friends) { friend ->
-          FriendsList(friend)
+          FriendsList(friend = friend) { friendId ->
+            navController.navigate("user_profile_screen/$friendId")
+          }
         }
       }
     }
@@ -99,12 +107,15 @@ fun FriendsPage(
 }
 
 @Composable
-fun FriendsList(friend: Friend) {
+fun FriendsList(
+  friend: Friend,
+  onFriendClick: (String) -> Unit
+) {
   Row(
     modifier = Modifier
       .fillMaxWidth()
       .padding(vertical = 8.dp)
-      .clickable {  },
+      .clickable { onFriendClick(friend.id) },
     verticalAlignment = Alignment.CenterVertically
   ) {
     Icon(

@@ -27,11 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.data.Itinerary
 import com.thesis.project.tripplanner.view.dialog.CancelFriendRequestDialog
 import com.thesis.project.tripplanner.view.itinerary.ItineraryCard
@@ -109,7 +111,7 @@ fun UserProfileContent(
                 fontSize = 16.sp
               )
               androidx.compose.material.Text(
-                text = "Itineraries",
+                text = stringResource(R.string.itineraries),
                 fontSize = 18.sp,
                 color = Color.Gray
               )
@@ -120,7 +122,11 @@ fun UserProfileContent(
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
               )
-              androidx.compose.material.Text(text = "Friends", fontSize = 18.sp, color = Color.Gray)
+              androidx.compose.material.Text(
+                text = stringResource(R.string.friends),
+                fontSize = 18.sp,
+                color = Color.Gray
+              )
             }
           }
         }
@@ -149,7 +155,7 @@ fun UserProfileContent(
             shape = RoundedCornerShape(24.dp),
             border = BorderStroke(1.dp, Color.Black)
           ) {
-            Text(text = "Add Friend")
+            Text(text = stringResource(R.string.add_friend))
           }
         }
         FriendshipStatus.REQUEST_SENT -> {
@@ -163,7 +169,7 @@ fun UserProfileContent(
             shape = RoundedCornerShape(24.dp),
             border = BorderStroke(1.dp, Color.Black)
           ) {
-            Text(text = "Request Sent")
+            Text(text = stringResource(R.string.request_has_been_sent))
           }
         }
         FriendshipStatus.ACCEPT_REQUEST -> {
@@ -177,7 +183,7 @@ fun UserProfileContent(
             shape = RoundedCornerShape(24.dp),
             border = BorderStroke(1.dp, Color.Black)
           ) {
-            Text(text = "Accept Request")
+            Text(text = stringResource(R.string.accept_request))
           }
         }
         FriendshipStatus.FRIEND -> {
@@ -191,7 +197,7 @@ fun UserProfileContent(
             shape = RoundedCornerShape(24.dp),
             border = BorderStroke(1.dp, Color.Black)
           ) {
-            Text(text = "Start to Chat")
+            Text(text = stringResource(R.string.start_to_chat))
           }
         }
       }
@@ -199,7 +205,7 @@ fun UserProfileContent(
 
     item {
       Text(
-        text = "Itineraries Created",
+        text = stringResource(R.string.itineraries_created),
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
         modifier = Modifier.padding(vertical = 8.dp)
@@ -209,7 +215,7 @@ fun UserProfileContent(
     if (itineraries.isEmpty()) {
       item {
         Text(
-          text = "No itineraries created.",
+          text = stringResource(R.string.no_itineraries_created),
           fontSize = 14.sp,
           color = Color.Gray,
           modifier = Modifier.fillMaxWidth(),
@@ -231,7 +237,7 @@ fun UserProfileContent(
 
       item {
         Text(
-          text = "See All",
+          text = stringResource(R.string.lihat_semua),
           fontSize = 14.sp,
           color = Color.Blue,
           modifier = Modifier
@@ -251,6 +257,3 @@ fun UserProfileContent(
     )
   }
 }
-
-
-

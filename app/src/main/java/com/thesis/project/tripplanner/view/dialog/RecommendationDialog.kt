@@ -37,7 +37,11 @@ fun RecommendationDialog(
       )
     },
     confirmButton = {
-      Row(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+      Row(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(bottom = 8.dp)
+      ) {
         Button(
           onClick = { onDismiss() },
           modifier = Modifier.weight(1f).padding(start = 8.dp, end = 4.dp),
@@ -51,7 +55,7 @@ fun RecommendationDialog(
           ),
           shape = RoundedCornerShape(8.dp)
         ) {
-          Text("No")
+          Text(stringResource(R.string.no))
         }
         Button(
           onClick = { onConfirm() },
@@ -66,7 +70,7 @@ fun RecommendationDialog(
           ),
           shape = RoundedCornerShape(8.dp)
         ) {
-          Text("Yes")
+          Text(stringResource(R.string.yes))
         }
       }
     }

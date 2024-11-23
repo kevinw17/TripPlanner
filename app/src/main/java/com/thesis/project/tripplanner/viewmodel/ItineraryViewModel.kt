@@ -1,22 +1,18 @@
 package com.thesis.project.tripplanner.viewmodel
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.thesis.project.tripplanner.data.Comment
 import com.thesis.project.tripplanner.data.Destination
+import com.thesis.project.tripplanner.data.Friend
 import com.thesis.project.tripplanner.data.Itinerary
 import com.thesis.project.tripplanner.data.OtherUserItinerary
-import com.thesis.project.tripplanner.view.account.Friend
 import com.thesis.project.tripplanner.view.account.FriendshipStatus
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class ItineraryViewModel : ViewModel() {
@@ -95,9 +91,7 @@ class ItineraryViewModel : ViewModel() {
       likeCount = 0,
       recommendationCount = 0)
     firestore.collection("itineraries").add(itinerary)
-      .addOnSuccessListener {
-        //Will add implementation later
-      }
+      .addOnSuccessListener {}
       .addOnFailureListener { exception ->
         exception.printStackTrace()
       }
@@ -177,7 +171,6 @@ class ItineraryViewModel : ViewModel() {
       .whereEqualTo("userId", userId)
       .addSnapshotListener { querySnapshot, exception ->
         if (exception != null) {
-          Log.e("DetailItinerary", "Error listening to itinerary changes: ${exception.message}")
           return@addSnapshotListener
         }
 
@@ -187,14 +180,6 @@ class ItineraryViewModel : ViewModel() {
 
           val selected = itineraryList.find { it.itineraryId == itineraryId }
           _selectedItinerary.value = selected
-
-          if (selected != null) {
-            Log.d("DetailItinerary", "Real-time itinerary update: $selected")
-          } else {
-            Log.d("DetailItinerary", "Itinerary not found for id: $itineraryId")
-          }
-        } else {
-          Log.d("DetailItinerary", "No itineraries found for userId: $userId")
         }
       }
   }
@@ -225,17 +210,14 @@ class ItineraryViewModel : ViewModel() {
                 "likedBy" to likedBy.filter { it != userId }
               ))
             }
-          }.addOnSuccessListener {
-            Log.d("DetailItinerary", "Like count updated for itinerary: $itineraryId")
-          }.addOnFailureListener { exception ->
-            Log.e("DetailItinerary", "Error updating like count: ${exception.message}")
+          }.addOnSuccessListener {}
+            .addOnFailureListener { exception ->
+            exception.printStackTrace()
           }
-        } else {
-          Log.e("DetailItinerary", "Itinerary not found for userId: $userId and itineraryId: $itineraryId")
         }
       }
       .addOnFailureListener { exception ->
-        Log.e("DetailItinerary", "Error querying itinerary: ${exception.message}")
+        exception.printStackTrace()
       }
   }
 
@@ -246,7 +228,7 @@ class ItineraryViewModel : ViewModel() {
       .get()
       .addOnSuccessListener { querySnapshot ->
         if (!querySnapshot.isEmpty) {
-          val documentId = querySnapshot.documents[0].id // Get the Firestore document ID
+          val documentId = querySnapshot.documents[0].id
           val itineraryRef = firestore.collection("itineraries").document(documentId)
 
           firestore.runTransaction { transaction ->
@@ -265,17 +247,14 @@ class ItineraryViewModel : ViewModel() {
                 "recommendedBy" to recommendedBy.filter { it != userId }
               ))
             }
-          }.addOnSuccessListener {
-            Log.d("DetailItinerary", "Recommendation count updated for itinerary: $itineraryId")
-          }.addOnFailureListener { exception ->
-            Log.e("DetailItinerary", "Error updating recommendation count: ${exception.message}")
+          }.addOnSuccessListener {}
+            .addOnFailureListener { exception ->
+            exception.printStackTrace()
           }
-        } else {
-          Log.e("DetailItinerary", "Itinerary not found for userId: $userId and itineraryId: $itineraryId")
         }
       }
       .addOnFailureListener { exception ->
-        Log.e("DetailItinerary", "Error querying itinerary: ${exception.message}")
+        exception.printStackTrace()
       }
   }
 
@@ -288,8 +267,8 @@ class ItineraryViewModel : ViewModel() {
       )
     ).addOnSuccessListener {
       _friendshipStatus.value = FriendshipStatus.REQUEST_SENT
-    }.addOnFailureListener {
-      Log.e("ItineraryViewModel", "Failed to send friend request: ${it.message}")
+    }.addOnFailureListener { exception ->
+      exception.printStackTrace()
     }
   }
 
@@ -311,8 +290,8 @@ class ItineraryViewModel : ViewModel() {
         ).addOnSuccessListener {
           _friendshipStatus.value = FriendshipStatus.FRIEND
         }
-      }.addOnFailureListener {
-        Log.e("ItineraryViewModel", "Failed to accept friend request: ${it.message}")
+      }.addOnFailureListener { exception ->
+        exception.printStackTrace()
       }
   }
 
@@ -324,8 +303,8 @@ class ItineraryViewModel : ViewModel() {
       .addOnSuccessListener { querySnapshot ->
         querySnapshot.documents.firstOrNull()?.reference?.delete()
         _friendshipStatus.value = FriendshipStatus.NOT_FRIEND
-      }.addOnFailureListener {
-        Log.e("ItineraryViewModel", "Failed to cancel friend request: ${it.message}")
+      }.addOnFailureListener { exception ->
+        exception.printStackTrace()
       }
   }
 
@@ -341,7 +320,6 @@ class ItineraryViewModel : ViewModel() {
         } else if (status == FriendshipStatus.FRIEND.name) {
           _friendshipStatus.value = FriendshipStatus.FRIEND
         } else {
-          // Periksa apakah targetUserId mengirim permintaan ke currentUserId
           firestore.collection("friendships")
             .whereEqualTo("userId", targetUserId)
             .whereEqualTo("friendId", currentUserId)
@@ -410,21 +388,16 @@ class ItineraryViewModel : ViewModel() {
             firestore.collection("itineraries").document(document.id)
               .delete()
               .addOnSuccessListener {
-                Log.d("ItineraryViewModel", "Itinerary deleted successfully: $itineraryId")
                 onSuccess()
               }
               .addOnFailureListener { exception ->
-                Log.e("ItineraryViewModel", "Failed to delete itinerary: ${exception.message}")
+                exception.printStackTrace()
               }
-          } else {
-            Log.e("ItineraryViewModel", "Unauthorized deletion attempt by userId: $currentUserId")
           }
-        } else {
-          Log.e("ItineraryViewModel", "Itinerary not found: $itineraryId")
         }
       }
       .addOnFailureListener { exception ->
-        Log.e("ItineraryViewModel", "Error finding itinerary: ${exception.message}")
+        exception.printStackTrace()
       }
   }
 
@@ -460,10 +433,10 @@ class ItineraryViewModel : ViewModel() {
     username: String,
     commentText: String,
     profileImageUrl: String?,
-    userId: String // Pastikan ini adalah ID user yang sedang login
+    userId: String
   ) {
     val comment = mapOf(
-      "userId" to userId, // Simpan ID user di komentar
+      "userId" to userId,
       "username" to username,
       "profileImageUrl" to profileImageUrl,
       "commentText" to commentText,
@@ -472,17 +445,13 @@ class ItineraryViewModel : ViewModel() {
 
     firestore.collection("comments").document(itineraryId)
       .update("comments", FieldValue.arrayUnion(comment))
-      .addOnSuccessListener {
-        Log.d("ItineraryViewModel", "Comment added successfully")
-      }
+      .addOnSuccessListener {}
       .addOnFailureListener { exception ->
         firestore.collection("comments").document(itineraryId)
           .set(mapOf("comments" to listOf(comment)))
-          .addOnSuccessListener {
-            Log.d("ItineraryViewModel", "Comment added and document created successfully")
-          }
+          .addOnSuccessListener {}
           .addOnFailureListener { innerException ->
-            Log.e("ItineraryViewModel", "Error creating document: ${innerException.message}")
+            exception.printStackTrace()
           }
       }
   }
@@ -490,11 +459,9 @@ class ItineraryViewModel : ViewModel() {
   fun deleteComment(itineraryId: String, comment: Comment) {
     firestore.collection("comments").document(itineraryId)
       .update("comments", FieldValue.arrayRemove(comment))
-      .addOnSuccessListener {
-        Log.d("ItineraryViewModel", "Comment deleted successfully")
-      }
+      .addOnSuccessListener {}
       .addOnFailureListener { exception ->
-        Log.e("ItineraryViewModel", "Error deleting comment: ${exception.message}")
+        exception.printStackTrace()
       }
   }
 }

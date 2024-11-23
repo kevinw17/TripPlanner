@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,14 +49,13 @@ fun EditProfilePictureBottomSheet(
       )
       Spacer(modifier = Modifier.width(8.dp))
       Text(
-        text = "New profile picture",
+        text = stringResource(R.string.foto_profil_baru),
         fontSize = 16.sp,
         color = Color.Black
       )
     }
     Divider()
 
-    // Remove profile picture option
     Row(
       modifier = Modifier
         .fillMaxWidth()
@@ -65,13 +65,13 @@ fun EditProfilePictureBottomSheet(
     ) {
       Icon(
         painter = painterResource(R.drawable.ic_remove),
-        contentDescription = "Remove profile picture",
+        contentDescription = stringResource(R.string.hapus_foto_profil),
         tint = Color.Red,
         modifier = Modifier.size(24.dp)
       )
       Spacer(modifier = Modifier.width(8.dp))
       Text(
-        text = "Remove profile picture",
+        text = stringResource(R.string.hapus_foto_profil),
         fontSize = 16.sp,
         color = Color.Red
       )
@@ -83,7 +83,7 @@ fun EditProfilePictureBottomSheet(
 @Composable
 fun EditProfilePictureBottomSheetPreview() {
   EditProfilePictureBottomSheet(
-    onNewProfilePicture = { /* Handle new profile picture */ },
-    onRemoveProfilePicture = { /* Handle remove profile picture */ }
+    onNewProfilePicture = {},
+    onRemoveProfilePicture = {}
   )
 }

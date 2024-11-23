@@ -52,8 +52,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.components.DestinationBottomSheet
 import com.thesis.project.tripplanner.utils.Utils
@@ -151,7 +149,11 @@ fun ItineraryPage(
             fontWeight = FontWeight.Bold
           )
         }, navigationIcon = {
-          IconButton(onClick = { navController.popBackStack() }) {
+          IconButton(
+            onClick = {
+              navController.popBackStack()
+            }
+          ) {
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
@@ -162,13 +164,15 @@ fun ItineraryPage(
         )
       },
       sheetContent = {
-        DestinationBottomSheet(destinations = destinationsList.map { it.name }) { destination ->
-          if (destination !in selectedDestination) {
-            selectedDestination = selectedDestination + destination
+        DestinationBottomSheet(
+          destinations = destinationsList.map { it.name }) { destination ->
+            if (destination !in selectedDestination) {
+              selectedDestination = selectedDestination + destination
+            }
+            coroutineScope.launch { scaffoldState.bottomSheetState.partialExpand() }
           }
-          coroutineScope.launch { scaffoldState.bottomSheetState.partialExpand() }
-        }
-      }, sheetPeekHeight = 0.dp
+      },
+      sheetPeekHeight = 0.dp
     ) { paddingValues ->
       Box(
         modifier = Modifier
@@ -188,9 +192,13 @@ fun ItineraryPage(
           }
 
           item {
-            Text(text = stringResource(R.string.judul_trip), color = Color.Black)
+            Text(
+              text = stringResource(R.string.judul_trip),
+              color = Color.Black
+            )
             Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(value = title,
+            OutlinedTextField(
+              value = title,
               onValueChange = { title = it },
               placeholder = { Text(stringResource(R.string.masukkan_judul)) },
               modifier = Modifier.fillMaxWidth(),
@@ -207,7 +215,10 @@ fun ItineraryPage(
           }
 
           item {
-            Text(text = stringResource(R.string.deskripsi), color = Color.Black)
+            Text(
+              text = stringResource(R.string.deskripsi),
+              color = Color.Black
+            )
             Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
               value = description,
@@ -228,9 +239,13 @@ fun ItineraryPage(
           }
 
           item {
-            Text(text = stringResource(R.string.tanggal_pergi), color = Color.Black)
+            Text(
+              text = stringResource(R.string.tanggal_pergi),
+              color = Color.Black
+            )
             Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(value = startDate,
+            OutlinedTextField(
+              value = startDate,
               onValueChange = {},
               placeholder = { Text(stringResource(R.string.pilih_tanggal_pergi)) },
               modifier = Modifier
@@ -258,9 +273,13 @@ fun ItineraryPage(
           }
 
           item {
-            Text(text = stringResource(R.string.tanggal_pulang), color = Color.Black)
+            Text(
+              text = stringResource(R.string.tanggal_pulang),
+              color = Color.Black
+            )
             Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(value = endDate,
+            OutlinedTextField(
+              value = endDate,
               onValueChange = {},
               placeholder = { Text(stringResource(R.string.pilih_tanggal_pulang)) },
               modifier = Modifier
@@ -288,7 +307,10 @@ fun ItineraryPage(
           }
 
           item {
-            Text(text = stringResource(R.string.tujuan), color = Color.Black)
+            Text(
+              text = stringResource(R.string.tujuan),
+              color = Color.Black
+            )
             Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
               value = Utils.EMPTY,

@@ -83,14 +83,29 @@ fun ChatRoomScreen(
       TopAppBar(
         title = {
           Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(painter = painterResource(R.drawable.ic_user_profile), contentDescription = "User Avatar", modifier = Modifier.size(24.dp))
+            Icon(
+              painter = painterResource(R.drawable.ic_user_profile),
+              contentDescription = "User Avatar",
+              modifier = Modifier.size(24.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = otherUserName, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Text(
+              text = otherUserName,
+              fontWeight = FontWeight.Bold,
+              fontSize = 20.sp
+            )
           }
         },
         navigationIcon = {
-          IconButton(onClick = { navController.popBackStack() }) {
-            Icon(painter = painterResource(R.drawable.ic_arrow_left), contentDescription = "Back", modifier = Modifier.size(24.dp))
+          IconButton(
+            onClick = {
+              navController.popBackStack()
+            }
+          ) {
+            Icon(
+              painter = painterResource(R.drawable.ic_arrow_left),
+              contentDescription = "Back",
+              modifier = Modifier.size(24.dp))
           }
         },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)

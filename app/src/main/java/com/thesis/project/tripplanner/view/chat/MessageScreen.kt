@@ -70,7 +70,11 @@ fun MessagesScreen(
           )
         },
         navigationIcon = {
-          IconButton(onClick = { navController.popBackStack() }) {
+          IconButton(
+            onClick = {
+              navController.popBackStack()
+            }
+          ) {
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",

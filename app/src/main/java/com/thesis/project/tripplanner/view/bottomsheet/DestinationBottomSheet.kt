@@ -13,8 +13,10 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.thesis.project.tripplanner.R
 
 @Composable
 fun DestinationBottomSheet(
@@ -22,7 +24,7 @@ fun DestinationBottomSheet(
   onSelect: (String) -> Unit
 ) {
   Column(modifier = Modifier.padding(16.dp)) {
-    Text(text = "Select destinations", fontSize = 18.sp)
+    Text(text = stringResource(R.string.pilih_destinasi), fontSize = 18.sp)
     Spacer(modifier = Modifier.height(8.dp))
   }
 

@@ -61,7 +61,11 @@ fun EditProfileScreen(
           )
         },
         navigationIcon = {
-          IconButton(onClick = { navController.popBackStack() }) {
+          IconButton(
+            onClick = {
+              navController.popBackStack()
+            }
+          ) {
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
@@ -91,7 +95,9 @@ fun EditProfileScreen(
       OutlinedTextField(
         value = username,
         onValueChange = {},
-        placeholder = { Text(stringResource(R.string.name)) },
+        placeholder = {
+          Text(stringResource(R.string.name))
+        },
         enabled = false,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
@@ -111,7 +117,9 @@ fun EditProfileScreen(
       OutlinedTextField(
         value = bioState.value,
         onValueChange = { bioState.value = it },
-        placeholder = { Text(stringResource(R.string.bio)) },
+        placeholder = {
+          Text(stringResource(R.string.bio))
+        },
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp)
       )
@@ -130,7 +138,10 @@ fun EditProfileScreen(
           .fillMaxWidth()
           .padding(horizontal = 16.dp)
       ) {
-        Text(text = stringResource(R.string.save_changes), fontSize = 16.sp)
+        Text(
+          text = stringResource(R.string.save_changes),
+          fontSize = 16.sp
+        )
       }
     }
   }

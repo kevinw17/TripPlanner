@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.thesis.project.tripplanner.utils.Utils
 import com.thesis.project.tripplanner.view.account.AccountPage
 import com.thesis.project.tripplanner.view.account.ChangePasswordScreen
 import com.thesis.project.tripplanner.view.account.EditProfileScreen
@@ -84,7 +85,7 @@ fun TripPlannerNavigation(
         )
       }
       composable("suggestion/{destinationName}") { backStackEntry ->
-        val destinationName = backStackEntry.arguments?.getString("destinationName") ?: ""
+        val destinationName = backStackEntry.arguments?.getString("destinationName") ?: Utils.EMPTY
         SuggestionPage(
           navController = navController,
           itineraryViewModel = itineraryViewModel,
@@ -114,7 +115,7 @@ fun TripPlannerNavigation(
         FriendsPage(
           navController = navController,
           itineraryViewModel = itineraryViewModel,
-          currentUserId = authViewModel.userId ?: ""
+          currentUserId = authViewModel.userId ?: Utils.EMPTY
         )
       }
       composable("edit_profile") {
@@ -134,12 +135,12 @@ fun TripPlannerNavigation(
         )
       }
       composable("user_profile_screen/{userId}") { backStackEntry ->
-        val userId = backStackEntry.arguments?.getString("userId") ?: ""
+        val userId = backStackEntry.arguments?.getString("userId") ?: Utils.EMPTY
         UserProfileScreen(
           navController = navController,
           itineraryViewModel = itineraryViewModel,
           authViewModel = authViewModel,
-          currentUserId = authViewModel.userId ?: "",
+          currentUserId = authViewModel.userId ?: Utils.EMPTY,
           targetUserId = userId
         )
       }
@@ -154,7 +155,7 @@ fun TripPlannerNavigation(
         MessagesScreen(
           navController = navController,
           chatViewModel = chatViewModel,
-          currentUserId = authViewModel.userId ?: ""
+          currentUserId = authViewModel.userId ?: Utils.EMPTY
         )
       }
       composable(
@@ -164,8 +165,8 @@ fun TripPlannerNavigation(
           navArgument("itineraryId") { type = NavType.StringType }
         )
       ) { backStackEntry ->
-        val userId = backStackEntry.arguments?.getString("userId") ?: ""
-        val itineraryId = backStackEntry.arguments?.getString("itineraryId") ?: ""
+        val userId = backStackEntry.arguments?.getString("userId") ?: Utils.EMPTY
+        val itineraryId = backStackEntry.arguments?.getString("itineraryId") ?: Utils.EMPTY
 
         DetailItineraryScreen(
           navController = navController,
@@ -181,7 +182,7 @@ fun TripPlannerNavigation(
           navArgument("userId") { type = NavType.StringType }
         )
       ) { backStackEntry ->
-        val otherUserId = backStackEntry.arguments?.getString("userId") ?: ""
+        val otherUserId = backStackEntry.arguments?.getString("userId") ?: Utils.EMPTY
         ChatRoomScreen(
           navController = navController,
           chatViewModel = chatViewModel,

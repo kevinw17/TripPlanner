@@ -37,9 +37,11 @@ fun CancelFriendRequestDialog(
       )
     },
     confirmButton = {
-      Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(bottom = 8.dp)) {
+      Row(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(bottom = 8.dp)
+      ) {
         Button(
           onClick = { onDismiss() },
           modifier = Modifier
@@ -55,7 +57,7 @@ fun CancelFriendRequestDialog(
           ),
           shape = RoundedCornerShape(8.dp)
         ) {
-          Text("No")
+          Text(stringResource(R.string.no))
         }
         Button(
           onClick = { onConfirm() },
@@ -72,7 +74,7 @@ fun CancelFriendRequestDialog(
           ),
           shape = RoundedCornerShape(8.dp)
         ) {
-          Text("Yes")
+          Text(stringResource(R.string.yes))
         }
       }
     }

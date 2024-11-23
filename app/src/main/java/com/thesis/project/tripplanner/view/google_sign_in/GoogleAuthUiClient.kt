@@ -24,16 +24,13 @@ class GoogleAuthUiClient(
   suspend fun signIn(): IntentSender? {
     return try {
       val result = oneTapClient.beginSignIn(buildSignInRequest()).await()
-      Log.d("GoogleAuthUiClient", "Sign-In success: ${result.pendingIntent}")
       result.pendingIntent?.intentSender
     } catch (e: Exception) {
-      Log.e("GoogleAuthUiClient", "Sign-In failed: ${e.message}", e)
       Toast.makeText(context, "Google Sign-In failed to initiate: ${e.message}", Toast.LENGTH_SHORT).show()
       if (e is CancellationException) throw e
       null
     }
   }
-
 
   suspend fun signInWithIntent(intent: Intent): SignInResult {
     val credential = oneTapClient.getSignInCredentialFromIntent(intent)
@@ -58,17 +55,6 @@ class GoogleAuthUiClient(
         data = null,
         errorMessage = e.message
       )
-    }
-  }
-
-  suspend fun signOut() {
-    try {
-      oneTapClient.signOut().await()
-      auth.signOut()
-    } catch (e: Exception) {
-      e.printStackTrace()
-      if(e is CancellationException) throw e
-
     }
   }
 

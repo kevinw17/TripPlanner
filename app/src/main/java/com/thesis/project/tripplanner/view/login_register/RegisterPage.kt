@@ -111,11 +111,9 @@ fun RegisterPage(
         val profilePictureUrl = user.profilePictureUrl
         val defaultBio = "Anda bisa menambahkan bio Anda melalui edit profile"
 
-        // Cek apakah dokumen user sudah ada di Firestore
         authViewModel.firestore.collection("users").document(userId).get()
           .addOnSuccessListener { document ->
             if (!document.exists()) {
-              // Jika dokumen belum ada, buat dokumen baru
               val userProfileData = mapOf(
                 "name" to username,
                 "bio" to defaultBio,
@@ -134,7 +132,6 @@ fun RegisterPage(
                   navController.navigate("home")
                 }
                 .addOnFailureListener { exception ->
-                  // Gagal menyimpan data user
                   Toast.makeText(
                     context,
                     context.getString(R.string.failed_save_user_account),
@@ -142,12 +139,10 @@ fun RegisterPage(
                   ).show()
                 }
             } else {
-              // Jika dokumen sudah ada, langsung navigasi ke halaman home
               navController.navigate("home")
             }
           }
           .addOnFailureListener { exception ->
-            // Gagal memeriksa dokumen Firestore
             Toast.makeText(
               context,
               context.getString(R.string.failed_fetch_user_document),
@@ -156,7 +151,6 @@ fun RegisterPage(
           }
       }
     } else if (signInState.signInError != null) {
-      // Tangani error saat sign-in
       Toast.makeText(
         context,
         context.getString(R.string.google_sign_in_failed, signInState.signInError),

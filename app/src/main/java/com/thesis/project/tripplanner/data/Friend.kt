@@ -1,7 +1,8 @@
 package com.thesis.project.tripplanner.data
 
+import com.thesis.project.tripplanner.utils.Utils
+
 data class Friend(
-  val userId: String = "",
-  val username: String = "",
-  val profileImageUrl: String? = null
+  val id: String = Utils.EMPTY,
+  val name: String = Utils.EMPTY
 )

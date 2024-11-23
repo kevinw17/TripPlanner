@@ -1,7 +1,8 @@
 package com.thesis.project.tripplanner.data
 
-data class Destination(
-  val name: String = "",
-  val description: String = ""
-)
+import com.thesis.project.tripplanner.utils.Utils
 
+data class Destination(
+  val name: String = Utils.EMPTY,
+  val description: String = Utils.EMPTY
+)

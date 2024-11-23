@@ -18,7 +18,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import coil.compose.rememberAsyncImagePainter
 import com.thesis.project.tripplanner.R
 
@@ -57,7 +56,10 @@ fun ItineraryCard(
             .clip(CircleShape)
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = username, fontWeight = FontWeight.Bold)
+        Text(
+          text = username,
+          fontWeight = FontWeight.Bold
+        )
       }
       Spacer(modifier = Modifier.height(2.dp))
       Column {

@@ -91,4 +91,14 @@
     <string name="send">Send</string>
     <string name="add_comment_here">Add comment here</string>
     <string name="message">Message</string>
+    <string name="description">Deskripsi:</string>
+    <string name="jakarta">Jakarta</string>
+    <string name="bandung">Bandung</string>
+    <string name="bali">Bali</string>
+    <string name="surabaya">Surabaya</string>
+    <string name="yogyakarta">Yogyakarta</string>
+    <string name="accept_request">Accept Request</string>
+    <string name="foto_profil_baru">Foto profil baru</string>
+    <string name="hapus_foto_profil">Hapus foto profil</string>
+    <string name="detail_itinerary">Detail itinerary</string>
 </resources>

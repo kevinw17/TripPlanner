@@ -33,10 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.thesis.project.tripplanner.R
+import com.thesis.project.tripplanner.data.Friend
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
 import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
-
-data class Friend(val id: String, val name: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +61,11 @@ fun FriendsPage(
           )
         },
         navigationIcon = {
-          IconButton(onClick = { navController.popBackStack() }) {
+          IconButton(
+            onClick = {
+              navController.popBackStack()
+            }
+          ) {
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",

@@ -1,6 +1,5 @@
 package com.thesis.project.tripplanner.view.itinerary
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,7 +46,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.thesis.project.tripplanner.R
-import com.thesis.project.tripplanner.components.DestinationBottomSheet
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
 import com.thesis.project.tripplanner.view.dialog.DeleteItineraryDialog
 import com.thesis.project.tripplanner.view.dialog.RecommendationDialog
@@ -82,25 +80,31 @@ fun DetailItineraryScreen(
   }
 
   LaunchedEffect(selectedItinerary) {
-    Log.d("DetailItineraryScreen", "Selected itinerary: $selectedItinerary")
     selectedItinerary?.let {
       isLiked = it.likedBy.contains(currentUserId)
       isRecommended = it.recommendedBy.contains(currentUserId)
-      Log.d("DetailItineraryScreen", "UserId of selected itinerary: ${it.userId}")
     }
   }
 
   LaunchedEffect(itineraryId) {
     itineraryViewModel.loadItineraryById(currentUserId, itineraryId)
     itineraryViewModel.loadComments(itineraryId)
-    Log.d("DetailItineraryScreen", "Loading itineraryId: $itineraryId for user: $currentUserId")
   }
 
   Scaffold(topBar = {
     TopAppBar(
-      title = { Text(text = "Detail Itinerary", fontWeight = FontWeight.Bold, fontSize = 20.sp) },
+      title = {
+        Text(
+          text = stringResource(R.string.detail_itinerary),
+          fontWeight = FontWeight.Bold,
+          fontSize = 20.sp)
+      },
       navigationIcon = {
-        IconButton(onClick = { navController.popBackStack() }) {
+        IconButton(
+          onClick = {
+            navController.popBackStack()
+          }
+        ) {
           Icon(
             painter = painterResource(R.drawable.ic_arrow_left),
             contentDescription = "Back",
@@ -126,7 +130,9 @@ fun DetailItineraryScreen(
     )
   }, bottomBar = { BottomNavigationBar(navController) }) { paddingValues ->
     BottomSheetScaffold(
-      modifier = Modifier.padding(paddingValues), scaffoldState = scaffoldState, sheetContent = {
+      modifier = Modifier.padding(paddingValues),
+      scaffoldState = scaffoldState,
+      sheetContent = {
         CommentBottomSheet(
           comments = comments,
           onSendComment = { commentText ->
@@ -145,20 +151,24 @@ fun DetailItineraryScreen(
             itineraryViewModel.deleteComment(itineraryId, comment)
           }
         )
-      }, sheetPeekHeight = 0.dp
+      },
+      sheetPeekHeight = 0.dp
     ) {
       Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+          .fillMaxSize()
+          .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
       ) {
         selectedItinerary?.let { item ->
-          Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
-            Log.d("DetailItinerary", "Navigating to user_profile_screen/${item.userId}")
-            navController.navigate("user_profile_screen/${item.userId}")
-          }) {
+          Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+              .clickable {
+                navController.navigate("user_profile_screen/${item.userId}")
+              }
+          ) {
             Image(
               painter = if (item.profileImageUrl != null) {
                   rememberAsyncImagePainter(item.profileImageUrl)
@@ -167,14 +177,22 @@ fun DetailItineraryScreen(
               },
               contentDescription = "User Avatar",
               modifier = Modifier
-                  .size(48.dp)
-                  .clip(CircleShape)
+                .size(48.dp)
+                .clip(CircleShape)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = item.username, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Text(
+              text = item.username,
+              fontWeight = FontWeight.Bold,
+              fontSize = 20.sp
+            )
           }
           Spacer(modifier = Modifier.height(16.dp))
-          Text(text = item.title, fontSize = 16.sp, modifier = Modifier.padding(top = 4.dp))
+          Text(
+            text = item.title,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(top = 4.dp)
+          )
           Text(
             text = "Start Date: ${item.startDate}",
             fontSize = 14.sp,
@@ -189,57 +207,67 @@ fun DetailItineraryScreen(
           )
           Spacer(modifier = Modifier.height(16.dp))
 
-          // Social Actions
           Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(painter = painterResource(R.drawable.ic_like),
+            Icon(
+              painter = painterResource(R.drawable.ic_like),
               contentDescription = "Like",
               tint = if (isLiked) Color.Red else Color.Black,
               modifier = Modifier
-                  .size(20.dp)
-                  .clickable {
-                      isLiked = !isLiked
-                      itineraryViewModel.updateLikeCount(
-                          itineraryId, currentUserId, isLiked
-                      )
-                  })
+                .size(20.dp)
+                .clickable {
+                  isLiked = !isLiked
+                  itineraryViewModel.updateLikeCount(
+                    itineraryId, currentUserId, isLiked
+                  )
+                }
+            )
             Spacer(modifier = Modifier.width(16.dp))
-            Icon(painter = painterResource(R.drawable.ic_comment),
+            Icon(
+              painter = painterResource(R.drawable.ic_comment),
               contentDescription = "Share",
               modifier = Modifier
-                  .size(20.dp)
-                  .clickable {
-                      showOverlay = true
-                      coroutineScope.launch {
-                          kotlinx.coroutines.delay(100)
-                          scaffoldState.bottomSheetState.expand()
-                      }
-                  })
+                .size(20.dp)
+                .clickable {
+                  showOverlay = true
+                  coroutineScope.launch {
+                    kotlinx.coroutines.delay(100)
+                    scaffoldState.bottomSheetState.expand()
+                  }
+                }
+            )
             Spacer(modifier = Modifier.width(16.dp))
-            Icon(painter = painterResource(R.drawable.ic_recommend),
+            Icon(
+              painter = painterResource(R.drawable.ic_recommend),
               contentDescription = "Send",
               modifier = Modifier
-                  .size(20.dp)
-                  .clickable {
-                      isDialogVisible = true
-                  })
+                .size(20.dp)
+                .clickable {
+                  isDialogVisible = true
+                }
+            )
           }
           Spacer(modifier = Modifier.height(8.dp))
-          Text(text = "${item.likeCount} Likes", fontSize = 14.sp)
+          Text(
+            text = "${item.likeCount} Likes",
+            fontSize = 14.sp
+          )
           Text(
             text = "Recommended by ${item.recommendationCount} people",
             fontSize = 14.sp,
             modifier = Modifier.padding(top = 8.dp)
           )
           Spacer(modifier = Modifier.height(16.dp))
-
           Text(
-            text = "Description:",
+            text = stringResource(R.string.description),
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
           )
-          Text(text = item.description, fontSize = 14.sp, color = Color.Gray)
+          Text(
+            text = item.description,
+            fontSize = 14.sp,
+            color = Color.Gray
+          )
           Spacer(modifier = Modifier.height(16.dp))
-
           Text(text = stringResource(R.string.view_all_comments),
             color = Color.Blue,
             fontSize = 14.sp,
@@ -253,28 +281,33 @@ fun DetailItineraryScreen(
         }
       }
       if (showOverlay) {
-        Box(modifier = Modifier
+        Box(
+          modifier = Modifier
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.5f))
             .clickable { coroutineScope.launch { scaffoldState.bottomSheetState.partialExpand() } })
       }
       if (isDialogVisible) {
-        RecommendationDialog(onConfirm = {
-          itineraryViewModel.updateRecommendationCount(currentUserId, itineraryId, isRecommended)
-          isDialogVisible = false
-          Toast.makeText(context, "Itinerary berhasil direkomendasikan", Toast.LENGTH_SHORT).show()
-        }, onDismiss = { isDialogVisible = false })
+        RecommendationDialog(
+          onConfirm = {
+            itineraryViewModel.updateRecommendationCount(currentUserId, itineraryId, isRecommended)
+            isDialogVisible = false
+            Toast.makeText(context, R.string.itinerary_recommended, Toast.LENGTH_SHORT).show()
+          },
+          onDismiss = { isDialogVisible = false })
       }
       if (isDeleteDialogVisible) {
-        DeleteItineraryDialog(onConfirm = {
-          isDeleteDialogVisible = false
-          itineraryViewModel.deleteItinerary(itineraryId, currentUserId) {
-            Toast.makeText(
-              context, context.getString(R.string.itinerary_deleted), Toast.LENGTH_SHORT
-            ).show()
-            navController.navigate("profile")
-          }
-        }, onDismiss = { isDeleteDialogVisible = false })
+        DeleteItineraryDialog(
+          onConfirm = {
+            isDeleteDialogVisible = false
+            itineraryViewModel.deleteItinerary(itineraryId, currentUserId) {
+              Toast.makeText(
+                context, context.getString(R.string.itinerary_deleted), Toast.LENGTH_SHORT
+              ).show()
+              navController.navigate("profile")
+            }
+          },
+          onDismiss = { isDeleteDialogVisible = false })
       }
     }
   }

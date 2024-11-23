@@ -82,7 +82,11 @@ fun SuggestionPage(
           )
         },
         navigationIcon = {
-          IconButton(onClick = { navController.popBackStack() }) {
+          IconButton(
+            onClick = {
+              navController.popBackStack()
+            }
+          ) {
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
@@ -139,10 +143,12 @@ fun SuggestionPage(
 
       item {
         val cityImageRes = when (selectedDestination.value) {
-          "Jakarta" -> R.drawable.jakarta
-          "Bandung" -> R.drawable.bandung
-          "Bali" -> R.drawable.bali
-          else -> R.drawable.jakarta
+          stringResource(R.string.jakarta) -> R.drawable.jakarta
+          stringResource(R.string.bandung) -> R.drawable.bandung
+          stringResource(R.string.bali) -> R.drawable.bali
+          stringResource(R.string.surabaya) -> R.drawable.surabaya
+          stringResource(R.string.yogyakarta) -> R.drawable.yogyakarta
+          else -> R.drawable.wisata
         }
         Image(
           painter = painterResource(cityImageRes),

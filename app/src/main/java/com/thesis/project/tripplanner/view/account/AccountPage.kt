@@ -1,7 +1,6 @@
 package com.thesis.project.tripplanner.view.account
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,7 +52,11 @@ fun AccountPage(
           )
         },
         navigationIcon = {
-          IconButton(onClick = { navController.popBackStack() }) {
+          IconButton(
+            onClick = {
+              navController.popBackStack()
+            }
+          ) {
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
@@ -63,7 +66,7 @@ fun AccountPage(
         },
         colors = TopAppBarDefaults.topAppBarColors(
           containerColor = Color.White
-        ),
+        )
       )
     },
     bottomBar = {
@@ -95,8 +98,7 @@ fun AccountPage(
       AccountOption(
         iconRes = R.drawable.ic_friends,
         label = stringResource(R.string.friends),
-        onClick = { navController.navigate("friends")
-        }
+        onClick = { navController.navigate("friends") }
       )
 
       Divider(
@@ -143,7 +145,7 @@ fun AccountPage(
 }
 
 @Composable
-fun AccountOption(
+private fun AccountOption(
   iconRes: Int,
   label: String,
   onClick: () -> Unit

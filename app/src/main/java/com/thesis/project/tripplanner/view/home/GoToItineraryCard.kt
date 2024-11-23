@@ -1,6 +1,5 @@
 package com.thesis.project.tripplanner.view.home
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,7 +28,10 @@ fun GoToItineraryCard(navController: NavController) {
     shape = RoundedCornerShape(8.dp)
   ) {
     Column(modifier = Modifier.padding(16.dp)) {
-      Text(stringResource(R.string.itinerary_card_description), fontSize = 16.sp)
+      Text(
+        text = stringResource(R.string.itinerary_card_description),
+        fontSize = 16.sp
+      )
       Spacer(modifier = Modifier.height(8.dp))
       Button(
         onClick = { navController.navigate("itinerary") },

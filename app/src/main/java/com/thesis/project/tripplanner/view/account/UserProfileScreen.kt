@@ -1,6 +1,5 @@
 package com.thesis.project.tripplanner.view.account
 
-import android.util.Log
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,10 +61,6 @@ fun UserProfileScreen(
     }
   }
 
-  LaunchedEffect(targetUsername) {
-    Log.d("UserProfileScreen", "Target username updated: $targetUsername")
-  }
-
   Scaffold(
     topBar = {
       TopAppBar(
@@ -113,5 +108,3 @@ fun UserProfileScreen(
     )
   }
 }
-
-

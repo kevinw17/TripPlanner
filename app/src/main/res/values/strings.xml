@@ -87,4 +87,5 @@
     <string name="failed_save_user_account">Gagal menyimpan data user</string>
     <string name="failed_fetch_user_document">Gagal memeriksa dokumen Firestore</string>
     <string name="itinerary_deleted">Itinerary berhasil dihapus</string>
+    <string name="no_comment">Belum ada komentar saat ini</string>
 </resources>

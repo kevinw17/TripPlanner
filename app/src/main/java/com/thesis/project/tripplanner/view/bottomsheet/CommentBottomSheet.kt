@@ -21,48 +21,60 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.thesis.project.tripplanner.R
-
-data class Comment(
-    val username: String,
-    val commentText: String,
-    val timeAgo: String
-)
+import com.thesis.project.tripplanner.data.Comment
 
 @Composable
 fun CommentBottomSheet(
-    comments: List<Comment> = listOf(
-        Comment("Fred", "Jalan-jalan ke Bandung sangat seru!! pokoknyaaa seru deh", "1h ago"),
-        Comment("Fred", "Jalan-jalan ke Bandung sangat seru!! pokoknyaaa seru deh", "2h ago"),
-        Comment("Fred", "Jalan-jalan ke Bandung sangat seru!! pokoknyaaa seru deh", "3h ago")
-    ),
-    onSendComment: (String) -> Unit
+    comments: List<Comment>,
+    onSendComment: (String) -> Unit,
+    currentUserId: String,
+    profileImageUrl: String? = null
 ) {
     var commentText by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 72.dp, start = 16.dp, end = 16.dp)
+            .padding(start = 16.dp, end = 16.dp, bottom = 48.dp)
+            .navigationBarsPadding()
             .heightIn(max = 400.dp)
     ) {
-        Text(text = "Comments", fontSize = 20.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+        Text(text = "Comments", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(comments) { comment ->
-                CommentItem(comment)
+        if (comments.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.no_comment),
+                    fontSize = 16.sp,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(comments) { comment ->
+                    CommentItem(comment = comment)
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -106,7 +118,7 @@ fun CommentItem(comment: Comment) {
             .padding(vertical = 8.dp)
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_user_profile),
+            painter = rememberAsyncImagePainter(comment.profileImageUrl ?: R.drawable.ic_user_profile),
             contentDescription = "User Avatar",
             modifier = Modifier
                 .size(40.dp)
@@ -115,8 +127,8 @@ fun CommentItem(comment: Comment) {
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                text = "${comment.username} • ${comment.timeAgo}",
-                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                text = "${comment.username} • ${getTimeAgo(comment.timestamp)}",
+                fontWeight = FontWeight.Bold,
                 fontSize = 14.sp
             )
             Text(
@@ -126,12 +138,21 @@ fun CommentItem(comment: Comment) {
             )
         }
     }
+}
 
-    Divider(
-        color = Color.LightGray,
-        thickness = 1.dp,
-        modifier = Modifier.padding(top = 4.dp)
-    )
+private fun getTimeAgo(timestamp: Long): String {
+    val diff = System.currentTimeMillis() - timestamp
+    val seconds = diff / 1000
+    val minutes = seconds / 60
+    val hours = minutes / 60
+    val days = hours / 24
+
+    return when {
+        seconds < 60 -> "$seconds seconds ago"
+        minutes < 60 -> "$minutes minutes ago"
+        hours < 24 -> "$hours hours ago"
+        else -> "$days days ago"
+    }
 }
 
 @Preview(showBackground = true)
@@ -139,11 +160,25 @@ fun CommentItem(comment: Comment) {
 fun CommentBottomSheetPreview() {
     CommentBottomSheet(
         comments = listOf(
-            Comment("Fred", "Jalan-jalan ke Bandung sangat seru!! pokoknyaaa seru deh", "1h ago"),
-            Comment("Fred", "Jalan-jalan ke Bandung sangat seru!! pokoknyaaa seru deh", "2h ago"),
-            Comment("Fred", "Jalan-jalan ke Bandung sangat seru!! pokoknyaaa seru deh", "3h ago")
-        )
-    ) { comment ->
-        // Handle the comment sent (for example, add it to a list or send it to a server)
-    }
+            Comment(
+                username = "Fred",
+                commentText = "Jalan-jalan ke Bandung sangat seru!! pokoknyaaa seru deh",
+                timestamp = System.currentTimeMillis()
+            ),
+            Comment(
+                username = "Fred",
+                commentText = "Jalan-jalan ke Bandung sangat seru!! pokoknyaaa seru deh",
+                timestamp = System.currentTimeMillis()
+            ),
+            Comment(
+                username = "Fred",
+                commentText = "Jalan-jalan ke Bandung sangat seru!! pokoknyaaa seru deh",
+                timestamp = System.currentTimeMillis()
+            )
+        ),
+        currentUserId = "",
+        profileImageUrl = null,
+        onSendComment = { _ ->
+        }
+    )
 }

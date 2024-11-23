@@ -5,7 +5,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.thesis.project.tripplanner.data.Comment
 import com.thesis.project.tripplanner.data.Destination
 import com.thesis.project.tripplanner.data.Itinerary
 import com.thesis.project.tripplanner.data.OtherUserItinerary
@@ -46,6 +48,9 @@ class ItineraryViewModel : ViewModel() {
 
   private val _friendsCount = MutableStateFlow(0)
   val friendsCount = _friendsCount.asStateFlow()
+
+  private val _comments = MutableStateFlow<List<Comment>>(emptyList())
+  val comments = _comments.asStateFlow()
 
   fun loadItineraries(userId: String) {
     viewModelScope.launch {
@@ -420,6 +425,59 @@ class ItineraryViewModel : ViewModel() {
       }
       .addOnFailureListener { exception ->
         Log.e("ItineraryViewModel", "Error finding itinerary: ${exception.message}")
+      }
+  }
+
+  fun loadComments(itineraryId: String) {
+    firestore.collection("comments").document(itineraryId)
+      .addSnapshotListener { documentSnapshot, exception ->
+        if (exception != null) {
+          Log.e("ItineraryViewModel", "Error listening for comments: ${exception.message}")
+          return@addSnapshotListener
+        }
+
+        if (documentSnapshot != null && documentSnapshot.exists()) {
+          val commentsList = documentSnapshot.get("comments") as? List<Map<String, Any>>
+          val parsedComments = commentsList?.map { commentMap ->
+            Comment(
+              userId = commentMap["userId"] as String,
+              username = commentMap["username"] as String,
+              profileImageUrl = commentMap["profileImageUrl"] as? String,
+              commentText = commentMap["commentText"] as String,
+              timestamp = (commentMap["timestamp"] as Long)
+            )
+          } ?: emptyList()
+
+          _comments.value = parsedComments
+        } else {
+          _comments.value = emptyList()
+        }
+      }
+  }
+
+  fun addComment(itineraryId: String, username: String, commentText: String, profileImageUrl: String?, userId: String) {
+    val comment = mapOf(
+      "userId" to userId,
+      "username" to username,
+      "profileImageUrl" to profileImageUrl,
+      "commentText" to commentText,
+      "timestamp" to System.currentTimeMillis()
+    )
+
+    firestore.collection("comments").document(itineraryId)
+      .update("comments", FieldValue.arrayUnion(comment))
+      .addOnSuccessListener {
+        Log.d("ItineraryViewModel", "Comment added successfully")
+      }
+      .addOnFailureListener { exception ->
+        firestore.collection("comments").document(itineraryId)
+          .set(mapOf("comments" to listOf(comment)))
+          .addOnSuccessListener {
+            Log.d("ItineraryViewModel", "Comment added and document created successfully")
+          }
+          .addOnFailureListener { innerException ->
+            Log.e("ItineraryViewModel", "Error creating document: ${innerException.message}")
+          }
       }
   }
 }

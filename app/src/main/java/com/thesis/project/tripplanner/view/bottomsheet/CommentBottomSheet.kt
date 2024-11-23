@@ -1,21 +1,35 @@
 package com.thesis.project.tripplanner.view.itinerary
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
-import androidx.compose.runtime.*
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.data.Comment
+import com.thesis.project.tripplanner.utils.Utils
 
 @Composable
 fun CommentBottomSheet(
@@ -38,7 +53,7 @@ fun CommentBottomSheet(
     currentUserId: String,
     profileImageUrl: String? = null
 ) {
-    var commentText by remember { mutableStateOf("") }
+    var commentText by remember { mutableStateOf(Utils.EMPTY) }
 
     Column(
         modifier = Modifier
@@ -86,31 +101,42 @@ fun CommentBottomSheet(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            OutlinedTextField(
+            androidx.compose.material3.OutlinedTextField(
                 value = commentText,
                 onValueChange = { commentText = it },
-                placeholder = { Text(text = "Add comment here") },
+                placeholder = { Text(text = stringResource(R.string.add_comment_here)) },
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 8.dp),
-                shape = RoundedCornerShape(24.dp)
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color(0xFFEEF3F4),
+                    unfocusedContainerColor = Color(0xFFEEF3F4),
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black,
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black
+                ),
+                shape = RoundedCornerShape(12.dp)
             )
-            IconButton(
+            Button(
                 onClick = {
                     if (commentText.isNotEmpty()) {
                         onSendComment(commentText)
-                        commentText = ""
+                        commentText = Utils.EMPTY
                     }
                 },
-                modifier = Modifier
-                    .background(Color.Gray, CircleShape)
-                    .size(40.dp)
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFEEF3F4),
+                    contentColor = Color.Black
+                ),
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = Color.Black
+                ),
+                modifier = Modifier.weight(0.3f)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Send,
-                    contentDescription = "Send",
-                    tint = Color.White
-                )
+                Text(text = stringResource(R.string.send))
             }
         }
     }

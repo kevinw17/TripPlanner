@@ -7,32 +7,32 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.thesis.project.tripplanner.data.Itinerary
 import com.thesis.project.tripplanner.view.account.AccountPage
 import com.thesis.project.tripplanner.view.account.ChangePasswordScreen
 import com.thesis.project.tripplanner.view.account.EditProfileScreen
 import com.thesis.project.tripplanner.view.account.FriendsPage
-import com.thesis.project.tripplanner.view.account.FriendshipStatus
 import com.thesis.project.tripplanner.view.account.ProfileScreen
 import com.thesis.project.tripplanner.view.account.UserProfileScreen
 import com.thesis.project.tripplanner.view.chat.ChatRoomScreen
-import com.thesis.project.tripplanner.view.home.HomePage
-import com.thesis.project.tripplanner.view.itinerary.ItineraryPage
 import com.thesis.project.tripplanner.view.explore.ExplorePage
+import com.thesis.project.tripplanner.view.home.HomePage
 import com.thesis.project.tripplanner.view.itinerary.DetailItineraryScreen
 import com.thesis.project.tripplanner.view.itinerary.ItineraryList
+import com.thesis.project.tripplanner.view.itinerary.ItineraryPage
 import com.thesis.project.tripplanner.view.login_register.LoginPage
 import com.thesis.project.tripplanner.view.login_register.RegisterPage
 import com.thesis.project.tripplanner.view.messages.MessagesScreen
 import com.thesis.project.tripplanner.view.suggestion.SuggestionPage
 import com.thesis.project.tripplanner.viewmodel.AuthViewModel
+import com.thesis.project.tripplanner.viewmodel.ChatViewModel
 import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 
 @Composable
 fun TripPlannerNavigation(
   modifier: Modifier = Modifier,
   authViewModel: AuthViewModel,
-  itineraryViewModel: ItineraryViewModel
+  itineraryViewModel: ItineraryViewModel,
+  chatViewModel: ChatViewModel
 ) {
   val navController = rememberNavController()
 
@@ -152,7 +152,9 @@ fun TripPlannerNavigation(
       }
       composable("message") {
         MessagesScreen(
-          navController = navController
+          navController = navController,
+          chatViewModel = chatViewModel,
+          currentUserId = authViewModel.userId ?: ""
         )
       }
       composable(
@@ -173,10 +175,18 @@ fun TripPlannerNavigation(
           currentUserId = userId
         )
       }
-      composable("chat_room") {
+      composable(
+        route = "chat_room/{userId}",
+        arguments = listOf(
+          navArgument("userId") { type = NavType.StringType }
+        )
+      ) { backStackEntry ->
+        val otherUserId = backStackEntry.arguments?.getString("userId") ?: ""
         ChatRoomScreen(
           navController = navController,
-          onSendMessage = {}
+          chatViewModel = chatViewModel,
+          currentUserId = authViewModel.userId.orEmpty(),
+          otherUserId = otherUserId
         )
       }
     }

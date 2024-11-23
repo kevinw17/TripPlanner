@@ -103,7 +103,7 @@ fun UserProfileScreen(
       onAddFriend = { itineraryViewModel.sendFriendRequest(currentUserId, targetUserId) },
       onCancelRequest = { isCancelDialogVisible = true },
       onAcceptFriendRequest = { itineraryViewModel.acceptFriendRequest(currentUserId, targetUserId) },
-      onStartChat = { navController.navigate("chat_room") },
+      onStartChat = { navController.navigate("chat_room/$targetUserId") },
       onConfirmCancelRequest = {
         itineraryViewModel.cancelFriendRequest(currentUserId, targetUserId)
         isCancelDialogVisible = false

@@ -88,4 +88,7 @@
     <string name="failed_fetch_user_document">Gagal memeriksa dokumen Firestore</string>
     <string name="itinerary_deleted">Itinerary berhasil dihapus</string>
     <string name="no_comment">Belum ada komentar saat ini</string>
+    <string name="send">Send</string>
+    <string name="add_comment_here">Add comment here</string>
+    <string name="message">Message</string>
 </resources>

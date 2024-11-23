@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,6 +25,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,32 +39,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.thesis.project.tripplanner.R
+import com.thesis.project.tripplanner.data.Message
 import com.thesis.project.tripplanner.view.bottomnav.BottomNavigationBar
-
-data class Message(
-  val username: String,
-  val messagePreview: String,
-  val date: String,
-  val isOnline: Boolean
-)
+import com.thesis.project.tripplanner.viewmodel.ChatViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessagesScreen(
   navController: NavController,
-  messages: List<Message> = listOf(
-    Message("Brian", "abcdefghi...xyz", "12 Oktober 2024", true),
-    Message("Ian", "abcdefghi...xyz", "12 Oktober 2024", false),
-    Message("Jack", "abcdefghi...xyz", "12 Oktober 2024", false),
-    Message("Ryan", "abcdefghi...xyz", "12 Oktober 2024", true),
-    Message("Charlie", "abcdefghi...xyz", "12 Oktober 2024", false),
-    Message("David", "abcdefghi...xyz", "12 Oktober 2024", true),
-    Message("Fred", "abcdefghi...xyz", "12 Oktober 2024", true),
-    Message("Charlie", "abcdefghi...xyz", "12 Oktober 2024", false),
-    Message("David", "abcdefghi...xyz", "12 Oktober 2024", true),
-    Message("Fred", "abcdefghi...xyz", "12 Oktober 2024", true)
-  )
+  chatViewModel: ChatViewModel,
+  currentUserId: String
 ) {
+  val messages by chatViewModel.userChatPreviews.collectAsState()
+
+  LaunchedEffect(currentUserId) {
+    chatViewModel.loadUserChatPreviews(currentUserId)
+  }
+
   Scaffold(
     topBar = {
       TopAppBar(
@@ -87,15 +85,32 @@ fun MessagesScreen(
       BottomNavigationBar(navController)
     }
   ) { paddingValues ->
-    LazyColumn(
-      modifier = Modifier
-        .fillMaxSize()
-        .padding(paddingValues)
-        .padding(horizontal = 16.dp),
-      verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-      items(messages) { message ->
-        MessageItem(navController, message)
+    if (messages.isEmpty()) {
+      Box(
+        modifier = Modifier
+          .fillMaxSize()
+          .padding(paddingValues),
+        contentAlignment = Alignment.Center
+      ) {
+        Text(text = "No messages available.", color = Color.Gray, fontSize = 16.sp)
+      }
+    } else {
+      LazyColumn(
+        modifier = Modifier
+          .fillMaxSize()
+          .padding(paddingValues)
+          .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+      ) {
+        items(messages) { message ->
+          MessageItem(
+            message = message,
+            onMessageClick = { userId ->
+              chatViewModel.markMessagesAsRead(currentUserId, userId)
+              navController.navigate("chat_room/$userId")
+            }
+          )
+        }
       }
     }
   }
@@ -103,14 +118,14 @@ fun MessagesScreen(
 
 @Composable
 fun MessageItem(
-  navController: NavController,
-  message: Message
+  message: Message,
+  onMessageClick: (String) -> Unit
 ) {
   Row(
     modifier = Modifier
       .fillMaxWidth()
       .padding(vertical = 8.dp)
-      .clickable { navController.navigate("chat_room") },
+      .clickable { onMessageClick(message.userId) },
     verticalAlignment = Alignment.CenterVertically
   ) {
     Image(
@@ -125,27 +140,37 @@ fun MessageItem(
       modifier = Modifier.weight(1f)
     ) {
       Text(text = message.username, fontWeight = FontWeight.Bold)
-      Text(text = message.messagePreview, color = Color.Gray, maxLines = 1, modifier = Modifier.padding(top = 8.dp))
+      Text(
+        text = message.lastMessage,
+        color = Color.Gray,
+        maxLines = 1,
+        modifier = Modifier.padding(top = 8.dp)
+      )
     }
     Column(
       horizontalAlignment = Alignment.End,
       modifier = Modifier.padding(top = 4.dp)
     ) {
-      if (message.isOnline) {
+      if (message.isUnread) {
         Box(
           modifier = Modifier
             .size(8.dp)
             .clip(CircleShape)
             .background(Color.Green)
-            .padding(bottom = 4.dp)
         )
       }
+      Spacer(modifier = Modifier.height(4.dp))
       Text(
-        text = message.date,
+        text = formatDate(message.lastMessageDate.toLongOrNull() ?: 0),
         color = Color.Gray,
-        fontSize = 12.sp,
-        modifier = Modifier.padding(top = 8.dp)
+        fontSize = 12.sp
       )
     }
   }
+}
+
+fun formatDate(timestamp: Long): String {
+  val date = Date(timestamp)
+  val formatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+  return formatter.format(date)
 }

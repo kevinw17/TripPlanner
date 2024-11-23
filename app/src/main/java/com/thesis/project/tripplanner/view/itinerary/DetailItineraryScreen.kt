@@ -55,7 +55,9 @@ import com.thesis.project.tripplanner.viewmodel.AuthViewModel
 import com.thesis.project.tripplanner.viewmodel.ItineraryViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class) @Composable fun DetailItineraryScreen(
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DetailItineraryScreen(
   navController: NavController,
   itineraryViewModel: ItineraryViewModel,
   authViewModel: AuthViewModel,
@@ -134,11 +136,14 @@ import kotlinx.coroutines.launch
                 username = username,
                 commentText = commentText,
                 profileImageUrl = profileImageUrl.toString(),
-                userId = currentUserId
+                userId = authViewModel.userId.orEmpty()
             )
           },
-          currentUserId = currentUserId,
-          profileImageUrl = profileImageUrl.toString()
+          currentUserId = authViewModel.userId.orEmpty(),
+          profileImageUrl = profileImageUrl.toString(),
+          onDeleteComment = { comment ->
+            itineraryViewModel.deleteComment(itineraryId, comment)
+          }
         )
       }, sheetPeekHeight = 0.dp
     ) {

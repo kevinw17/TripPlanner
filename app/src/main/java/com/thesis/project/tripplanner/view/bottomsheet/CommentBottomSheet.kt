@@ -34,6 +34,7 @@ import com.thesis.project.tripplanner.data.Comment
 fun CommentBottomSheet(
     comments: List<Comment>,
     onSendComment: (String) -> Unit,
+    onDeleteComment: (Comment) -> Unit,
     currentUserId: String,
     profileImageUrl: String? = null
 ) {
@@ -69,7 +70,12 @@ fun CommentBottomSheet(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(comments) { comment ->
-                    CommentItem(comment = comment)
+                    val isCommentOwner = comment.userId == currentUserId
+                    CommentItem(
+                        comment = comment,
+                        isAllowedToDeleteComment = isCommentOwner,
+                        onDeleteComment = onDeleteComment
+                    )
                 }
             }
         }
@@ -111,11 +117,16 @@ fun CommentBottomSheet(
 }
 
 @Composable
-fun CommentItem(comment: Comment) {
+fun CommentItem(
+    comment: Comment,
+    isAllowedToDeleteComment: Boolean,
+    onDeleteComment: (Comment) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = rememberAsyncImagePainter(comment.profileImageUrl ?: R.drawable.ic_user_profile),
@@ -125,7 +136,9 @@ fun CommentItem(comment: Comment) {
                 .clip(CircleShape)
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Column {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
             Text(
                 text = "${comment.username} • ${getTimeAgo(comment.timestamp)}",
                 fontWeight = FontWeight.Bold,
@@ -136,6 +149,20 @@ fun CommentItem(comment: Comment) {
                 fontSize = 14.sp,
                 color = Color.Gray
             )
+        }
+        if (isAllowedToDeleteComment) {
+            IconButton(
+                onClick = { onDeleteComment(comment) },
+                modifier = Modifier
+                    .size(24.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_remove),
+                    contentDescription = "Delete",
+                    tint = Color.Red,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
     }
 }
@@ -179,6 +206,7 @@ fun CommentBottomSheetPreview() {
         currentUserId = "",
         profileImageUrl = null,
         onSendComment = { _ ->
-        }
+        },
+        onDeleteComment = {}
     )
 }

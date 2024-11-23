@@ -455,9 +455,15 @@ class ItineraryViewModel : ViewModel() {
       }
   }
 
-  fun addComment(itineraryId: String, username: String, commentText: String, profileImageUrl: String?, userId: String) {
+  fun addComment(
+    itineraryId: String,
+    username: String,
+    commentText: String,
+    profileImageUrl: String?,
+    userId: String // Pastikan ini adalah ID user yang sedang login
+  ) {
     val comment = mapOf(
-      "userId" to userId,
+      "userId" to userId, // Simpan ID user di komentar
       "username" to username,
       "profileImageUrl" to profileImageUrl,
       "commentText" to commentText,
@@ -478,6 +484,17 @@ class ItineraryViewModel : ViewModel() {
           .addOnFailureListener { innerException ->
             Log.e("ItineraryViewModel", "Error creating document: ${innerException.message}")
           }
+      }
+  }
+
+  fun deleteComment(itineraryId: String, comment: Comment) {
+    firestore.collection("comments").document(itineraryId)
+      .update("comments", FieldValue.arrayRemove(comment))
+      .addOnSuccessListener {
+        Log.d("ItineraryViewModel", "Comment deleted successfully")
+      }
+      .addOnFailureListener { exception ->
+        Log.e("ItineraryViewModel", "Error deleting comment: ${exception.message}")
       }
   }
 }

@@ -50,7 +50,7 @@
     <string name="konfirmasi_pembatalan">Konfirmasi Pembatalan</string>
     <string name="cancel_friend_request_dialog_description">Are you sure to cancel the request?</string>
     <string name="explore">Explore</string>
-    <string name="explore_page_description">Jelajahi itinerary temanmu</string>
+    <string name="explore_page_description">Jelajahi itinerary wisatawan lain</string>
     <string name="suggestion">Suggestion</string>
     <string name="account">Account</string>
     <string name="friends">Friends</string>
@@ -101,4 +101,6 @@
     <string name="foto_profil_baru">Foto profil baru</string>
     <string name="hapus_foto_profil">Hapus foto profil</string>
     <string name="detail_itinerary">Detail itinerary</string>
+    <string name="delete_friend_confirmation">Are you sure to delete friend?</string>
+    <string name="delete_friend">Delete friend</string>
 </resources>

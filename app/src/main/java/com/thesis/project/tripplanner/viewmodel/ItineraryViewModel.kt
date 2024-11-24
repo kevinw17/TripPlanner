@@ -464,4 +464,25 @@ class ItineraryViewModel : ViewModel() {
         exception.printStackTrace()
       }
   }
+
+  fun deleteFriend(currentUserId: String, targetUserId: String) {
+    firestore.collection("friendships")
+      .whereEqualTo("userId", currentUserId)
+      .whereEqualTo("friendId", targetUserId)
+      .get()
+      .addOnSuccessListener { querySnapshot ->
+        querySnapshot.documents.firstOrNull()?.reference?.delete()
+        firestore.collection("friendships")
+          .whereEqualTo("userId", targetUserId)
+          .whereEqualTo("friendId", currentUserId)
+          .get()
+          .addOnSuccessListener { reverseSnapshot ->
+            reverseSnapshot.documents.firstOrNull()?.reference?.delete()
+            _friendshipStatus.value = FriendshipStatus.NOT_FRIEND
+          }
+      }
+      .addOnFailureListener { exception ->
+        exception.printStackTrace()
+      }
+  }
 }

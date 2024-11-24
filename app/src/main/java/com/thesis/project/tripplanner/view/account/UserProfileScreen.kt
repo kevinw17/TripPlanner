@@ -45,6 +45,7 @@ fun UserProfileScreen(
   val friends by itineraryViewModel.friends.collectAsState()
   val friendshipStatus by itineraryViewModel.friendshipStatus.collectAsState()
   var isCancelDialogVisible by remember { mutableStateOf(false) }
+  var isDeleteFriendDialogVisible by remember { mutableStateOf(false) }
 
   LaunchedEffect(targetUserId) {
     if (targetUserId.isNotEmpty()) {
@@ -95,15 +96,21 @@ fun UserProfileScreen(
       friendStatus = friendshipStatus,
       itineraries = itineraries,
       isCancelDialogVisible = isCancelDialogVisible,
+      isDeleteFriendDialogVisible = isDeleteFriendDialogVisible,
       onAddFriend = { itineraryViewModel.sendFriendRequest(currentUserId, targetUserId) },
       onCancelRequest = { isCancelDialogVisible = true },
+      onDeleteFriendRequest = { isDeleteFriendDialogVisible = true },
       onAcceptFriendRequest = { itineraryViewModel.acceptFriendRequest(currentUserId, targetUserId) },
       onStartChat = { navController.navigate("chat_room/$targetUserId") },
+      onDeleteFriend = {
+        itineraryViewModel.deleteFriend(currentUserId, targetUserId)
+        isDeleteFriendDialogVisible = false
+     },
       onConfirmCancelRequest = {
         itineraryViewModel.cancelFriendRequest(currentUserId, targetUserId)
         isCancelDialogVisible = false
       },
-      onDismissCancelDialog = { isCancelDialogVisible = false },
+      onDismissDialog = { isCancelDialogVisible = false },
       paddingValues = paddingValues
     )
   }

@@ -36,6 +36,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.thesis.project.tripplanner.R
 import com.thesis.project.tripplanner.data.Itinerary
 import com.thesis.project.tripplanner.view.dialog.CancelFriendRequestDialog
+import com.thesis.project.tripplanner.view.dialog.DeleteFriendDialog
 import com.thesis.project.tripplanner.view.itinerary.ItineraryCard
 
 @Composable
@@ -49,12 +50,15 @@ fun UserProfileContent(
   friendStatus: FriendshipStatus,
   itineraries: List<Itinerary>,
   isCancelDialogVisible: Boolean,
+  isDeleteFriendDialogVisible: Boolean,
   onAddFriend: () -> Unit,
   onCancelRequest: () -> Unit,
+  onDeleteFriendRequest: () -> Unit,
   onAcceptFriendRequest: () -> Unit,
   onStartChat: () -> Unit,
+  onDeleteFriend: () -> Unit,
   onConfirmCancelRequest: () -> Unit,
-  onDismissCancelDialog: () -> Unit,
+  onDismissDialog: () -> Unit,
   paddingValues: PaddingValues
 ) {
   LazyColumn(
@@ -187,17 +191,35 @@ fun UserProfileContent(
           }
         }
         FriendshipStatus.FRIEND -> {
-          Button(
-            onClick = onStartChat,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-              containerColor = Color(0xFF005FED),
-              contentColor = Color.White
-            ),
-            shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, Color.Black)
-          ) {
-            Text(text = stringResource(R.string.start_to_chat))
+          Row {
+            Button(
+              onClick = onStartChat,
+              modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp),
+              colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF005FED),
+                contentColor = Color.White
+              ),
+              shape = RoundedCornerShape(24.dp),
+              border = BorderStroke(1.dp, Color.Black)
+            ) {
+              Text(text = stringResource(R.string.start_to_chat))
+            }
+            Button(
+              onClick = onDeleteFriendRequest,
+              modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp),
+              colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFFF0000),
+                contentColor = Color.White
+              ),
+              shape = RoundedCornerShape(24.dp),
+              border = BorderStroke(1.dp, Color.Black)
+            ) {
+              Text(text = stringResource(R.string.delete_friend))
+            }
           }
         }
       }
@@ -253,7 +275,14 @@ fun UserProfileContent(
   if (isCancelDialogVisible) {
     CancelFriendRequestDialog(
       onConfirm = onConfirmCancelRequest,
-      onDismiss = onDismissCancelDialog
+      onDismiss = onDismissDialog
+    )
+  }
+
+  if (isDeleteFriendDialogVisible) {
+    DeleteFriendDialog(
+      onConfirm = onDeleteFriend,
+      onDismiss = onDismissDialog
     )
   }
 }

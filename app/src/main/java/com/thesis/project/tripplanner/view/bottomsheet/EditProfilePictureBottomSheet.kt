@@ -33,7 +33,7 @@ fun EditProfilePictureBottomSheet(
     modifier = Modifier
       .fillMaxWidth()
       .background(Color.White)
-      .padding(bottom = 72.dp, start = 16.dp, end = 16.dp)
+      .padding(bottom = 80.dp, start = 16.dp, end = 16.dp)
       .heightIn(max = 250.dp)
   ) {
     Row(

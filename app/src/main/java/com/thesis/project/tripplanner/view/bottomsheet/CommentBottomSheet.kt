@@ -60,7 +60,7 @@ fun CommentBottomSheet(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(start = 16.dp, end = 16.dp, bottom = 48.dp)
+            .padding(start = 16.dp, end = 16.dp, bottom = 80.dp)
             .navigationBarsPadding()
             .heightIn(max = 400.dp)
     ) {

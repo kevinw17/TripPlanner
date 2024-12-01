@@ -33,7 +33,6 @@ class MainActivity : ComponentActivity() {
         splashScreenViewModel.isLoading.value
       }
     }
-    enableEdgeToEdge()
     setContent {
       TripPlannerTheme {
         Scaffold(

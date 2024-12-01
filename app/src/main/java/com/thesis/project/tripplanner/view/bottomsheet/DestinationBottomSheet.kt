@@ -1,5 +1,6 @@
 package com.thesis.project.tripplanner.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,14 +25,23 @@ fun DestinationBottomSheet(
   destinations: List<String>,
   onSelect: (String) -> Unit
 ) {
-  Column(modifier = Modifier.padding(16.dp)) {
-    Text(text = stringResource(R.string.pilih_destinasi), fontSize = 18.sp)
+  Column(modifier = Modifier
+    .fillMaxWidth()
+    .background(Color.White)
+  ) {
+    Text(
+      modifier = Modifier.padding(horizontal = 16.dp),
+      text = stringResource(R.string.pilih_destinasi),
+      fontSize = 18.sp,
+      color = Color.Black
+    )
     Spacer(modifier = Modifier.height(8.dp))
   }
 
   LazyColumn(
     modifier = Modifier
       .fillMaxWidth()
+      .background(Color.White)
       .padding(bottom = 72.dp, start = 16.dp, end = 16.dp)
       .heightIn(max = 400.dp)
   ) {
@@ -40,9 +51,10 @@ fun DestinationBottomSheet(
         modifier = Modifier
           .fillMaxWidth()
           .clickable { onSelect(destination) }
-          .padding(vertical = 12.dp)
+          .padding(vertical = 12.dp),
+        color = Color.Black
       )
-      Divider()
+      Divider(color = Color.Black)
     }
   }
 }

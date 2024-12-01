@@ -30,7 +30,8 @@ fun GoToItineraryCard(navController: NavController) {
     Column(modifier = Modifier.padding(16.dp)) {
       Text(
         text = stringResource(R.string.itinerary_card_description),
-        fontSize = 16.sp
+        fontSize = 16.sp,
+        color = Color.Black
       )
       Spacer(modifier = Modifier.height(8.dp))
       Button(

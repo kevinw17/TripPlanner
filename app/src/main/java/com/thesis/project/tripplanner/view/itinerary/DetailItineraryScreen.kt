@@ -130,7 +130,10 @@ fun DetailItineraryScreen(
     )
   }, bottomBar = { BottomNavigationBar(navController) }) { paddingValues ->
     BottomSheetScaffold(
-      modifier = Modifier.padding(paddingValues),
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(paddingValues)
+        .background(Color.White),
       scaffoldState = scaffoldState,
       sheetContent = {
         CommentBottomSheet(
@@ -152,11 +155,14 @@ fun DetailItineraryScreen(
           }
         )
       },
+      sheetContainerColor = Color.White,
+      sheetContentColor = Color.White,
       sheetPeekHeight = 0.dp
     ) {
       Column(
         modifier = Modifier
           .fillMaxSize()
+          .background(Color.White)
           .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start

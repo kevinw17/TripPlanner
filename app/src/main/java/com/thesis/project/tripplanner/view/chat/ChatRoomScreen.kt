@@ -116,6 +116,7 @@ fun ChatRoomScreen(
     Column(
       modifier = Modifier
         .fillMaxSize()
+        .background(Color.White)
         .padding(paddingValues)
         .padding(horizontal = 16.dp)
     ) {
@@ -163,7 +164,9 @@ fun ChatRoomScreen(
             focusedBorderColor = Color.Black,
             unfocusedBorderColor = Color.Black,
             focusedLabelColor = Color.Black,
-            unfocusedLabelColor = Color.Black
+            unfocusedLabelColor = Color.Black,
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black
           ),
           shape = RoundedCornerShape(12.dp)
         )

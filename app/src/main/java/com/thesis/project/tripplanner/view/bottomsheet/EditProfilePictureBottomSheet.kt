@@ -1,5 +1,6 @@
 package com.thesis.project.tripplanner.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ fun EditProfilePictureBottomSheet(
   Column(
     modifier = Modifier
       .fillMaxWidth()
+      .background(Color.White)
       .padding(bottom = 72.dp, start = 16.dp, end = 16.dp)
       .heightIn(max = 250.dp)
   ) {

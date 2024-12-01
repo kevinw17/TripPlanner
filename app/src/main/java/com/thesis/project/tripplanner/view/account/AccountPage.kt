@@ -1,6 +1,7 @@
 package com.thesis.project.tripplanner.view.account
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -76,8 +77,9 @@ fun AccountPage(
     Column(
       modifier = Modifier
         .fillMaxSize()
+        .background(Color.White)
         .padding(paddingValues)
-        .padding(horizontal = 16.dp),
+        .padding(horizontal = 16.dp, vertical = 8.dp),
       verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.Start
     ) {
@@ -162,17 +164,19 @@ private fun AccountOption(
       Icon(
         painter = painterResource(id = iconRes),
         contentDescription = null,
-        modifier = Modifier.size(32.dp)
+        modifier = Modifier.size(32.dp),
+        tint = Color.Black
       )
       Spacer(modifier = Modifier
         .width(16.dp)
         .height(48.dp))
-      Text(text = label, fontSize = 18.sp)
+      Text(text = label, fontSize = 18.sp, color = Color.Black)
     }
     Icon(
       painter = painterResource(R.drawable.ic_right_chevron),
       contentDescription = "Forward Arrow",
-      modifier = Modifier.size(16.dp)
+      modifier = Modifier.size(16.dp),
+      tint = Color.Black
     )
   }
 }

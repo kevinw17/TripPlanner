@@ -1,5 +1,6 @@
 package com.thesis.project.tripplanner.view.account
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -85,8 +86,11 @@ fun FriendsPage(
     Column(
       modifier = Modifier
         .fillMaxSize()
+        .background(Color.White)
         .padding(paddingValues)
-        .padding(horizontal = 16.dp)
+        .padding(horizontal = 16.dp, vertical = 8.dp),
+      verticalArrangement = Arrangement.Top,
+      horizontalAlignment = Alignment.Start
     ) {
       Text(
         text = "${friends.size} Friends",

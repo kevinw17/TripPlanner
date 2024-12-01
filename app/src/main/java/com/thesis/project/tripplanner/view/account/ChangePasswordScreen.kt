@@ -2,6 +2,7 @@ package com.thesis.project.tripplanner.view.account
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -62,7 +63,8 @@ fun ChangePasswordScreen(
         title = {
           Text(
             text = stringResource(R.string.change_password),
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            color = Color.Black
           )
         },
         navigationIcon = {
@@ -74,7 +76,8 @@ fun ChangePasswordScreen(
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
-              modifier = Modifier.size(24.dp)
+              modifier = Modifier.size(24.dp),
+              tint = Color.Black
             )
           }
         },
@@ -88,6 +91,7 @@ fun ChangePasswordScreen(
     Column(
       modifier = Modifier
         .fillMaxSize()
+        .background(Color.White)
         .padding(paddingValues)
         .padding(16.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -114,7 +118,11 @@ fun ChangePasswordScreen(
           focusedBorderColor = Color.Black,
           unfocusedBorderColor = Color.Black,
           focusedLabelColor = Color.Black,
-          unfocusedLabelColor = Color.Black
+          unfocusedLabelColor = Color.Black,
+          focusedTextColor = Color.Black,
+          focusedPlaceholderColor = Color.Black,
+          unfocusedTextColor = Color.Black,
+          unfocusedPlaceholderColor = Color.Black
         )
       )
 
@@ -140,7 +148,11 @@ fun ChangePasswordScreen(
           focusedBorderColor = Color.Black,
           unfocusedBorderColor = Color.Black,
           focusedLabelColor = Color.Black,
-          unfocusedLabelColor = Color.Black
+          unfocusedLabelColor = Color.Black,
+          focusedTextColor = Color.Black,
+          focusedPlaceholderColor = Color.Black,
+          unfocusedTextColor = Color.Black,
+          unfocusedPlaceholderColor = Color.Black
         )
       )
 
@@ -166,7 +178,11 @@ fun ChangePasswordScreen(
           focusedBorderColor = Color.Black,
           unfocusedBorderColor = Color.Black,
           focusedLabelColor = Color.Black,
-          unfocusedLabelColor = Color.Black
+          unfocusedLabelColor = Color.Black,
+          focusedTextColor = Color.Black,
+          focusedPlaceholderColor = Color.Black,
+          unfocusedTextColor = Color.Black,
+          unfocusedPlaceholderColor = Color.Black
         )
       )
 

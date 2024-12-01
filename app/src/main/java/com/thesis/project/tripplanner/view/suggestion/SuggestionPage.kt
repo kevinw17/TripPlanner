@@ -1,6 +1,7 @@
 package com.thesis.project.tripplanner.view.suggestion
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -78,7 +80,8 @@ fun SuggestionPage(
         title = {
           Text(
             text = stringResource(R.string.suggestion),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
           )
         },
         navigationIcon = {
@@ -90,7 +93,8 @@ fun SuggestionPage(
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
-              modifier = Modifier.size(24.dp)
+              modifier = Modifier.size(24.dp),
+              tint = Color.Black
             )
           }
         },
@@ -106,9 +110,11 @@ fun SuggestionPage(
     LazyColumn(
       modifier = Modifier
         .fillMaxSize()
+        .background(Color.White)
         .padding(paddingValues)
-        .padding(16.dp),
-      verticalArrangement = Arrangement.spacedBy(8.dp)
+        .padding(horizontal = 16.dp, vertical = 8.dp),
+      verticalArrangement = Arrangement.Top,
+      horizontalAlignment = Alignment.Start
     ) {
       item {
         LazyRow(
@@ -126,7 +132,7 @@ fun SuggestionPage(
               colors = if (selectedDestination.value == destination.name) {
                 ChipDefaults.chipColors(
                   backgroundColor = Color(0xFFDFF9FF),
-                  contentColor = Color.Black
+                  contentColor = Color.Black,
                 )
               } else {
                 ChipDefaults.chipColors(
@@ -135,7 +141,7 @@ fun SuggestionPage(
                 )
               }
             ) {
-              Text(destination.name)
+              Text(text = destination.name, color = Color.Black)
             }
           }
         }
@@ -161,11 +167,17 @@ fun SuggestionPage(
       }
 
       item {
-        Text(text = selectedDestination.value, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Text(
+          text = selectedDestination.value,
+          fontWeight = FontWeight.Bold,
+          fontSize = 20.sp,
+          color = Color.Black
+        )
         Text(
           text = selectedDestinationDescription.orEmpty(),
           style = MaterialTheme.typography.bodyMedium,
-          modifier = Modifier.padding(top = 4.dp)
+          modifier = Modifier.padding(top = 4.dp),
+          color = Color.Black
         )
       }
 
@@ -175,7 +187,8 @@ fun SuggestionPage(
             text = "Rekomendasi Itinerary untuk ${selectedDestination.value}",
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier.padding(vertical = 8.dp),
+            color = Color.Black
           )
         }
 
@@ -186,7 +199,7 @@ fun SuggestionPage(
               fontSize = 16.sp,
               color = Color.DarkGray,
               modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-              textAlign = TextAlign.Center
+              textAlign = TextAlign.Center,
             )
           }
         } else {

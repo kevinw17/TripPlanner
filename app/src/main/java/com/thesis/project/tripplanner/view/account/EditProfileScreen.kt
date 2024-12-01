@@ -1,6 +1,7 @@
 package com.thesis.project.tripplanner.view.account
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -69,7 +71,8 @@ fun EditProfileScreen(
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
-              modifier = Modifier.size(24.dp)
+              modifier = Modifier.size(24.dp),
+              tint = Color.Black
             )
           }
         },
@@ -83,9 +86,11 @@ fun EditProfileScreen(
     Column(
       modifier = Modifier
         .fillMaxSize()
+        .background(Color.White)
         .padding(paddingValues)
-        .padding(16.dp),
-      verticalArrangement = Arrangement.spacedBy(16.dp)
+        .padding(horizontal = 16.dp, vertical = 8.dp),
+      verticalArrangement = Arrangement.Top,
+      horizontalAlignment = Alignment.Start
     ) {
       Text(
         text = stringResource(R.string.name),
@@ -103,11 +108,14 @@ fun EditProfileScreen(
         shape = RoundedCornerShape(8.dp),
         colors = OutlinedTextFieldDefaults.colors(
           focusedBorderColor = Color.Black,
-          unfocusedBorderColor = Color.Black
+          unfocusedBorderColor = Color.Black,
+          disabledBorderColor = Color.Black,
+          disabledPlaceholderColor = Color.DarkGray,
+          disabledTextColor = Color.DarkGray
         )
       )
 
-      Spacer(modifier = Modifier.height(8.dp))
+      Spacer(modifier = Modifier.height(16.dp))
 
       Text(
         text = stringResource(R.string.bio),
@@ -121,7 +129,15 @@ fun EditProfileScreen(
           Text(stringResource(R.string.bio))
         },
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+          focusedBorderColor = Color.Black,
+          unfocusedBorderColor = Color.Black,
+          focusedTextColor = Color.Black,
+          unfocusedTextColor = Color.Black,
+          focusedPlaceholderColor = Color.Black,
+          unfocusedPlaceholderColor = Color.Black
+        )
       )
 
       Spacer(modifier = Modifier.weight(1f))
@@ -131,7 +147,7 @@ fun EditProfileScreen(
         shape = RoundedCornerShape(12.dp),
         colors = androidx.compose.material3.ButtonDefaults.buttonColors(
           containerColor = Color(0xFFDFF9FF),
-          contentColor = Color.Black
+          contentColor = Color.Black,
         ),
         border = BorderStroke(1.dp, Color.Black),
         modifier = Modifier

@@ -141,12 +141,14 @@ fun ItineraryPage(
     bottomBar = { BottomNavigationBar(navController) }
   ) { innerPadding ->
     BottomSheetScaffold(
+      modifier = Modifier.background(Color.White),
       scaffoldState = scaffoldState,
       topBar = {
         TopAppBar(title = {
           Text(
             text = stringResource(R.string.itinerary),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
           )
         }, navigationIcon = {
           IconButton(
@@ -157,7 +159,8 @@ fun ItineraryPage(
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
-              modifier = Modifier.size(24.dp)
+              modifier = Modifier.size(24.dp),
+              tint = Color.Black
             )
           }
         }, colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
@@ -172,6 +175,8 @@ fun ItineraryPage(
             coroutineScope.launch { scaffoldState.bottomSheetState.partialExpand() }
           }
       },
+      sheetContentColor = Color.White,
+      sheetContainerColor = Color.White,
       sheetPeekHeight = 0.dp
     ) { paddingValues ->
       Box(
@@ -187,7 +192,11 @@ fun ItineraryPage(
             .padding(horizontal = 16.dp), verticalArrangement = Arrangement.Top
         ) {
           item {
-            Text(text = stringResource(R.string.buat_itinerary), fontSize = 20.sp)
+            Text(
+              text = stringResource(R.string.buat_itinerary),
+              fontSize = 20.sp,
+              color = Color.Black
+            )
             Spacer(modifier = Modifier.height(24.dp))
           }
 
@@ -208,7 +217,11 @@ fun ItineraryPage(
                 focusedBorderColor = Color.Black,
                 unfocusedBorderColor = Color.Black,
                 focusedLabelColor = Color.Black,
-                unfocusedLabelColor = Color.Black
+                unfocusedLabelColor = Color.Black,
+                focusedPlaceholderColor = Color.Black,
+                focusedTextColor = Color.Black,
+                unfocusedPlaceholderColor = Color.Black,
+                unfocusedTextColor = Color.Black
               )
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -231,7 +244,11 @@ fun ItineraryPage(
                 focusedBorderColor = Color.Black,
                 unfocusedBorderColor = Color.Black,
                 focusedLabelColor = Color.Black,
-                unfocusedLabelColor = Color.Black
+                unfocusedLabelColor = Color.Black,
+                focusedPlaceholderColor = Color.Black,
+                focusedTextColor = Color.Black,
+                unfocusedPlaceholderColor = Color.Black,
+                unfocusedTextColor = Color.Black
               ),
               maxLines = 5
             )

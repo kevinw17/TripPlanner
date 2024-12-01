@@ -2,6 +2,7 @@ package com.thesis.project.tripplanner.view.account
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -64,9 +65,11 @@ fun UserProfileContent(
   LazyColumn(
     modifier = Modifier
       .fillMaxSize()
+      .background(Color.White)
       .padding(paddingValues)
-      .padding(16.dp),
-    verticalArrangement = Arrangement.spacedBy(16.dp)
+      .padding(horizontal = 16.dp, vertical = 8.dp),
+    verticalArrangement = Arrangement.Top,
+    horizontalAlignment = Alignment.Start
   ) {
 
     item {
@@ -230,7 +233,8 @@ fun UserProfileContent(
         text = stringResource(R.string.itineraries_created),
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
-        modifier = Modifier.padding(vertical = 8.dp)
+        modifier = Modifier.padding(vertical = 8.dp),
+        color = Color.Black
       )
     }
 

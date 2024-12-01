@@ -2,6 +2,7 @@ package com.thesis.project.tripplanner.view.itinerary
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,6 +59,7 @@ fun CommentBottomSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color.White)
             .padding(start = 16.dp, end = 16.dp, bottom = 48.dp)
             .navigationBarsPadding()
             .heightIn(max = 400.dp)
@@ -114,7 +116,9 @@ fun CommentBottomSheet(
                     focusedBorderColor = Color.Black,
                     unfocusedBorderColor = Color.Black,
                     focusedLabelColor = Color.Black,
-                    unfocusedLabelColor = Color.Black
+                    unfocusedLabelColor = Color.Black,
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
                 ),
                 shape = RoundedCornerShape(12.dp)
             )

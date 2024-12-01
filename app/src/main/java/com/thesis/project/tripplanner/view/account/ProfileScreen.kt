@@ -148,7 +148,8 @@ fun ProfileScreen(
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
-              modifier = Modifier.size(24.dp)
+              modifier = Modifier.size(24.dp),
+              tint = Color.Black
             )
           }
         },
@@ -162,6 +163,7 @@ fun ProfileScreen(
     }
   ) { paddingValues ->
     BottomSheetScaffold(
+      modifier = Modifier.background(Color.White),
       scaffoldState = scaffoldState,
       sheetContent = {
         EditProfilePictureBottomSheet(
@@ -173,6 +175,8 @@ fun ProfileScreen(
           }
         )
       },
+      sheetContentColor = Color.White,
+      sheetContainerColor = Color.White,
       sheetPeekHeight = 0.dp
     ) { innerPadding ->
       if (isLoadingProfile) {

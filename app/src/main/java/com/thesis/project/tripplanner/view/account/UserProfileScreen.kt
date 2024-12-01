@@ -77,7 +77,8 @@ fun UserProfileScreen(
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
-              modifier = Modifier.size(24.dp)
+              modifier = Modifier.size(24.dp),
+              tint = Color.Black
             )
           }
         },
@@ -110,7 +111,10 @@ fun UserProfileScreen(
         itineraryViewModel.cancelFriendRequest(currentUserId, targetUserId)
         isCancelDialogVisible = false
       },
-      onDismissDialog = { isCancelDialogVisible = false },
+      onDismissDialog = {
+        isCancelDialogVisible = false
+        isDeleteFriendDialogVisible = false
+      },
       paddingValues = paddingValues
     )
   }

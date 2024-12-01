@@ -1,5 +1,6 @@
 package com.thesis.project.tripplanner.view.itinerary
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -60,7 +62,8 @@ fun ItineraryList(
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
-              modifier = Modifier.size(24.dp)
+              modifier = Modifier.size(24.dp),
+              tint = Color.Black
             )
           }
         },
@@ -74,16 +77,19 @@ fun ItineraryList(
     LazyColumn(
       modifier = Modifier
         .fillMaxSize()
+        .background(Color.White)
         .padding(paddingValues)
-        .padding(horizontal = 16.dp),
-      verticalArrangement = Arrangement.spacedBy(16.dp)
+        .padding(horizontal = 16.dp, vertical = 8.dp),
+      verticalArrangement = Arrangement.Top,
+      horizontalAlignment = Alignment.Start
     ) {
       item {
         Text(
           text = "$itinerariesCount ${stringResource(R.string.itineraries)}",
           fontWeight = FontWeight.Bold,
           fontSize = 18.sp,
-          modifier = Modifier.padding(vertical = 8.dp)
+          modifier = Modifier.padding(vertical = 8.dp),
+          color = Color.Black
         )
       }
 

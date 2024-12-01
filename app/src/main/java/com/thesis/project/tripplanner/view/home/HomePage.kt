@@ -112,7 +112,12 @@ fun HomePage(
       horizontalAlignment = Alignment.Start
     ) {
       item {
-        Text(text = stringResource(R.string.welcome_user, username), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Text(
+          text = stringResource(R.string.welcome_user, username),
+          fontSize = 18.sp,
+          fontWeight = FontWeight.Bold,
+          color = Color.Black
+        )
         Spacer(modifier = Modifier.height(8.dp))
       }
 
@@ -122,7 +127,12 @@ fun HomePage(
       }
 
       item {
-        Text(text = stringResource(R.string.itinerary_wisatawan_lain), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Text(
+          text = stringResource(R.string.itinerary_wisatawan_lain),
+          fontSize = 18.sp,
+          fontWeight = FontWeight.Bold,
+          color = Color.Black
+        )
         Spacer(modifier = Modifier.height(8.dp))
       }
 
@@ -131,7 +141,7 @@ fun HomePage(
           androidx.compose.material.Text(
             text = stringResource(R.string.no_itineraries_created),
             fontSize = 14.sp,
-            color = Color.Black,
+            color = Color.DarkGray,
             modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
             textAlign = TextAlign.Center
           )
@@ -167,7 +177,12 @@ fun HomePage(
 
       item {
         Spacer(modifier = Modifier.height(16.dp))
-        Text(stringResource(R.string.suggestions), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Text(
+          text = stringResource(R.string.suggestions),
+          fontSize = 18.sp,
+          fontWeight = FontWeight.Bold,
+          color = Color.Black
+        )
         Spacer(modifier = Modifier.height(8.dp))
       }
 

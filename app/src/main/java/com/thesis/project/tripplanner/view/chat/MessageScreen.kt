@@ -93,6 +93,7 @@ fun MessagesScreen(
       Box(
         modifier = Modifier
           .fillMaxSize()
+          .background(Color.White)
           .padding(paddingValues),
         contentAlignment = Alignment.Center
       ) {
@@ -102,6 +103,7 @@ fun MessagesScreen(
       LazyColumn(
         modifier = Modifier
           .fillMaxSize()
+          .background(Color.White)
           .padding(paddingValues)
           .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)

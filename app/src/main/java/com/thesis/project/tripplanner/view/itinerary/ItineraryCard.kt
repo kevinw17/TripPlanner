@@ -58,12 +58,13 @@ fun ItineraryCard(
         Spacer(modifier = Modifier.width(8.dp))
         Text(
           text = username,
-          fontWeight = FontWeight.Bold
+          fontWeight = FontWeight.Bold,
+          color = Color.Black
         )
       }
       Spacer(modifier = Modifier.height(2.dp))
       Column {
-        Text(text = title)
+        Text(text = title, color = Color.Black)
         Text(
           text = description,
           color = Color.Gray,

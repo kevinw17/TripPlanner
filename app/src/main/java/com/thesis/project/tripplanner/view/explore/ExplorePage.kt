@@ -1,5 +1,6 @@
 package com.thesis.project.tripplanner.view.explore
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -57,7 +59,8 @@ fun ExplorePage(
         title = {
           Text(
             text = stringResource(R.string.explore),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
           )
         },
         navigationIcon = {
@@ -69,7 +72,8 @@ fun ExplorePage(
             Icon(
               painter = painterResource(R.drawable.ic_arrow_left),
               contentDescription = "Back",
-              modifier = Modifier.size(24.dp)
+              modifier = Modifier.size(24.dp),
+              tint = Color.Black
             )
           }
         },
@@ -85,15 +89,18 @@ fun ExplorePage(
     LazyColumn(
       modifier = Modifier
         .fillMaxSize()
-        .padding(paddingValues),
-      verticalArrangement = Arrangement.spacedBy(8.dp),
-      contentPadding = PaddingValues(16.dp)
+        .background(Color.White)
+        .padding(paddingValues)
+        .padding(horizontal = 16.dp, vertical = 8.dp),
+      verticalArrangement = Arrangement.Top,
+      horizontalAlignment = Alignment.Start
     ) {
       item {
         Text(
           text = stringResource(R.string.explore_page_description),
           style = MaterialTheme.typography.titleMedium,
-          modifier = Modifier.padding(bottom = 16.dp)
+          modifier = Modifier.padding(bottom = 16.dp),
+          color = Color.Black
         )
       }
 

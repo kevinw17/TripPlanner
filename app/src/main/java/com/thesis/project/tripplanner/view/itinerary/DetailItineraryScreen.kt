@@ -296,7 +296,8 @@ fun DetailItineraryScreen(
       if (isDialogVisible) {
         RecommendationDialog(
           onConfirm = {
-            itineraryViewModel.updateRecommendationCount(currentUserId, itineraryId, isRecommended)
+            isRecommended = !isRecommended
+            itineraryViewModel.updateRecommendationCount(itineraryId, currentUserId, isRecommended)
             isDialogVisible = false
             Toast.makeText(context, R.string.itinerary_recommended, Toast.LENGTH_SHORT).show()
           },

@@ -206,7 +206,7 @@ class ItineraryViewModel : ViewModel() {
               ))
             } else {
               transaction.update(itineraryRef, mapOf(
-                "likeCount" to currentLikeCount - 1,
+                "likeCount" to currentLikeCount,
                 "likedBy" to likedBy.filter { it != userId }
               ))
             }
@@ -223,7 +223,6 @@ class ItineraryViewModel : ViewModel() {
 
   fun updateRecommendationCount(itineraryId: String, userId: String, isRecommended: Boolean) {
     firestore.collection("itineraries")
-      .whereEqualTo("userId", userId)
       .whereEqualTo("itineraryId", itineraryId)
       .get()
       .addOnSuccessListener { querySnapshot ->
@@ -236,14 +235,14 @@ class ItineraryViewModel : ViewModel() {
             val currentRecommendationCount = snapshot.getLong("recommendationCount") ?: 0
             val recommendedBy = (snapshot.get("recommendedBy") as? List<*>)?.filterIsInstance<String>() ?: emptyList()
 
-            if (isRecommended) {
+            if (!recommendedBy.contains(userId)) {
               transaction.update(itineraryRef, mapOf(
                 "recommendationCount" to currentRecommendationCount + 1,
                 "recommendedBy" to recommendedBy + userId
               ))
             } else {
               transaction.update(itineraryRef, mapOf(
-                "recommendationCount" to currentRecommendationCount - 1,
+                "recommendationCount" to maxOf(0, currentRecommendationCount - 1),
                 "recommendedBy" to recommendedBy.filter { it != userId }
               ))
             }

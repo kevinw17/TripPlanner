@@ -76,7 +76,6 @@ class ItineraryViewModel : ViewModel() {
   ) {
     val itineraryRef = firestore.collection("itineraries").document()
     val itineraryId = itineraryRef.id
-    Log.d("SaveItinerary", "Generated itineraryId: $itineraryId")
 
     val itinerary = Itinerary(
       itineraryId = itineraryId,
@@ -404,7 +403,6 @@ class ItineraryViewModel : ViewModel() {
     firestore.collection("comments").document(itineraryId)
       .addSnapshotListener { documentSnapshot, exception ->
         if (exception != null) {
-          Log.e("ItineraryViewModel", "Error listening for comments: ${exception.message}")
           return@addSnapshotListener
         }
 

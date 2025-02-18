@@ -151,10 +151,10 @@ fun SuggestionPage(
         val cityImageRes = when (selectedDestination.value) {
           stringResource(R.string.jakarta) -> R.drawable.jakarta
           stringResource(R.string.bandung) -> R.drawable.bandung
-          stringResource(R.string.bali) -> R.drawable.bali
-          stringResource(R.string.surabaya) -> R.drawable.surabaya
-          stringResource(R.string.yogyakarta) -> R.drawable.yogyakarta
-          else -> R.drawable.wisata
+          stringResource(R.string.bali) -> R.drawable.jakarta
+          stringResource(R.string.surabaya) -> R.drawable.bandung
+          stringResource(R.string.yogyakarta) -> R.drawable.bandung
+          else -> R.drawable.jakarta
         }
         Image(
           painter = painterResource(cityImageRes),
